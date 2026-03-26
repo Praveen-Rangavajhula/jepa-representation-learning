@@ -2,3 +2,8 @@
 *.iml
 *.iws
 *.ipr
+__pycache__/
+*.pyc
+/skills/
+/.codex_deps/
+/data/
