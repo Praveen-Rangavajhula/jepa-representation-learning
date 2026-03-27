@@ -1,2 +1,6 @@
 numpy>=1.26,<3
 pillow>=10,<13
+transformers>=4.57,<5
+accelerate>=1.7,<2
+huggingface_hub>=0.33,<1
+safetensors>=0.4.5,<1

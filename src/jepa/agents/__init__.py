@@ -14,8 +14,8 @@ from .future_selection_agents import (
 )
 
 __all__ = [
-    "CriticAgent",
     "CandidateEvaluation",
+    "CriticAgent",
     "CritiqueMessage",
     "ExecutiveAgent",
     "EvaluatorAgent",

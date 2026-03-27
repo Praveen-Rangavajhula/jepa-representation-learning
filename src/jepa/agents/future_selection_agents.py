@@ -1,18 +1,19 @@
-"""Agent pipeline skeleton for the future-selection task.
+"""Agent pipeline for the future-selection task.
 
 Inputs:
 - observed clip: ``(T_obs, C, H, W)``
 - candidate futures: ``(K, T_future, C, H, W)``
 
-The implementation uses lightweight geometric heuristics so the pipeline can run
-end-to-end now and be swapped later for a learned representation model.
+The pipeline supports three evaluator modes:
+- ``heuristic`` for the original geometric baseline
+- ``representation_only`` for V-JEPA-backed scoring
+- ``hybrid`` for optional additive comparisons
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from math import sqrt
-from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -127,6 +128,7 @@ class TaskPlan:
     context_frames: int
     future_frames: int
     candidate_count: int
+    evaluator_mode: str = "heuristic"
     candidate_generation_types: Tuple[str, ...] = ()
     heuristic_weights: Dict[str, float] = field(default_factory=dict)
     notes: List[str] = field(default_factory=list)
@@ -138,6 +140,7 @@ class TaskPlan:
             "context_frames": self.context_frames,
             "future_frames": self.future_frames,
             "candidate_count": self.candidate_count,
+            "evaluator_mode": self.evaluator_mode,
             "candidate_generation_types": list(self.candidate_generation_types),
             "heuristic_weights": dict(self.heuristic_weights),
             "notes": list(self.notes),
@@ -153,6 +156,8 @@ class CandidateEvaluation:
     components: Dict[str, float]
     generation_type: str = "unknown"
     rationale: str = ""
+    evaluator_name: str = "heuristic"
+    confidence: float | None = None
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -161,6 +166,8 @@ class CandidateEvaluation:
             "components": dict(self.components),
             "generation_type": self.generation_type,
             "rationale": self.rationale,
+            "evaluator_name": self.evaluator_name,
+            "confidence": self.confidence,
         }
 
 
@@ -233,6 +240,7 @@ class PlannerAgent:
         candidates: ArrayLike,
         candidate_metadata: Optional[Sequence[Mapping[str, Any]]] = None,
         representation_model: Any = None,
+        evaluation_mode: str = "heuristic",
     ) -> TaskPlan:
         observed_np = _to_numpy(observed)
         candidates_np = _to_numpy(candidates)
@@ -242,13 +250,32 @@ class PlannerAgent:
             _candidate_generation_type(candidate_metadata, index)
             for index in range(candidates_np.shape[0])
         )
-        notes = [
-            "Observed clip is treated as context and candidate futures are compared against its motion profile.",
-        ]
+
+        base_weights = {
+            "continuity": 0.26,
+            "extrapolation": 0.26,
+            "direction": 0.18,
+            "speed": 0.15,
+            "smoothness": 0.15,
+        }
+        if evaluation_mode == "representation_only":
+            heuristic_weights = {name: 0.0 for name in base_weights}
+            notes = [
+                "Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+            ]
+        elif evaluation_mode == "hybrid":
+            heuristic_weights = dict(base_weights)
+            notes = [
+                "Observed clip and candidate futures are scored with both motion heuristics and V-JEPA latent compatibility.",
+            ]
+        else:
+            heuristic_weights = dict(base_weights)
+            notes = [
+                "Observed clip is treated as context and candidate futures are compared against its motion profile.",
+            ]
+
         if representation_model is not None:
-            notes.append(
-                "A representation model was supplied and can be wired into the evaluator later."
-            )
+            notes.append("A representation model was supplied to the evaluator.")
 
         return TaskPlan(
             observed_shape=tuple(observed_np.shape),
@@ -256,23 +283,19 @@ class PlannerAgent:
             context_frames=int(observed_np.shape[0]),
             future_frames=int(candidates_np.shape[1]),
             candidate_count=int(candidates_np.shape[0]),
+            evaluator_mode=evaluation_mode,
             candidate_generation_types=generation_types,
-            heuristic_weights={
-                "continuity": 0.26,
-                "extrapolation": 0.26,
-                "direction": 0.18,
-                "speed": 0.15,
-                "smoothness": 0.15,
-            },
+            heuristic_weights=heuristic_weights,
             notes=notes,
         )
 
 
 class EvaluatorAgent:
-    """Rank candidates using placeholder motion-consistency heuristics."""
+    """Rank candidates using a heuristic baseline, V-JEPA scorer, or both."""
 
-    def __init__(self, *, representation_model: Any = None) -> None:
+    def __init__(self, *, representation_model: Any = None, mode: str = "heuristic") -> None:
         self.representation_model = representation_model
+        self.mode = mode
 
     def evaluate(
         self,
@@ -291,16 +314,118 @@ class EvaluatorAgent:
                 candidates_np,
                 candidate_metadata=candidate_metadata,
                 representation_model=self.representation_model,
+                evaluation_mode=self.mode,
             )
 
-        observed_traj = _trajectory(observed_np)
+        representation_bundle = None
+        representation_lookup: Dict[int, Any] = {}
+        if self.mode in {"representation_only", "hybrid"}:
+            representation_bundle = self._representation_bundle(
+                observed,
+                candidates,
+                candidate_metadata=candidate_metadata,
+            )
+            if representation_bundle is None:
+                raise ValueError(
+                    "EvaluatorAgent in representation_only/hybrid mode requires a representation model "
+                    "that exposes score_future_candidates() or score_example()."
+                )
+            for item in representation_bundle.candidate_scores:
+                representation_lookup[int(item.candidate_index)] = item
+
+        heuristic_lookup = self._heuristic_components_by_candidate(observed_np, candidates_np)
+        evaluations: List[CandidateEvaluation] = []
+        for index in range(candidates_np.shape[0]):
+            generation_type = _candidate_generation_type(candidate_metadata, index)
+            heuristic_components = heuristic_lookup[index]
+            heuristic_score = self._combine_scores(plan.heuristic_weights, heuristic_components)
+            rep_item = representation_lookup.get(index)
+
+            if self.mode == "heuristic":
+                total_score = heuristic_score
+                components = dict(heuristic_components)
+                rationale = self._build_heuristic_rationale(heuristic_components, generation_type)
+                evaluator_name = "heuristic"
+                confidence = None
+            elif self.mode == "representation_only":
+                if rep_item is None or representation_bundle is None:
+                    raise ValueError("Missing representation scores for representation_only evaluation.")
+                total_score = float(rep_item.score)
+                components = dict(rep_item.components)
+                rationale = rep_item.rationale
+                evaluator_name = getattr(representation_bundle, "evaluator_name", "representation")
+                confidence = getattr(representation_bundle, "confidence", None)
+            elif self.mode == "hybrid":
+                if rep_item is None or representation_bundle is None:
+                    raise ValueError("Missing representation scores for hybrid evaluation.")
+                total_score = float(heuristic_score + rep_item.score)
+                components = {
+                    **{f"heuristic_{key}": float(value) for key, value in heuristic_components.items()},
+                    **{f"vjepa_{key}": float(value) for key, value in rep_item.components.items()},
+                    "heuristic_total": float(heuristic_score),
+                    "vjepa_total": float(rep_item.score),
+                }
+                rationale = (
+                    f"{generation_type} candidate under hybrid scoring; heuristic={heuristic_score:.3f}, "
+                    f"vjepa={rep_item.score:.3f}."
+                )
+                evaluator_name = f"hybrid::{getattr(representation_bundle, 'evaluator_name', 'representation')}"
+                confidence = getattr(representation_bundle, "confidence", None)
+            else:
+                raise ValueError(f"Unsupported evaluator mode: {self.mode}")
+
+            evaluations.append(
+                CandidateEvaluation(
+                    candidate_index=index,
+                    score=float(total_score),
+                    components=components,
+                    generation_type=generation_type,
+                    rationale=rationale,
+                    evaluator_name=evaluator_name,
+                    confidence=confidence,
+                )
+            )
+
+        evaluations.sort(key=lambda item: item.score, reverse=True)
+        return evaluations
+
+    def _representation_bundle(
+        self,
+        observed: ArrayLike,
+        candidates: ArrayLike,
+        *,
+        candidate_metadata: Optional[Sequence[Mapping[str, Any]]],
+    ) -> Any:
+        model = self.representation_model
+        if model is None:
+            return None
+        if hasattr(model, "score_future_candidates"):
+            return model.score_future_candidates(
+                observed,
+                candidates,
+                candidate_metadata=candidate_metadata,
+            )
+        if hasattr(model, "score_example"):
+            return model.score_example(
+                observed,
+                candidates,
+                candidate_metadata=candidate_metadata,
+            )
+        return None
+
+    def _heuristic_components_by_candidate(
+        self,
+        observed: np.ndarray,
+        candidates: np.ndarray,
+    ) -> Dict[int, Dict[str, float]]:
+        observed_traj = _trajectory(observed)
         observed_last_position = observed_traj["centroids"][-1]
         observed_last_velocity = observed_traj["velocities"][-1]
         expected_next_position = observed_last_position + observed_last_velocity
         observed_speed = _mean_or_zero(observed_traj["speeds"][-3:])
 
-        evaluations: List[CandidateEvaluation] = []
-        for index, candidate in enumerate(candidates_np):
+        lookup: Dict[int, Dict[str, float]] = {}
+        for index, candidate in enumerate(candidates):
             candidate_traj = _trajectory(candidate)
             first_position = candidate_traj["centroids"][0]
             first_velocity = candidate_traj["velocities"][0]
@@ -313,65 +438,21 @@ class EvaluatorAgent:
             speed = 1.0 / (1.0 + abs(observed_speed - candidate_speed))
             smoothness = 1.0 / (1.0 + candidate_smoothness)
 
-            components = {
+            lookup[index] = {
                 "continuity": float(continuity),
                 "extrapolation": float(extrapolation),
                 "direction": float(direction),
                 "speed": float(speed),
                 "smoothness": float(smoothness),
             }
-
-            model_bonus = self._score_with_model(observed_np, candidate, plan)
-            total_score = self._combine_scores(plan.heuristic_weights, components, model_bonus)
-            generation_type = _candidate_generation_type(candidate_metadata, index)
-            rationale = self._build_rationale(components, generation_type)
-
-            evaluations.append(
-                CandidateEvaluation(
-                    candidate_index=index,
-                    score=total_score,
-                    components=components,
-                    generation_type=generation_type,
-                    rationale=rationale,
-                )
-            )
-
-        evaluations.sort(key=lambda item: item.score, reverse=True)
-        return evaluations
-
-    def _score_with_model(self, observed: np.ndarray, candidate: np.ndarray, plan: TaskPlan) -> float:
-        model = self.representation_model
-        if model is None:
-            return 0.0
-
-        if hasattr(model, "score_context_future"):
-            try:
-                return float(model.score_context_future(observed, candidate, plan.as_dict()))
-            except Exception:
-                return 0.0
-
-        if hasattr(model, "score"):
-            try:
-                return float(model.score(observed, candidate))
-            except Exception:
-                return 0.0
-
-        if callable(model):
-            try:
-                value = model(observed, candidate)
-                return float(np.asarray(value).reshape(-1)[0])
-            except Exception:
-                return 0.0
-
-        return 0.0
+        return lookup
 
     @staticmethod
-    def _combine_scores(weights: Mapping[str, float], components: Mapping[str, float], model_bonus: float) -> float:
-        base_score = sum(float(weights.get(name, 0.0)) * float(components.get(name, 0.0)) for name in components)
-        return float(base_score + model_bonus)
+    def _combine_scores(weights: Mapping[str, float], components: Mapping[str, float]) -> float:
+        return float(sum(float(weights.get(name, 0.0)) * float(components.get(name, 0.0)) for name in components))
 
     @staticmethod
-    def _build_rationale(components: Mapping[str, float], generation_type: str) -> str:
+    def _build_heuristic_rationale(components: Mapping[str, float], generation_type: str) -> str:
         dominant = max(components.items(), key=lambda item: item[1])[0]
         return (
             f"{generation_type} candidate; strongest heuristic was {dominant} "
@@ -392,13 +473,14 @@ class CriticAgent:
             return critiques
 
         best = ranked_candidates[0]
+        evidence_label = "latent compatibility" if best.evaluator_name != "heuristic" else "motion consistency"
         critiques.append(
             CritiqueMessage(
                 candidate_index=best.candidate_index,
                 severity="info",
                 message=(
                     f"Candidate {best.candidate_index} is the strongest continuation candidate "
-                    f"with score {best.score:.3f}."
+                    f"with score {best.score:.3f} under {evidence_label}."
                 ),
                 generation_type=best.generation_type,
             )
@@ -410,18 +492,18 @@ class CriticAgent:
                 severity = "warning"
                 message = (
                     f"Candidate {item.candidate_index} is close to the leader but still loses on "
-                    f"motion consistency; inspect continuity and direction cues."
+                    f"{evidence_label}; inspect the strongest scoring components."
                 )
             elif item.generation_type not in {"true", "true_continuation", "ground_truth"}:
                 severity = "warning"
                 message = (
                     f"Candidate {item.candidate_index} looks plausible but its {item.generation_type} "
-                    f"construction leaves trajectory inconsistencies."
+                    f"construction is less consistent under {item.evaluator_name}."
                 )
             else:
                 severity = "info"
                 message = (
-                    f"Candidate {item.candidate_index} is lower ranked because the heuristic motion "
+                    f"Candidate {item.candidate_index} is lower ranked because its active evaluator "
                     f"signals are weaker."
                 )
 
@@ -459,14 +541,17 @@ class ExecutiveAgent:
         candidates: ArrayLike,
         candidate_metadata: Optional[Sequence[Mapping[str, Any]]] = None,
         representation_model: Any = None,
+        evaluation_mode: Optional[str] = None,
     ) -> FutureSelectionResult:
         trace: List[PipelineTraceEvent] = []
 
+        active_mode = evaluation_mode or self.evaluator.mode
         plan = self.planner.plan(
             observed,
             candidates,
             candidate_metadata=candidate_metadata,
             representation_model=representation_model,
+            evaluation_mode=active_mode,
         )
         trace.append(
             PipelineTraceEvent(
@@ -476,8 +561,9 @@ class ExecutiveAgent:
             )
         )
 
-        if representation_model is not None and self.evaluator.representation_model is None:
+        if representation_model is not None:
             self.evaluator.representation_model = representation_model
+        self.evaluator.mode = active_mode
 
         ranked = self.evaluator.evaluate(
             observed,
@@ -489,7 +575,10 @@ class ExecutiveAgent:
             PipelineTraceEvent(
                 stage="evaluate",
                 message="Ranked candidate futures.",
-                payload={"ranked_candidates": [item.as_dict() for item in ranked]},
+                payload={
+                    "evaluation_mode": active_mode,
+                    "ranked_candidates": [item.as_dict() for item in ranked],
+                },
             )
         )
 
@@ -511,6 +600,7 @@ class ExecutiveAgent:
                 payload={
                     "selected_index": selected_index,
                     "selected_score": ranked[0].score if ranked else None,
+                    "evaluation_mode": active_mode,
                 },
             )
         )
@@ -529,6 +619,7 @@ class ExecutiveAgent:
         candidates: ArrayLike,
         candidate_metadata: Optional[Sequence[Mapping[str, Any]]] = None,
         representation_model: Any = None,
+        evaluation_mode: Optional[str] = None,
     ) -> FutureSelectionResult:
         """Alias for select(), useful for notebook and pipeline calls."""
 
@@ -537,6 +628,7 @@ class ExecutiveAgent:
             candidates=candidates,
             candidate_metadata=candidate_metadata,
             representation_model=representation_model,
+            evaluation_mode=evaluation_mode,
         )
 
     def execute(
@@ -545,6 +637,7 @@ class ExecutiveAgent:
         candidates: ArrayLike,
         candidate_metadata: Optional[Sequence[Mapping[str, Any]]] = None,
         representation_model: Any = None,
+        evaluation_mode: Optional[str] = None,
     ) -> FutureSelectionResult:
         """Alias for select(), mirroring common pipeline terminology."""
 
@@ -553,6 +646,7 @@ class ExecutiveAgent:
             candidates=candidates,
             candidate_metadata=candidate_metadata,
             representation_model=representation_model,
+            evaluation_mode=evaluation_mode,
         )
 
 
@@ -561,13 +655,20 @@ def run_future_selection_pipeline(
     candidates: ArrayLike,
     candidate_metadata: Optional[Sequence[Mapping[str, Any]]] = None,
     representation_model: Any = None,
+    evaluation_mode: str = "heuristic",
 ) -> FutureSelectionResult:
     """Convenience wrapper for notebook and script use."""
 
-    executive = ExecutiveAgent()
+    executive = ExecutiveAgent(
+        evaluator=EvaluatorAgent(
+            mode=evaluation_mode,
+            representation_model=representation_model,
+        )
+    )
     return executive.select(
         observed=observed,
         candidates=candidates,
         candidate_metadata=candidate_metadata,
         representation_model=representation_model,
+        evaluation_mode=evaluation_mode,
     )
