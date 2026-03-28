@@ -1,46 +1,68 @@
 {
   "heuristic": {
     "wrong_direction_continuation": {
-      "count": 43,
-      "accuracy_when_present": 0.8604651162790697
+      "count": 5,
+      "accuracy_when_present": 0.8
     },
     "mirrored_or_perturbed_continuation": {
-      "count": 37,
-      "accuracy_when_present": 0.7837837837837838
+      "count": 5,
+      "accuracy_when_present": 1.0
     },
     "shuffled_temporal_order": {
-      "count": 41,
-      "accuracy_when_present": 0.7560975609756098
+      "count": 5,
+      "accuracy_when_present": 1.0
     },
     "future_segment_from_other_sample": {
-      "count": 35,
-      "accuracy_when_present": 0.8571428571428571
+      "count": 6,
+      "accuracy_when_present": 0.8333333333333334
     },
     "wrong_velocity_continuation": {
-      "count": 36,
-      "accuracy_when_present": 0.6388888888888888
+      "count": 3,
+      "accuracy_when_present": 0.6666666666666666
     }
   },
   "vjepa": {
     "wrong_direction_continuation": {
-      "count": 43,
-      "accuracy_when_present": 0.7674418604651163
+      "count": 5,
+      "accuracy_when_present": 1.0
     },
     "mirrored_or_perturbed_continuation": {
-      "count": 37,
-      "accuracy_when_present": 0.7567567567567568
+      "count": 5,
+      "accuracy_when_present": 1.0
     },
     "shuffled_temporal_order": {
-      "count": 41,
-      "accuracy_when_present": 0.5609756097560976
+      "count": 5,
+      "accuracy_when_present": 1.0
     },
     "future_segment_from_other_sample": {
-      "count": 35,
-      "accuracy_when_present": 0.8571428571428571
+      "count": 6,
+      "accuracy_when_present": 1.0
     },
     "wrong_velocity_continuation": {
-      "count": 36,
-      "accuracy_when_present": 0.6666666666666666
+      "count": 3,
+      "accuracy_when_present": 1.0
+    }
+  },
+  "latent_predictor": {
+    "wrong_direction_continuation": {
+      "count": 5,
+      "accuracy_when_present": 0.6
+    },
+    "mirrored_or_perturbed_continuation": {
+      "count": 5,
+      "accuracy_when_present": 0.4
+    },
+    "shuffled_temporal_order": {
+      "count": 5,
+      "accuracy_when_present": 0.4
+    },
+    "future_segment_from_other_sample": {
+      "count": 6,
+      "accuracy_when_present": 0.3333333333333333
+    },
+    "wrong_velocity_continuation": {
+      "count": 3,
+      "accuracy_when_present": 1.0
     }
   }
 }

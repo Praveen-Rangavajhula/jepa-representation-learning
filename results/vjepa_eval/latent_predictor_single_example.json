@@ -1,0 +1,212 @@
+{
+  "training_summary": {
+    "embedding_dim": 1024,
+    "train_examples": 26,
+    "validation_examples": 6,
+    "epochs": 4,
+    "best_epoch": 4,
+    "final_train_loss": 0.05751871131360531,
+    "best_validation_loss": 0.04383588582277298,
+    "embedding_cache_hit": false,
+    "embedding_extraction_seconds": 71.96029212299982,
+    "training_seconds": 0.5408052729999326,
+    "total_seconds": 72.50892940000017,
+    "loss_history": [
+      {
+        "epoch": 1.0,
+        "train_loss": 0.403076171875,
+        "validation_loss": 0.22333472967147827
+      },
+      {
+        "epoch": 2.0,
+        "train_loss": 0.18235313147306442,
+        "validation_loss": 0.08422300219535828
+      },
+      {
+        "epoch": 3.0,
+        "train_loss": 0.07949504628777504,
+        "validation_loss": 0.05387738347053528
+      },
+      {
+        "epoch": 4.0,
+        "train_loss": 0.05751871131360531,
+        "validation_loss": 0.04383588582277298
+      }
+    ]
+  },
+  "ranking_summary": {
+    "evaluator_name": "vjepa2_latent_predictor",
+    "selected_index": 3,
+    "selected_generation_type": "shuffled_temporal_order",
+    "selected_score": 0.9032753705978394,
+    "selected_probability": 0.25848284363746643,
+    "selected_component_highlights": [
+      {
+        "name": "predicted_future_cosine",
+        "value": 0.9032753705978394
+      },
+      {
+        "name": "predicted_future_distance_score",
+        "value": 0.6945270895957947
+      }
+    ],
+    "runner_up_index": 1,
+    "runner_up_generation_type": "true_continuation",
+    "runner_up_score": 0.9008228778839111,
+    "runner_up_probability": 0.25784969329833984,
+    "score_gap_to_runner_up": 0.0024524927139282227,
+    "probability_gap_to_runner_up": 0.0006331503391265869,
+    "confidence": 0.0006331503391265869,
+    "uncertainty": "low",
+    "correct_index": 1,
+    "correct_rank": 2,
+    "was_correct": false
+  },
+  "candidate_score_table": [
+    {
+      "candidate_index": 3,
+      "rank": 1,
+      "score": 0.9032753705978394,
+      "probability": 0.25848284363746643,
+      "generation_type": "shuffled_temporal_order",
+      "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).",
+      "components": {
+        "predicted_future_cosine": 0.9032753705978394,
+        "predicted_future_distance_score": 0.6945270895957947
+      },
+      "is_true": false,
+      "is_correct": false
+    },
+    {
+      "candidate_index": 1,
+      "rank": 2,
+      "score": 0.9008228778839111,
+      "probability": 0.25784969329833984,
+      "generation_type": "true_continuation",
+      "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).",
+      "components": {
+        "predicted_future_cosine": 0.9008228778839111,
+        "predicted_future_distance_score": 0.6918646097183228
+      },
+      "is_true": true,
+      "is_correct": true
+    },
+    {
+      "candidate_index": 2,
+      "rank": 3,
+      "score": 0.8395777940750122,
+      "probability": 0.24253152310848236,
+      "generation_type": "mirrored_or_perturbed_continuation",
+      "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.840).",
+      "components": {
+        "predicted_future_cosine": 0.8395777940750122,
+        "predicted_future_distance_score": 0.6383938789367676
+      },
+      "is_true": false,
+      "is_correct": false
+    },
+    {
+      "candidate_index": 0,
+      "rank": 4,
+      "score": 0.8338069915771484,
+      "probability": 0.24113596975803375,
+      "generation_type": "wrong_direction_continuation",
+      "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.834).",
+      "components": {
+        "predicted_future_cosine": 0.8338069915771484,
+        "predicted_future_distance_score": 0.6343047618865967
+      },
+      "is_true": false,
+      "is_correct": false
+    }
+  ],
+  "comparison_table": [
+    {
+      "evaluator": "heuristic",
+      "evaluator_name": "FutureSelectionResult",
+      "selected_index": 1,
+      "selected_generation_type": "true_continuation",
+      "selected_score": 0.6260618971258913,
+      "selected_probability": null,
+      "selected_component_highlights": [
+        {
+          "name": "direction",
+          "value": 0.967485236749424
+        },
+        {
+          "name": "speed",
+          "value": 0.7659075374410548
+        }
+      ],
+      "runner_up_index": 3,
+      "runner_up_generation_type": "shuffled_temporal_order",
+      "runner_up_score": 0.3911813517658619,
+      "runner_up_probability": null,
+      "score_gap_to_runner_up": 0.23488054536002945,
+      "probability_gap_to_runner_up": null,
+      "confidence": null,
+      "uncertainty": null,
+      "correct_index": 1,
+      "correct_rank": 1,
+      "was_correct": true
+    },
+    {
+      "evaluator": "vjepa",
+      "evaluator_name": "vjepa2_overlap_transition",
+      "selected_index": 3,
+      "selected_generation_type": "shuffled_temporal_order",
+      "selected_score": 0.9773304462432861,
+      "selected_probability": 0.2540198862552643,
+      "selected_component_highlights": [
+        {
+          "name": "cosine_b_c",
+          "value": 0.9966485500335693
+        },
+        {
+          "name": "cosine_a_b",
+          "value": 0.995932936668396
+        }
+      ],
+      "runner_up_index": 1,
+      "runner_up_generation_type": "true_continuation",
+      "runner_up_score": 0.9770991802215576,
+      "runner_up_probability": 0.25396114587783813,
+      "score_gap_to_runner_up": 0.00023126602172851562,
+      "probability_gap_to_runner_up": 5.874037742614746e-05,
+      "confidence": 5.874037742614746e-05,
+      "uncertainty": "low",
+      "correct_index": 1,
+      "correct_rank": 2,
+      "was_correct": false
+    },
+    {
+      "evaluator": "latent_predictor",
+      "evaluator_name": "vjepa2_latent_predictor",
+      "selected_index": 3,
+      "selected_generation_type": "shuffled_temporal_order",
+      "selected_score": 0.9032753705978394,
+      "selected_probability": 0.25848284363746643,
+      "selected_component_highlights": [
+        {
+          "name": "predicted_future_cosine",
+          "value": 0.9032753705978394
+        },
+        {
+          "name": "predicted_future_distance_score",
+          "value": 0.6945270895957947
+        }
+      ],
+      "runner_up_index": 1,
+      "runner_up_generation_type": "true_continuation",
+      "runner_up_score": 0.9008228778839111,
+      "runner_up_probability": 0.25784969329833984,
+      "score_gap_to_runner_up": 0.0024524927139282227,
+      "probability_gap_to_runner_up": 0.0006331503391265869,
+      "confidence": 0.0006331503391265869,
+      "uncertainty": "low",
+      "correct_index": 1,
+      "correct_rank": 2,
+      "was_correct": false
+    }
+  ]
+}

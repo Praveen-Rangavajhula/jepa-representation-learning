@@ -1,0 +1,2290 @@
+[
+  {
+    "example_index": 0,
+    "correct_index": 1,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.530532867100479,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "smoothness",
+              "value": 0.7545381957764324
+            },
+            {
+              "name": "speed",
+              "value": 0.690560053136872
+            }
+          ],
+          "runner_up_index": 0,
+          "runner_up_generation_type": "wrong_direction_continuation",
+          "runner_up_score": 0.38530239393370164,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.14523047316677734,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.530532867100479,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was smoothness (0.755).",
+            "components": {
+              "continuity": 0.3400566326488194,
+              "extrapolation": 0.5823554320994566,
+              "direction": 0.41078329404962005,
+              "speed": 0.690560053136872,
+              "smoothness": 0.7545381957764324
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 0,
+            "rank": 2,
+            "score": 0.38530239393370164,
+            "probability": null,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate; strongest heuristic was smoothness (0.795).",
+            "components": {
+              "continuity": 0.3868301165697308,
+              "extrapolation": 0.24870453647741483,
+              "direction": 0.0012513969168360117,
+              "speed": 0.6704290806003035,
+              "smoothness": 0.7951584707091183
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.30872577732902146,
+            "probability": null,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was speed (0.929).",
+            "components": {
+              "continuity": 0.0937302420650711,
+              "extrapolation": 0.10851254086480376,
+              "direction": 0.01885031580582902,
+              "speed": 0.9294208842828898,
+              "smoothness": 0.7555764285318086
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 4,
+            "score": 0.2921228811511592,
+            "probability": null,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate; strongest heuristic was direction (0.438).",
+            "components": {
+              "continuity": 0.30448893449422276,
+              "extrapolation": 0.34005663264881897,
+              "direction": 0.43815413572086215,
+              "speed": 0.14073280985151398,
+              "smoothness": 0.16375578524324053
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9773610830307007,
+          "selected_probability": 0.25589361786842346,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_b_c",
+              "value": 0.9976064562797546
+            },
+            {
+              "name": "cosine_a_b",
+              "value": 0.9959670901298523
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.9752345085144043,
+          "runner_up_probability": 0.2553500235080719,
+          "score_gap_to_runner_up": 0.0021265745162963867,
+          "probability_gap_to_runner_up": 0.0005435943603515625,
+          "confidence": 0.0005435943603515625,
+          "uncertainty": "low",
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.9773610830307007,
+            "probability": 0.25589361786842346,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.998).",
+            "components": {
+              "cosine_a_b": 0.9959670901298523,
+              "cosine_b_c": 0.9976064562797546,
+              "transition_smoothness": 0.89990234375
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.9752345085144043,
+            "probability": 0.2553500235080719,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.998).",
+            "components": {
+              "cosine_a_b": 0.995241105556488,
+              "cosine_b_c": 0.9978988170623779,
+              "transition_smoothness": 0.8896484375
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 3,
+            "score": 0.9527884721755981,
+            "probability": 0.24968227744102478,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+            "components": {
+              "cosine_a_b": 0.9708229303359985,
+              "cosine_b_c": 0.988174557685852,
+              "transition_smoothness": 0.845703125
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.9093726277351379,
+            "probability": 0.23907405138015747,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.974).",
+            "components": {
+              "cosine_a_b": 0.949683427810669,
+              "cosine_b_c": 0.9737115502357483,
+              "transition_smoothness": 0.7001953125
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9038268327713013,
+          "selected_probability": 0.25604474544525146,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.9038268327713013
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.6951333284378052
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.9037581086158752,
+          "runner_up_probability": 0.2560271620750427,
+          "score_gap_to_runner_up": 6.872415542602539e-05,
+          "probability_gap_to_runner_up": 1.7583370208740234e-05,
+          "confidence": 1.7583370208740234e-05,
+          "uncertainty": "low",
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.9038268327713013,
+            "probability": 0.25604474544525146,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.904).",
+            "components": {
+              "predicted_future_cosine": 0.9038268327713013,
+              "predicted_future_distance_score": 0.6951333284378052
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.9037581086158752,
+            "probability": 0.2560271620750427,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.904).",
+            "components": {
+              "predicted_future_cosine": 0.9037581086158752,
+              "predicted_future_distance_score": 0.6950573921203613
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.8580061197280884,
+            "probability": 0.2445773184299469,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.858).",
+            "components": {
+              "predicted_future_cosine": 0.8580061197280884,
+              "predicted_future_distance_score": 0.6523562073707581
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 4,
+            "score": 0.8529784679412842,
+            "probability": 0.24335075914859772,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.853).",
+            "components": {
+              "predicted_future_cosine": 0.8529784679412842,
+              "predicted_future_distance_score": 0.6484002470970154
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 1,
+    "correct_index": 0,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.5588618135855513,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "smoothness",
+              "value": 0.6907535234013157
+            },
+            {
+              "name": "speed",
+              "value": 0.6488968066520019
+            }
+          ],
+          "runner_up_index": 2,
+          "runner_up_generation_type": "wrong_velocity_continuation",
+          "runner_up_score": 0.5008692620930092,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.05799255149254212,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.5588618135855513,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was smoothness (0.691).",
+            "components": {
+              "continuity": 0.5762698421891492,
+              "extrapolation": 0.4341296260797606,
+              "direction": 0.5289466795979839,
+              "speed": 0.6488968066520019,
+              "smoothness": 0.6907535234013157
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 2,
+            "rank": 2,
+            "score": 0.5008692620930092,
+            "probability": null,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate; strongest heuristic was direction (0.998).",
+            "components": {
+              "continuity": 0.28568121295382426,
+              "extrapolation": 0.25878026006681837,
+              "direction": 0.9984219942856687,
+              "speed": 0.627745054404864,
+              "smoothness": 0.5695437465032812
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.2942000917650014,
+            "probability": null,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate; strongest heuristic was smoothness (0.725).",
+            "components": {
+              "continuity": 0.03569693861523555,
+              "extrapolation": 0.034028933194730736,
+              "direction": 0.4887531079705815,
+              "speed": 0.5288945210220466,
+              "smoothness": 0.7250775167093234
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 4,
+            "score": 0.20615708570201935,
+            "probability": null,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate; strongest heuristic was direction (0.420).",
+            "components": {
+              "continuity": 0.10289445001474114,
+              "extrapolation": 0.10472199474103303,
+              "direction": 0.4204851980596196,
+              "speed": 0.2465704300216278,
+              "smoothness": 0.2633593994102826
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9829696416854858,
+          "selected_probability": 0.2532842457294464,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_a_b",
+              "value": 0.9988390207290649
+            },
+            {
+              "name": "cosine_b_c",
+              "value": 0.9977696537971497
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.9812982082366943,
+          "runner_up_probability": 0.25286123156547546,
+          "score_gap_to_runner_up": 0.001671433448791504,
+          "probability_gap_to_runner_up": 0.00042301416397094727,
+          "confidence": 0.00042301416397094727,
+          "uncertainty": "low",
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.9829696416854858,
+            "probability": 0.2532842457294464,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_a_b (0.999).",
+            "components": {
+              "cosine_a_b": 0.9988390207290649,
+              "cosine_b_c": 0.9977696537971497,
+              "transition_smoothness": 0.921875
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.9812982082366943,
+            "probability": 0.25286123156547546,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_a_b (0.999).",
+            "components": {
+              "cosine_a_b": 0.9988786578178406,
+              "cosine_b_c": 0.9972135424613953,
+              "transition_smoothness": 0.9140625
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.9606041312217712,
+            "probability": 0.24768228828907013,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under overlap_transition; strongest latent component was cosine_b_c (0.989).",
+            "components": {
+              "cosine_a_b": 0.9851049184799194,
+              "cosine_b_c": 0.9885488748550415,
+              "transition_smoothness": 0.85595703125
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.9544884562492371,
+            "probability": 0.24617217481136322,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.987).",
+            "components": {
+              "cosine_a_b": 0.9731220006942749,
+              "cosine_b_c": 0.9870737195014954,
+              "transition_smoothness": 0.85205078125
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9090913534164429,
+          "selected_probability": 0.25378772616386414,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.9090913534164429
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.7010654211044312
+            }
+          ],
+          "runner_up_index": 1,
+          "runner_up_generation_type": "future_segment_from_other_sample",
+          "runner_up_score": 0.9087763428688049,
+          "runner_up_probability": 0.25370779633522034,
+          "score_gap_to_runner_up": 0.00031501054763793945,
+          "probability_gap_to_runner_up": 7.992982864379883e-05,
+          "confidence": 7.992982864379883e-05,
+          "uncertainty": "low",
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.9090913534164429,
+            "probability": 0.25378772616386414,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.909).",
+            "components": {
+              "predicted_future_cosine": 0.9090913534164429,
+              "predicted_future_distance_score": 0.7010654211044312
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 1,
+            "rank": 2,
+            "score": 0.9087763428688049,
+            "probability": 0.25370779633522034,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.909).",
+            "components": {
+              "predicted_future_cosine": 0.9087763428688049,
+              "predicted_future_distance_score": 0.7007027864456177
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 3,
+            "score": 0.9078453183174133,
+            "probability": 0.253471702337265,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.908).",
+            "components": {
+              "predicted_future_cosine": 0.9078453183174133,
+              "predicted_future_distance_score": 0.6996368169784546
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.8491936326026917,
+            "probability": 0.23903273046016693,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.849).",
+            "components": {
+              "predicted_future_cosine": 0.8491936326026917,
+              "predicted_future_distance_score": 0.6454974412918091
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 2,
+    "correct_index": 2,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 2,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.6327805839129257,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "direction",
+              "value": 0.9993671924769894
+            },
+            {
+              "name": "speed",
+              "value": 0.8060334534109984
+            }
+          ],
+          "runner_up_index": 0,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.376823885182453,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.25595669873047266,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 2,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 2,
+            "rank": 1,
+            "score": 0.6327805839129257,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was direction (0.999).",
+            "components": {
+              "continuity": 0.35197863297074833,
+              "extrapolation": 0.49559270580510917,
+              "direction": 0.9993671924769894,
+              "speed": 0.8060334534109984,
+              "smoothness": 0.7441394878246329
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 0,
+            "rank": 2,
+            "score": 0.376823885182453,
+            "probability": null,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate; strongest heuristic was direction (0.994).",
+            "components": {
+              "continuity": 0.22227212436905286,
+              "extrapolation": 0.3005741306827364,
+              "direction": 0.9942962312486789,
+              "speed": 0.1778925086885799,
+              "smoothness": 0.23484440627292422
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 3,
+            "score": 0.32658044201850517,
+            "probability": null,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate; strongest heuristic was direction (0.853).",
+            "components": {
+              "continuity": 0.048392065449182335,
+              "extrapolation": 0.04668166633190608,
+              "direction": 0.8529523855171659,
+              "speed": 0.5138555382117902,
+              "smoothness": 0.47501007753709207
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 4,
+            "score": 0.31578817252167096,
+            "probability": null,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was speed (0.974).",
+            "components": {
+              "continuity": 0.10942549507155638,
+              "extrapolation": 0.09649503951083688,
+              "direction": 0.014054407017505932,
+              "speed": 0.9741366929511897,
+              "smoothness": 0.7573235754961279
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 2,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9820147752761841,
+          "selected_probability": 0.25470221042633057,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_a_b",
+              "value": 0.9965273141860962
+            },
+            {
+              "name": "cosine_b_c",
+              "value": 0.9955579042434692
+            }
+          ],
+          "runner_up_index": 0,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.979977011680603,
+          "runner_up_probability": 0.25418370962142944,
+          "score_gap_to_runner_up": 0.0020377635955810547,
+          "probability_gap_to_runner_up": 0.000518500804901123,
+          "confidence": 0.000518500804901123,
+          "uncertainty": "low",
+          "correct_index": 2,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 2,
+            "rank": 1,
+            "score": 0.9820147752761841,
+            "probability": 0.25470221042633057,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_a_b (0.997).",
+            "components": {
+              "cosine_a_b": 0.9965273141860962,
+              "cosine_b_c": 0.9955579042434692,
+              "transition_smoothness": 0.92578125
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 0,
+            "rank": 2,
+            "score": 0.979977011680603,
+            "probability": 0.25418370962142944,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.996).",
+            "components": {
+              "cosine_a_b": 0.9956158399581909,
+              "cosine_b_c": 0.9956473708152771,
+              "transition_smoothness": 0.91748046875
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 3,
+            "score": 0.9549950957298279,
+            "probability": 0.24791237711906433,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under overlap_transition; strongest latent component was cosine_b_c (0.992).",
+            "components": {
+              "cosine_a_b": 0.9817672371864319,
+              "cosine_b_c": 0.9919021129608154,
+              "transition_smoothness": 0.82763671875
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 4,
+            "score": 0.9358110427856445,
+            "probability": 0.24320174753665924,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.984).",
+            "components": {
+              "cosine_a_b": 0.9657741189002991,
+              "cosine_b_c": 0.9840439558029175,
+              "transition_smoothness": 0.779296875
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 3,
+          "selected_generation_type": "future_segment_from_other_sample",
+          "selected_score": 0.9118496179580688,
+          "selected_probability": 0.25435417890548706,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.9118496179580688
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.7042837738990784
+            }
+          ],
+          "runner_up_index": 0,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.9047709703445435,
+          "runner_up_probability": 0.2525600492954254,
+          "score_gap_to_runner_up": 0.007078647613525391,
+          "probability_gap_to_runner_up": 0.0017941296100616455,
+          "confidence": 0.0017941296100616455,
+          "uncertainty": "low",
+          "correct_index": 2,
+          "correct_rank": 3,
+          "was_correct": false
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 3,
+            "rank": 1,
+            "score": 0.9118496179580688,
+            "probability": 0.25435417890548706,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.912).",
+            "components": {
+              "predicted_future_cosine": 0.9118496179580688,
+              "predicted_future_distance_score": 0.7042837738990784
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 2,
+            "score": 0.9047709703445435,
+            "probability": 0.2525600492954254,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.905).",
+            "components": {
+              "predicted_future_cosine": 0.9047709703445435,
+              "predicted_future_distance_score": 0.6961776614189148
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.9047676920890808,
+            "probability": 0.25255921483039856,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.905).",
+            "components": {
+              "predicted_future_cosine": 0.9047676920890808,
+              "predicted_future_distance_score": 0.6961739659309387
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 1,
+            "rank": 4,
+            "score": 0.8559523224830627,
+            "probability": 0.24052654206752777,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.856).",
+            "components": {
+              "predicted_future_cosine": 0.8559523224830627,
+              "predicted_future_distance_score": 0.6507260799407959
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 3,
+    "correct_index": 0,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.5391012114179754,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "speed",
+              "value": 0.8064097928425494
+            },
+            {
+              "name": "continuity",
+              "value": 0.7825361542308692
+            }
+          ],
+          "runner_up_index": 2,
+          "runner_up_generation_type": "wrong_direction_continuation",
+          "runner_up_score": 0.3410815849747826,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.19801962644319282,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.5391012114179754,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was speed (0.806).",
+            "components": {
+              "continuity": 0.7825361542308692,
+              "extrapolation": 0.3830603180584674,
+              "direction": 0.0002028854158357407,
+              "speed": 0.8064097928425494,
+              "smoothness": 0.7669876021434333
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 2,
+            "rank": 2,
+            "score": 0.3410815849747826,
+            "probability": null,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate; strongest heuristic was smoothness (0.849).",
+            "components": {
+              "continuity": 0.2323480034565315,
+              "extrapolation": 0.1652319540758954,
+              "direction": 0.004135631362053749,
+              "speed": 0.7310859285723372,
+              "smoothness": 0.848689953902209
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.31188325465568145,
+            "probability": null,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was speed (0.977).",
+            "components": {
+              "continuity": 0.07862933902124963,
+              "extrapolation": 0.07473593790097476,
+              "direction": 0.0056700968234043025,
+              "speed": 0.9768766442960553,
+              "smoothness": 0.8297077905552137
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 4,
+            "score": 0.29656563129041075,
+            "probability": null,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate; strongest heuristic was speed (0.757).",
+            "components": {
+              "continuity": 0.060000055995322994,
+              "extrapolation": 0.05825885541288811,
+              "direction": 0.35010580371955546,
+              "speed": 0.7565692238692511,
+              "smoothness": 0.5954259071624548
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.976119339466095,
+          "selected_probability": 0.25555160641670227,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_b_c",
+              "value": 0.9971340894699097
+            },
+            {
+              "name": "cosine_a_b",
+              "value": 0.9957765936851501
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "future_segment_from_other_sample",
+          "runner_up_score": 0.9645900726318359,
+          "runner_up_probability": 0.25262221693992615,
+          "score_gap_to_runner_up": 0.011529266834259033,
+          "probability_gap_to_runner_up": 0.002929389476776123,
+          "confidence": 0.002929389476776123,
+          "uncertainty": "low",
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.976119339466095,
+            "probability": 0.25555160641670227,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+            "components": {
+              "cosine_a_b": 0.9957765936851501,
+              "cosine_b_c": 0.9971340894699097,
+              "transition_smoothness": 0.89501953125
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.9645900726318359,
+            "probability": 0.25262221693992615,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under overlap_transition; strongest latent component was cosine_b_c (0.994).",
+            "components": {
+              "cosine_a_b": 0.9907245635986328,
+              "cosine_b_c": 0.994420051574707,
+              "transition_smoothness": 0.8525390625
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.9540283679962158,
+            "probability": 0.24996812641620636,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.989).",
+            "components": {
+              "cosine_a_b": 0.9701244235038757,
+              "cosine_b_c": 0.988921046257019,
+              "transition_smoothness": 0.85205078125
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 4,
+            "score": 0.9210458993911743,
+            "probability": 0.24185805022716522,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.979).",
+            "components": {
+              "cosine_a_b": 0.9548118114471436,
+              "cosine_b_c": 0.9791505932807922,
+              "transition_smoothness": 0.7373046875
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 3,
+          "selected_generation_type": "future_segment_from_other_sample",
+          "selected_score": 0.9213894605636597,
+          "selected_probability": 0.2580875754356384,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.9213894605636597
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.7160703539848328
+            }
+          ],
+          "runner_up_index": 0,
+          "runner_up_generation_type": "true_continuation",
+          "runner_up_score": 0.9160656929016113,
+          "runner_up_probability": 0.2567172348499298,
+          "score_gap_to_runner_up": 0.00532376766204834,
+          "probability_gap_to_runner_up": 0.0013703405857086182,
+          "confidence": 0.0013703405857086182,
+          "uncertainty": "low",
+          "correct_index": 0,
+          "correct_rank": 2,
+          "was_correct": false
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 3,
+            "rank": 1,
+            "score": 0.9213894605636597,
+            "probability": 0.2580875754356384,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.921).",
+            "components": {
+              "predicted_future_cosine": 0.9213894605636597,
+              "predicted_future_distance_score": 0.7160703539848328
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 2,
+            "score": 0.9160656929016113,
+            "probability": 0.2567172348499298,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.916).",
+            "components": {
+              "predicted_future_cosine": 0.9160656929016113,
+              "predicted_future_distance_score": 0.7093619108200073
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.8612254858016968,
+            "probability": 0.24301786720752716,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.861).",
+            "components": {
+              "predicted_future_cosine": 0.8612254858016968,
+              "predicted_future_distance_score": 0.6549521684646606
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.8577603697776794,
+            "probability": 0.24217724800109863,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.858).",
+            "components": {
+              "predicted_future_cosine": 0.8577603697776794,
+              "predicted_future_distance_score": 0.6521600484848022
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 4,
+    "correct_index": 0,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.711002198733354,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "direction",
+              "value": 0.9357530026458024
+            },
+            {
+              "name": "speed",
+              "value": 0.8627232527688251
+            }
+          ],
+          "runner_up_index": 1,
+          "runner_up_generation_type": "wrong_velocity_continuation",
+          "runner_up_score": 0.6246584306871124,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.08634376804624166,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.711002198733354,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was direction (0.936).",
+            "components": {
+              "continuity": 0.520659107105652,
+              "extrapolation": 0.5996186403842917,
+              "direction": 0.9357530026458024,
+              "speed": 0.8627232527688251,
+              "smoothness": 0.8125730399626696
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 1,
+            "rank": 2,
+            "score": 0.6246584306871124,
+            "probability": null,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate; strongest heuristic was direction (0.966).",
+            "components": {
+              "continuity": 0.309355535054256,
+              "extrapolation": 0.4196302567827995,
+              "direction": 0.9659398552289757,
+              "speed": 0.8857702814270734,
+              "smoothness": 0.8559160576946752
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.4832420386568071,
+            "probability": null,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was direction (0.986).",
+            "components": {
+              "continuity": 0.13627082036642182,
+              "extrapolation": 0.13517946568592643,
+              "direction": 0.9863380571373204,
+              "speed": 0.7582266991309183,
+              "smoothness": 0.8092673941922741
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 4,
+            "score": 0.4769212025822761,
+            "probability": null,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate; strongest heuristic was smoothness (0.901).",
+            "components": {
+              "continuity": 0.49048751707294896,
+              "extrapolation": 0.4408357824917189,
+              "direction": 0.001351350598399359,
+              "speed": 0.6622960368929189,
+              "smoothness": 0.9012633070254182
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9760411381721497,
+          "selected_probability": 0.2547442317008972,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_a_b",
+              "value": 0.9965286254882812
+            },
+            {
+              "name": "cosine_b_c",
+              "value": 0.9961864948272705
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "wrong_direction_continuation",
+          "runner_up_score": 0.9542019367218018,
+          "runner_up_probability": 0.24924112856388092,
+          "score_gap_to_runner_up": 0.0218392014503479,
+          "probability_gap_to_runner_up": 0.005503103137016296,
+          "confidence": 0.005503103137016296,
+          "uncertainty": "low",
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.9760411381721497,
+            "probability": 0.2547442317008972,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_a_b (0.997).",
+            "components": {
+              "cosine_a_b": 0.9965286254882812,
+              "cosine_b_c": 0.9961864948272705,
+              "transition_smoothness": 0.89501953125
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.9542019367218018,
+            "probability": 0.24924112856388092,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.987).",
+            "components": {
+              "cosine_a_b": 0.9713631868362427,
+              "cosine_b_c": 0.9865903854370117,
+              "transition_smoothness": 0.85498046875
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.952437162399292,
+            "probability": 0.24880166351795197,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.987).",
+            "components": {
+              "cosine_a_b": 0.9706265330314636,
+              "cosine_b_c": 0.9874926805496216,
+              "transition_smoothness": 0.84619140625
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.946031391620636,
+            "probability": 0.2472129911184311,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.985).",
+            "components": {
+              "cosine_a_b": 0.9692572355270386,
+              "cosine_b_c": 0.9850545525550842,
+              "transition_smoothness": 0.82177734375
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 0,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9151273369789124,
+          "selected_probability": 0.261711984872818,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.9151273369789124
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.708214521408081
+            }
+          ],
+          "runner_up_index": 2,
+          "runner_up_generation_type": "mirrored_or_perturbed_continuation",
+          "runner_up_score": 0.8552102446556091,
+          "runner_up_probability": 0.24649150669574738,
+          "score_gap_to_runner_up": 0.05991709232330322,
+          "probability_gap_to_runner_up": 0.015220478177070618,
+          "confidence": 0.015220478177070618,
+          "uncertainty": "low",
+          "correct_index": 0,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.9151273369789124,
+            "probability": 0.261711984872818,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.915).",
+            "components": {
+              "predicted_future_cosine": 0.9151273369789124,
+              "predicted_future_distance_score": 0.708214521408081
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 2,
+            "rank": 2,
+            "score": 0.8552102446556091,
+            "probability": 0.24649150669574738,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.855).",
+            "components": {
+              "predicted_future_cosine": 0.8552102446556091,
+              "predicted_future_distance_score": 0.6501418948173523
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.8548378944396973,
+            "probability": 0.24639973044395447,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.855).",
+            "components": {
+              "predicted_future_cosine": 0.8548378944396973,
+              "predicted_future_distance_score": 0.6498496532440186
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 4,
+            "score": 0.8507589101791382,
+            "probability": 0.24539673328399658,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.851).",
+            "components": {
+              "predicted_future_cosine": 0.8507589101791382,
+              "predicted_future_distance_score": 0.646690309047699
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 5,
+    "correct_index": 3,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 0,
+          "selected_generation_type": "wrong_velocity_continuation",
+          "selected_score": 0.6810204461326753,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "direction",
+              "value": 0.9990765162494203
+            },
+            {
+              "name": "speed",
+              "value": 0.8837207161981374
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "true_continuation",
+          "runner_up_score": 0.5519099928712253,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.12911045326145,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 3,
+          "correct_rank": 2,
+          "was_correct": false
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.6810204461326753,
+            "probability": null,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate; strongest heuristic was direction (0.999).",
+            "components": {
+              "continuity": 0.32592792825592987,
+              "extrapolation": 0.7113432453811299,
+              "direction": 0.9990765162494203,
+              "speed": 0.8837207161981374,
+              "smoothness": 0.6595870708828238
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.5519099928712253,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was direction (0.999).",
+            "components": {
+              "continuity": 0.28189872012727085,
+              "extrapolation": 0.47656618868508316,
+              "direction": 0.9991942272282119,
+              "speed": 0.5764508631236038,
+              "smoothness": 0.589243508069297
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.38079702117509107,
+            "probability": null,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate; strongest heuristic was smoothness (0.804).",
+            "components": {
+              "continuity": 0.4417042729298998,
+              "extrapolation": 0.2524826197128938,
+              "direction": 0.0011146287883805894,
+              "speed": 0.5296710458935304,
+              "smoothness": 0.804380926813511
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 4,
+            "score": 0.32759091906888893,
+            "probability": null,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate; strongest heuristic was speed (0.844).",
+            "components": {
+              "continuity": 0.07368399015351552,
+              "extrapolation": 0.06865316076703767,
+              "direction": 0.3985393605898828,
+              "speed": 0.8442762988951191,
+              "smoothness": 0.6146982005939888
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 3,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9808761477470398,
+          "selected_probability": 0.2539392113685608,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_a_b",
+              "value": 0.9979681372642517
+            },
+            {
+              "name": "cosine_b_c",
+              "value": 0.9973740577697754
+            }
+          ],
+          "runner_up_index": 1,
+          "runner_up_generation_type": "future_segment_from_other_sample",
+          "runner_up_score": 0.9670485258102417,
+          "runner_up_probability": 0.2504520118236542,
+          "score_gap_to_runner_up": 0.013827621936798096,
+          "probability_gap_to_runner_up": 0.003487199544906616,
+          "confidence": 0.003487199544906616,
+          "uncertainty": "low",
+          "correct_index": 3,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 3,
+            "rank": 1,
+            "score": 0.9808761477470398,
+            "probability": 0.2539392113685608,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_a_b (0.998).",
+            "components": {
+              "cosine_a_b": 0.9979681372642517,
+              "cosine_b_c": 0.9973740577697754,
+              "transition_smoothness": 0.91357421875
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 1,
+            "rank": 2,
+            "score": 0.9670485258102417,
+            "probability": 0.2504520118236542,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under overlap_transition; strongest latent component was cosine_b_c (0.994).",
+            "components": {
+              "cosine_a_b": 0.9922536015510559,
+              "cosine_b_c": 0.9944595098495483,
+              "transition_smoothness": 0.86181640625
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.956983208656311,
+            "probability": 0.24794377386569977,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.991).",
+            "components": {
+              "cosine_a_b": 0.9727765917778015,
+              "cosine_b_c": 0.9912145137786865,
+              "transition_smoothness": 0.85693359375
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 4,
+            "score": 0.9558581113815308,
+            "probability": 0.24766495823860168,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.990).",
+            "components": {
+              "cosine_a_b": 0.9726634621620178,
+              "cosine_b_c": 0.9903459548950195,
+              "transition_smoothness": 0.853515625
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 3,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9139436483383179,
+          "selected_probability": 0.25743651390075684,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.9139436483383179
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.7067813277244568
+            }
+          ],
+          "runner_up_index": 1,
+          "runner_up_generation_type": "future_segment_from_other_sample",
+          "runner_up_score": 0.9082282781600952,
+          "runner_up_probability": 0.255969375371933,
+          "score_gap_to_runner_up": 0.005715370178222656,
+          "probability_gap_to_runner_up": 0.0014671385288238525,
+          "confidence": 0.0014671385288238525,
+          "uncertainty": "low",
+          "correct_index": 3,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 3,
+            "rank": 1,
+            "score": 0.9139436483383179,
+            "probability": 0.25743651390075684,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.914).",
+            "components": {
+              "predicted_future_cosine": 0.9139436483383179,
+              "predicted_future_distance_score": 0.7067813277244568
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 1,
+            "rank": 2,
+            "score": 0.9082282781600952,
+            "probability": 0.255969375371933,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.908).",
+            "components": {
+              "predicted_future_cosine": 0.9082282781600952,
+              "predicted_future_distance_score": 0.7000743746757507
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 3,
+            "score": 0.8579058647155762,
+            "probability": 0.24340710043907166,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.858).",
+            "components": {
+              "predicted_future_cosine": 0.8579058647155762,
+              "predicted_future_distance_score": 0.6522761583328247
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 4,
+            "score": 0.857001543045044,
+            "probability": 0.2431870847940445,
+            "generation_type": "wrong_velocity_continuation",
+            "rationale": "wrong_velocity_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.857).",
+            "components": {
+              "predicted_future_cosine": 0.857001543045044,
+              "predicted_future_distance_score": 0.6515563130378723
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 6,
+    "correct_index": 1,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.7068300738784021,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "direction",
+              "value": 0.9524843957819755
+            },
+            {
+              "name": "speed",
+              "value": 0.9041812799782066
+            }
+          ],
+          "runner_up_index": 3,
+          "runner_up_generation_type": "future_segment_from_other_sample",
+          "runner_up_score": 0.3775358926602632,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.3292941812181389,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.7068300738784021,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was direction (0.952).",
+            "components": {
+              "continuity": 0.5101783737996282,
+              "extrapolation": 0.6676731723619285,
+              "direction": 0.9524843957819755,
+              "speed": 0.9041812799782066,
+              "smoothness": 0.6234285909260724
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 2,
+            "score": 0.3775358926602632,
+            "probability": null,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate; strongest heuristic was smoothness (0.821).",
+            "components": {
+              "continuity": 0.10915873416071763,
+              "extrapolation": 0.09540331744139854,
+              "direction": 0.47055464697695515,
+              "speed": 0.7770230001444415,
+              "smoothness": 0.8206431517746327
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 3,
+            "score": 0.3622705945573864,
+            "probability": null,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate; strongest heuristic was speed (0.937).",
+            "components": {
+              "continuity": 0.18831754463246705,
+              "extrapolation": 0.15014281985622258,
+              "direction": 0.002008187506965131,
+              "speed": 0.9365451617757824,
+              "smoothness": 0.889517678484707
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.18343691476144303,
+            "probability": null,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate; strongest heuristic was smoothness (0.267).",
+            "components": {
+              "continuity": 0.14897150359295389,
+              "extrapolation": 0.17883698267830378,
+              "direction": 0.12252838571541952,
+              "speed": 0.24053760941136235,
+              "smoothness": 0.2671397166029078
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9846857190132141,
+          "selected_probability": 0.25299280881881714,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_a_b",
+              "value": 0.9975621700286865
+            },
+            {
+              "name": "cosine_b_c",
+              "value": 0.9972331523895264
+            }
+          ],
+          "runner_up_index": 2,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.9798234701156616,
+          "runner_up_probability": 0.2517656683921814,
+          "score_gap_to_runner_up": 0.00486224889755249,
+          "probability_gap_to_runner_up": 0.0012271404266357422,
+          "confidence": 0.0012271404266357422,
+          "uncertainty": "low",
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.9846857190132141,
+            "probability": 0.25299280881881714,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_a_b (0.998).",
+            "components": {
+              "cosine_a_b": 0.9975621700286865,
+              "cosine_b_c": 0.9972331523895264,
+              "transition_smoothness": 0.93408203125
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 2,
+            "rank": 2,
+            "score": 0.9798234701156616,
+            "probability": 0.2517656683921814,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+            "components": {
+              "cosine_a_b": 0.9964320063591003,
+              "cosine_b_c": 0.9974992871284485,
+              "transition_smoothness": 0.9111328125
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 3,
+            "score": 0.9742969870567322,
+            "probability": 0.2503781318664551,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under overlap_transition; strongest latent component was cosine_b_c (0.996).",
+            "components": {
+              "cosine_a_b": 0.9940286874771118,
+              "cosine_b_c": 0.995546817779541,
+              "transition_smoothness": 0.892578125
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 4,
+            "score": 0.9520249366760254,
+            "probability": 0.2448633462190628,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.984).",
+            "components": {
+              "cosine_a_b": 0.9707570672035217,
+              "cosine_b_c": 0.9838902950286865,
+              "transition_smoothness": 0.8505859375
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 3,
+          "selected_generation_type": "future_segment_from_other_sample",
+          "selected_score": 0.906935453414917,
+          "selected_probability": 0.2539268434047699,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.906935453414917
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.698603630065918
+            }
+          ],
+          "runner_up_index": 2,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.905758261680603,
+          "runner_up_probability": 0.25362810492515564,
+          "score_gap_to_runner_up": 0.0011771917343139648,
+          "probability_gap_to_runner_up": 0.0002987384796142578,
+          "confidence": 0.0002987384796142578,
+          "uncertainty": "low",
+          "correct_index": 1,
+          "correct_rank": 3,
+          "was_correct": false
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 3,
+            "rank": 1,
+            "score": 0.906935453414917,
+            "probability": 0.2539268434047699,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.907).",
+            "components": {
+              "predicted_future_cosine": 0.906935453414917,
+              "predicted_future_distance_score": 0.698603630065918
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 2,
+            "score": 0.905758261680603,
+            "probability": 0.25362810492515564,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.906).",
+            "components": {
+              "predicted_future_cosine": 0.905758261680603,
+              "predicted_future_distance_score": 0.6972787380218506
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 3,
+            "score": 0.9025561213493347,
+            "probability": 0.2528172433376312,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).",
+            "components": {
+              "predicted_future_cosine": 0.9025561213493347,
+              "predicted_future_distance_score": 0.6937406659126282
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 0,
+            "rank": 4,
+            "score": 0.8489764332771301,
+            "probability": 0.239627867937088,
+            "generation_type": "wrong_direction_continuation",
+            "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.849).",
+            "components": {
+              "predicted_future_cosine": 0.8489764332771301,
+              "predicted_future_distance_score": 0.6453328132629395
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "example_index": 7,
+    "correct_index": 1,
+    "evaluators": {
+      "heuristic": {
+        "ranking_summary": {
+          "evaluator_name": "FutureSelectionResult",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.6292348462298171,
+          "selected_probability": null,
+          "selected_component_highlights": [
+            {
+              "name": "direction",
+              "value": 0.9490674816032982
+            },
+            {
+              "name": "speed",
+              "value": 0.8885265990878942
+            }
+          ],
+          "runner_up_index": 2,
+          "runner_up_generation_type": "mirrored_or_perturbed_continuation",
+          "runner_up_score": 0.40842266627382556,
+          "runner_up_probability": null,
+          "score_gap_to_runner_up": 0.2208121799559915,
+          "probability_gap_to_runner_up": null,
+          "confidence": null,
+          "uncertainty": null,
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.6292348462298171,
+            "probability": null,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate; strongest heuristic was direction (0.949).",
+            "components": {
+              "continuity": 0.36314046348169227,
+              "extrapolation": 0.5880889126655364,
+              "direction": 0.9490674816032982,
+              "speed": 0.8885265990878942,
+              "smoothness": 0.5186938125317322
+            },
+            "is_true": null,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 2,
+            "rank": 2,
+            "score": 0.40842266627382556,
+            "probability": null,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was direction (0.900).",
+            "components": {
+              "continuity": 0.14638963663573945,
+              "extrapolation": 0.14550475991216966,
+              "direction": 0.9000551595706415,
+              "speed": 0.5712733334001826,
+              "smoothness": 0.5655279629241756
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 0,
+            "rank": 3,
+            "score": 0.33219268028017274,
+            "probability": null,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate; strongest heuristic was direction (0.827).",
+            "components": {
+              "continuity": 0.09626220625901871,
+              "extrapolation": 0.1220596307312835,
+              "direction": 0.8273619761724686,
+              "speed": 0.5835126869674272,
+              "smoothness": 0.25984629271023824
+            },
+            "is_true": null,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 4,
+            "score": 0.29553581923057715,
+            "probability": null,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate; strongest heuristic was speed (0.758).",
+            "components": {
+              "continuity": 0.10262873725846101,
+              "extrapolation": 0.100130085280728,
+              "direction": 0.0889264421513708,
+              "speed": 0.7575402427778425,
+              "smoothness": 0.7545381957764324
+            },
+            "is_true": null,
+            "is_correct": false
+          }
+        ]
+      },
+      "vjepa": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_overlap_transition",
+          "selected_index": 1,
+          "selected_generation_type": "true_continuation",
+          "selected_score": 0.9792637825012207,
+          "selected_probability": 0.25324487686157227,
+          "selected_component_highlights": [
+            {
+              "name": "cosine_a_b",
+              "value": 0.9963735938072205
+            },
+            {
+              "name": "cosine_b_c",
+              "value": 0.9961584806442261
+            }
+          ],
+          "runner_up_index": 0,
+          "runner_up_generation_type": "shuffled_temporal_order",
+          "runner_up_score": 0.9732015132904053,
+          "runner_up_probability": 0.251714289188385,
+          "score_gap_to_runner_up": 0.00606226921081543,
+          "probability_gap_to_runner_up": 0.0015305876731872559,
+          "confidence": 0.0015305876731872559,
+          "uncertainty": "low",
+          "correct_index": 1,
+          "correct_rank": 1,
+          "was_correct": true
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 1,
+            "rank": 1,
+            "score": 0.9792637825012207,
+            "probability": 0.25324487686157227,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_a_b (0.996).",
+            "components": {
+              "cosine_a_b": 0.9963735938072205,
+              "cosine_b_c": 0.9961584806442261,
+              "transition_smoothness": 0.9111328125
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 0,
+            "rank": 2,
+            "score": 0.9732015132904053,
+            "probability": 0.251714289188385,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_a_b (0.995).",
+            "components": {
+              "cosine_a_b": 0.9953585863113403,
+              "cosine_b_c": 0.9951403737068176,
+              "transition_smoothness": 0.88525390625
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 3,
+            "rank": 3,
+            "score": 0.9670901298522949,
+            "probability": 0.2501806616783142,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under overlap_transition; strongest latent component was cosine_b_c (0.993).",
+            "components": {
+              "cosine_a_b": 0.9922335743904114,
+              "cosine_b_c": 0.9930576682090759,
+              "transition_smoothness": 0.86474609375
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.9455939531326294,
+            "probability": 0.24486011266708374,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.990).",
+            "components": {
+              "cosine_a_b": 0.9651809930801392,
+              "cosine_b_c": 0.9895630478858948,
+              "transition_smoothness": 0.818359375
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      },
+      "latent_predictor": {
+        "ranking_summary": {
+          "evaluator_name": "vjepa2_latent_predictor",
+          "selected_index": 0,
+          "selected_generation_type": "shuffled_temporal_order",
+          "selected_score": 0.915165901184082,
+          "selected_probability": 0.25373896956443787,
+          "selected_component_highlights": [
+            {
+              "name": "predicted_future_cosine",
+              "value": 0.915165901184082
+            },
+            {
+              "name": "predicted_future_distance_score",
+              "value": 0.7082613706588745
+            }
+          ],
+          "runner_up_index": 1,
+          "runner_up_generation_type": "true_continuation",
+          "runner_up_score": 0.9134634733200073,
+          "runner_up_probability": 0.25330737233161926,
+          "score_gap_to_runner_up": 0.001702427864074707,
+          "probability_gap_to_runner_up": 0.0004315972328186035,
+          "confidence": 0.0004315972328186035,
+          "uncertainty": "low",
+          "correct_index": 1,
+          "correct_rank": 2,
+          "was_correct": false
+        },
+        "candidate_score_table": [
+          {
+            "candidate_index": 0,
+            "rank": 1,
+            "score": 0.915165901184082,
+            "probability": 0.25373896956443787,
+            "generation_type": "shuffled_temporal_order",
+            "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.915).",
+            "components": {
+              "predicted_future_cosine": 0.915165901184082,
+              "predicted_future_distance_score": 0.7082613706588745
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 1,
+            "rank": 2,
+            "score": 0.9134634733200073,
+            "probability": 0.25330737233161926,
+            "generation_type": "true_continuation",
+            "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.913).",
+            "components": {
+              "predicted_future_cosine": 0.9134634733200073,
+              "predicted_future_distance_score": 0.7062044739723206
+            },
+            "is_true": true,
+            "is_correct": true
+          },
+          {
+            "candidate_index": 3,
+            "rank": 3,
+            "score": 0.904197633266449,
+            "probability": 0.25097107887268066,
+            "generation_type": "future_segment_from_other_sample",
+            "rationale": "future_segment_from_other_sample candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.904).",
+            "components": {
+              "predicted_future_cosine": 0.904197633266449,
+              "predicted_future_distance_score": 0.6955423355102539
+            },
+            "is_true": false,
+            "is_correct": false
+          },
+          {
+            "candidate_index": 2,
+            "rank": 4,
+            "score": 0.8677257895469666,
+            "probability": 0.2419826239347458,
+            "generation_type": "mirrored_or_perturbed_continuation",
+            "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.868).",
+            "components": {
+              "predicted_future_cosine": 0.8677257895469666,
+              "predicted_future_distance_score": 0.6603525876998901
+            },
+            "is_true": false,
+            "is_correct": false
+          }
+        ]
+      }
+    }
+  }
+]

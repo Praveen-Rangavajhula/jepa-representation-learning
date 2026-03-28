@@ -1,0 +1,298 @@
+{
+  "system_instructions": "You are writing grounded anticipatory commentary for a future-selection benchmark. Use only the provided evidence. State the selected candidate, explain why it ranked highest, describe the system's certainty, warn when the margin is small, and note baseline disagreement if present. Do not invent storylines, object identities, or causes.",
+  "user_prompt": "Generate a concise analytical commentary in 3-5 sentences. Mention: (1) what future is most likely, (2) why it was selected using the score evidence, and (3) how certain the system is.\n\nEvidence JSON:\n{\n  \"task_type\": \"future_selection\",\n  \"observed_clip_summary\": {\n    \"shape\": [\n      8,\n      1,\n      64,\n      64\n    ],\n    \"frame_count\": 8\n  },\n  \"candidate_clip_summary\": {\n    \"shape\": [\n      4,\n      8,\n      1,\n      64,\n      64\n    ],\n    \"candidate_count\": 4,\n    \"future_frames\": 8\n  },\n  \"ranking_summary\": {\n    \"evaluator_name\": \"vjepa2_latent_predictor\",\n    \"selected_index\": 3,\n    \"selected_generation_type\": \"shuffled_temporal_order\",\n    \"selected_score\": 0.9032753705978394,\n    \"selected_probability\": 0.25848284363746643,\n    \"selected_component_highlights\": [\n      {\n        \"name\": \"predicted_future_cosine\",\n        \"value\": 0.9032753705978394\n      },\n      {\n        \"name\": \"predicted_future_distance_score\",\n        \"value\": 0.6945270895957947\n      }\n    ],\n    \"runner_up_index\": 1,\n    \"runner_up_generation_type\": \"true_continuation\",\n    \"runner_up_score\": 0.9008228778839111,\n    \"runner_up_probability\": 0.25784969329833984,\n    \"score_gap_to_runner_up\": 0.0024524927139282227,\n    \"probability_gap_to_runner_up\": 0.0006331503391265869,\n    \"confidence\": 0.0006331503391265869,\n    \"uncertainty\": \"low\",\n    \"correct_index\": 1,\n    \"correct_rank\": 2,\n    \"was_correct\": false\n  },\n  \"selected_candidate\": {\n    \"candidate_index\": 3,\n    \"rank\": 1,\n    \"score\": 0.9032753705978394,\n    \"probability\": 0.25848284363746643,\n    \"generation_type\": \"shuffled_temporal_order\",\n    \"rationale\": \"shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).\",\n    \"components\": {\n      \"predicted_future_cosine\": 0.9032753705978394,\n      \"predicted_future_distance_score\": 0.6945270895957947\n    },\n    \"is_true\": false,\n    \"is_correct\": false\n  },\n  \"runner_up_candidate\": {\n    \"candidate_index\": 1,\n    \"rank\": 2,\n    \"score\": 0.9008228778839111,\n    \"probability\": 0.25784969329833984,\n    \"generation_type\": \"true_continuation\",\n    \"rationale\": \"true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).\",\n    \"components\": {\n      \"predicted_future_cosine\": 0.9008228778839111,\n      \"predicted_future_distance_score\": 0.6918646097183228\n    },\n    \"is_true\": true,\n    \"is_correct\": true\n  },\n  \"candidate_score_table\": [\n    {\n      \"candidate_index\": 3,\n      \"rank\": 1,\n      \"score\": 0.9032753705978394,\n      \"probability\": 0.25848284363746643,\n      \"generation_type\": \"shuffled_temporal_order\",\n      \"rationale\": \"shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).\",\n      \"components\": {\n        \"predicted_future_cosine\": 0.9032753705978394,\n        \"predicted_future_distance_score\": 0.6945270895957947\n      },\n      \"is_true\": false,\n      \"is_correct\": false\n    },\n    {\n      \"candidate_index\": 1,\n      \"rank\": 2,\n      \"score\": 0.9008228778839111,\n      \"probability\": 0.25784969329833984,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).\",\n      \"components\": {\n        \"predicted_future_cosine\": 0.9008228778839111,\n        \"predicted_future_distance_score\": 0.6918646097183228\n      },\n      \"is_true\": true,\n      \"is_correct\": true\n    },\n    {\n      \"candidate_index\": 2,\n      \"rank\": 3,\n      \"score\": 0.8395777940750122,\n      \"probability\": 0.24253152310848236,\n      \"generation_type\": \"mirrored_or_perturbed_continuation\",\n      \"rationale\": \"mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.840).\",\n      \"components\": {\n        \"predicted_future_cosine\": 0.8395777940750122,\n        \"predicted_future_distance_score\": 0.6383938789367676\n      },\n      \"is_true\": false,\n      \"is_correct\": false\n    },\n    {\n      \"candidate_index\": 0,\n      \"rank\": 4,\n      \"score\": 0.8338069915771484,\n      \"probability\": 0.24113596975803375,\n      \"generation_type\": \"wrong_direction_continuation\",\n      \"rationale\": \"wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.834).\",\n      \"components\": {\n        \"predicted_future_cosine\": 0.8338069915771484,\n        \"predicted_future_distance_score\": 0.6343047618865967\n      },\n      \"is_true\": false,\n      \"is_correct\": false\n    }\n  ],\n  \"candidate_metadata\": [\n    {\n      \"strategy\": \"wrong_direction_continuation\",\n      \"generation_type\": \"wrong_direction_continuation\",\n      \"is_true\": false,\n      \"source_index\": 0,\n      \"details\": {\n        \"description\": \"Continuation moving in the opposite direction.\",\n        \"direction_scale\": -1.0\n      }\n    },\n    {\n      \"strategy\": \"true_continuation\",\n      \"generation_type\": \"true_continuation\",\n      \"is_true\": true,\n      \"source_index\": 0,\n      \"details\": {\n        \"description\": \"Ground-truth future segment.\"\n      }\n    },\n    {\n      \"strategy\": \"mirrored_or_perturbed_continuation\",\n      \"generation_type\": \"mirrored_or_perturbed_continuation\",\n      \"is_true\": false,\n      \"source_index\": 0,\n      \"details\": {\n        \"description\": \"Mirrored future with small spatial perturbations.\"\n      }\n    },\n    {\n      \"strategy\": \"shuffled_temporal_order\",\n      \"generation_type\": \"shuffled_temporal_order\",\n      \"is_true\": false,\n      \"source_index\": 0,\n      \"details\": {\n        \"description\": \"True future frames in shuffled order.\"\n      }\n    }\n  ],\n  \"baseline_comparison\": [\n    {\n      \"evaluator\": \"latent_predictor\",\n      \"evaluator_name\": \"vjepa2_latent_predictor\",\n      \"selected_index\": 3,\n      \"selected_generation_type\": \"shuffled_temporal_order\",\n      \"selected_score\": 0.9032753705978394,\n      \"selected_probability\": 0.25848284363746643,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"predicted_future_cosine\",\n          \"value\": 0.9032753705978394\n        },\n        {\n          \"name\": \"predicted_future_distance_score\",\n          \"value\": 0.6945270895957947\n        }\n      ],\n      \"runner_up_index\": 1,\n      \"runner_up_generation_type\": \"true_continuation\",\n      \"runner_up_score\": 0.9008228778839111,\n      \"runner_up_probability\": 0.25784969329833984,\n      \"score_gap_to_runner_up\": 0.0024524927139282227,\n      \"probability_gap_to_runner_up\": 0.0006331503391265869,\n      \"confidence\": 0.0006331503391265869,\n      \"uncertainty\": \"low\",\n      \"correct_index\": 1,\n      \"correct_rank\": 2,\n      \"was_correct\": false\n    },\n    {\n      \"evaluator\": \"heuristic\",\n      \"evaluator_name\": \"FutureSelectionResult\",\n      \"selected_index\": 1,\n      \"selected_generation_type\": \"true_continuation\",\n      \"selected_score\": 0.6260618971258913,\n      \"selected_probability\": null,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"direction\",\n          \"value\": 0.967485236749424\n        },\n        {\n          \"name\": \"speed\",\n          \"value\": 0.7659075374410548\n        }\n      ],\n      \"runner_up_index\": 3,\n      \"runner_up_generation_type\": \"shuffled_temporal_order\",\n      \"runner_up_score\": 0.3911813517658619,\n      \"runner_up_probability\": null,\n      \"score_gap_to_runner_up\": 0.23488054536002945,\n      \"probability_gap_to_runner_up\": null,\n      \"confidence\": null,\n      \"uncertainty\": null,\n      \"correct_index\": 1,\n      \"correct_rank\": 1,\n      \"was_correct\": true\n    }\n  ],\n  \"baseline_agreement\": false,\n  \"evidence_highlights\": {\n    \"selected_candidate\": {\n      \"candidate_index\": 3,\n      \"rank\": 1,\n      \"score\": 0.9032753705978394,\n      \"probability\": 0.25848284363746643,\n      \"generation_type\": \"shuffled_temporal_order\",\n      \"rationale\": \"shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).\",\n      \"components\": {\n        \"predicted_future_cosine\": 0.9032753705978394,\n        \"predicted_future_distance_score\": 0.6945270895957947\n      },\n      \"is_true\": false,\n      \"is_correct\": false\n    },\n    \"runner_up_candidate\": {\n      \"candidate_index\": 1,\n      \"rank\": 2,\n      \"score\": 0.9008228778839111,\n      \"probability\": 0.25784969329833984,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).\",\n      \"components\": {\n        \"predicted_future_cosine\": 0.9008228778839111,\n        \"predicted_future_distance_score\": 0.6918646097183228\n      },\n      \"is_true\": true,\n      \"is_correct\": true\n    },\n    \"selected_component_highlights\": [\n      {\n        \"name\": \"predicted_future_cosine\",\n        \"value\": 0.9032753705978394\n      },\n      {\n        \"name\": \"predicted_future_distance_score\",\n        \"value\": 0.6945270895957947\n      }\n    ],\n    \"runner_up_component_highlights\": [\n      {\n        \"name\": \"predicted_future_cosine\",\n        \"value\": 0.9008228778839111\n      },\n      {\n        \"name\": \"predicted_future_distance_score\",\n        \"value\": 0.6918646097183228\n      }\n    ],\n    \"score_gap_to_runner_up\": 0.0024524927139282227,\n    \"probability_gap_to_runner_up\": 0.0006331503391265869\n  },\n  \"notes\": [\n    \"Candidate futures are ranked against a predicted future latent derived from the observed prefix.\",\n    \"The predictor head is trained on frozen V-JEPA embeddings.\",\n    \"Predictor training used 26 train and 6 validation examples.\"\n  ]\n}",
+  "evidence": {
+    "task_type": "future_selection",
+    "observed_clip_summary": {
+      "shape": [
+        8,
+        1,
+        64,
+        64
+      ],
+      "frame_count": 8
+    },
+    "candidate_clip_summary": {
+      "shape": [
+        4,
+        8,
+        1,
+        64,
+        64
+      ],
+      "candidate_count": 4,
+      "future_frames": 8
+    },
+    "ranking_summary": {
+      "evaluator_name": "vjepa2_latent_predictor",
+      "selected_index": 3,
+      "selected_generation_type": "shuffled_temporal_order",
+      "selected_score": 0.9032753705978394,
+      "selected_probability": 0.25848284363746643,
+      "selected_component_highlights": [
+        {
+          "name": "predicted_future_cosine",
+          "value": 0.9032753705978394
+        },
+        {
+          "name": "predicted_future_distance_score",
+          "value": 0.6945270895957947
+        }
+      ],
+      "runner_up_index": 1,
+      "runner_up_generation_type": "true_continuation",
+      "runner_up_score": 0.9008228778839111,
+      "runner_up_probability": 0.25784969329833984,
+      "score_gap_to_runner_up": 0.0024524927139282227,
+      "probability_gap_to_runner_up": 0.0006331503391265869,
+      "confidence": 0.0006331503391265869,
+      "uncertainty": "low",
+      "correct_index": 1,
+      "correct_rank": 2,
+      "was_correct": false
+    },
+    "selected_candidate": {
+      "candidate_index": 3,
+      "rank": 1,
+      "score": 0.9032753705978394,
+      "probability": 0.25848284363746643,
+      "generation_type": "shuffled_temporal_order",
+      "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).",
+      "components": {
+        "predicted_future_cosine": 0.9032753705978394,
+        "predicted_future_distance_score": 0.6945270895957947
+      },
+      "is_true": false,
+      "is_correct": false
+    },
+    "runner_up_candidate": {
+      "candidate_index": 1,
+      "rank": 2,
+      "score": 0.9008228778839111,
+      "probability": 0.25784969329833984,
+      "generation_type": "true_continuation",
+      "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).",
+      "components": {
+        "predicted_future_cosine": 0.9008228778839111,
+        "predicted_future_distance_score": 0.6918646097183228
+      },
+      "is_true": true,
+      "is_correct": true
+    },
+    "candidate_score_table": [
+      {
+        "candidate_index": 3,
+        "rank": 1,
+        "score": 0.9032753705978394,
+        "probability": 0.25848284363746643,
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).",
+        "components": {
+          "predicted_future_cosine": 0.9032753705978394,
+          "predicted_future_distance_score": 0.6945270895957947
+        },
+        "is_true": false,
+        "is_correct": false
+      },
+      {
+        "candidate_index": 1,
+        "rank": 2,
+        "score": 0.9008228778839111,
+        "probability": 0.25784969329833984,
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).",
+        "components": {
+          "predicted_future_cosine": 0.9008228778839111,
+          "predicted_future_distance_score": 0.6918646097183228
+        },
+        "is_true": true,
+        "is_correct": true
+      },
+      {
+        "candidate_index": 2,
+        "rank": 3,
+        "score": 0.8395777940750122,
+        "probability": 0.24253152310848236,
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "rationale": "mirrored_or_perturbed_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.840).",
+        "components": {
+          "predicted_future_cosine": 0.8395777940750122,
+          "predicted_future_distance_score": 0.6383938789367676
+        },
+        "is_true": false,
+        "is_correct": false
+      },
+      {
+        "candidate_index": 0,
+        "rank": 4,
+        "score": 0.8338069915771484,
+        "probability": 0.24113596975803375,
+        "generation_type": "wrong_direction_continuation",
+        "rationale": "wrong_direction_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.834).",
+        "components": {
+          "predicted_future_cosine": 0.8338069915771484,
+          "predicted_future_distance_score": 0.6343047618865967
+        },
+        "is_true": false,
+        "is_correct": false
+      }
+    ],
+    "candidate_metadata": [
+      {
+        "strategy": "wrong_direction_continuation",
+        "generation_type": "wrong_direction_continuation",
+        "is_true": false,
+        "source_index": 0,
+        "details": {
+          "description": "Continuation moving in the opposite direction.",
+          "direction_scale": -1.0
+        }
+      },
+      {
+        "strategy": "true_continuation",
+        "generation_type": "true_continuation",
+        "is_true": true,
+        "source_index": 0,
+        "details": {
+          "description": "Ground-truth future segment."
+        }
+      },
+      {
+        "strategy": "mirrored_or_perturbed_continuation",
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "is_true": false,
+        "source_index": 0,
+        "details": {
+          "description": "Mirrored future with small spatial perturbations."
+        }
+      },
+      {
+        "strategy": "shuffled_temporal_order",
+        "generation_type": "shuffled_temporal_order",
+        "is_true": false,
+        "source_index": 0,
+        "details": {
+          "description": "True future frames in shuffled order."
+        }
+      }
+    ],
+    "baseline_comparison": [
+      {
+        "evaluator": "latent_predictor",
+        "evaluator_name": "vjepa2_latent_predictor",
+        "selected_index": 3,
+        "selected_generation_type": "shuffled_temporal_order",
+        "selected_score": 0.9032753705978394,
+        "selected_probability": 0.25848284363746643,
+        "selected_component_highlights": [
+          {
+            "name": "predicted_future_cosine",
+            "value": 0.9032753705978394
+          },
+          {
+            "name": "predicted_future_distance_score",
+            "value": 0.6945270895957947
+          }
+        ],
+        "runner_up_index": 1,
+        "runner_up_generation_type": "true_continuation",
+        "runner_up_score": 0.9008228778839111,
+        "runner_up_probability": 0.25784969329833984,
+        "score_gap_to_runner_up": 0.0024524927139282227,
+        "probability_gap_to_runner_up": 0.0006331503391265869,
+        "confidence": 0.0006331503391265869,
+        "uncertainty": "low",
+        "correct_index": 1,
+        "correct_rank": 2,
+        "was_correct": false
+      },
+      {
+        "evaluator": "heuristic",
+        "evaluator_name": "FutureSelectionResult",
+        "selected_index": 1,
+        "selected_generation_type": "true_continuation",
+        "selected_score": 0.6260618971258913,
+        "selected_probability": null,
+        "selected_component_highlights": [
+          {
+            "name": "direction",
+            "value": 0.967485236749424
+          },
+          {
+            "name": "speed",
+            "value": 0.7659075374410548
+          }
+        ],
+        "runner_up_index": 3,
+        "runner_up_generation_type": "shuffled_temporal_order",
+        "runner_up_score": 0.3911813517658619,
+        "runner_up_probability": null,
+        "score_gap_to_runner_up": 0.23488054536002945,
+        "probability_gap_to_runner_up": null,
+        "confidence": null,
+        "uncertainty": null,
+        "correct_index": 1,
+        "correct_rank": 1,
+        "was_correct": true
+      }
+    ],
+    "baseline_agreement": false,
+    "evidence_highlights": {
+      "selected_candidate": {
+        "candidate_index": 3,
+        "rank": 1,
+        "score": 0.9032753705978394,
+        "probability": 0.25848284363746643,
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.903).",
+        "components": {
+          "predicted_future_cosine": 0.9032753705978394,
+          "predicted_future_distance_score": 0.6945270895957947
+        },
+        "is_true": false,
+        "is_correct": false
+      },
+      "runner_up_candidate": {
+        "candidate_index": 1,
+        "rank": 2,
+        "score": 0.9008228778839111,
+        "probability": 0.25784969329833984,
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under predicted_future_alignment; strongest learned latent signal was predicted_future_cosine (0.901).",
+        "components": {
+          "predicted_future_cosine": 0.9008228778839111,
+          "predicted_future_distance_score": 0.6918646097183228
+        },
+        "is_true": true,
+        "is_correct": true
+      },
+      "selected_component_highlights": [
+        {
+          "name": "predicted_future_cosine",
+          "value": 0.9032753705978394
+        },
+        {
+          "name": "predicted_future_distance_score",
+          "value": 0.6945270895957947
+        }
+      ],
+      "runner_up_component_highlights": [
+        {
+          "name": "predicted_future_cosine",
+          "value": 0.9008228778839111
+        },
+        {
+          "name": "predicted_future_distance_score",
+          "value": 0.6918646097183228
+        }
+      ],
+      "score_gap_to_runner_up": 0.0024524927139282227,
+      "probability_gap_to_runner_up": 0.0006331503391265869
+    },
+    "notes": [
+      "Candidate futures are ranked against a predicted future latent derived from the observed prefix.",
+      "The predictor head is trained on frozen V-JEPA embeddings.",
+      "Predictor training used 26 train and 6 validation examples."
+    ]
+  }
+}

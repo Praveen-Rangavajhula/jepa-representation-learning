@@ -1,13 +1,18 @@
 {
-  "evaluation_count": 64,
+  "evaluation_count": 8,
   "heuristic": {
-    "top1_accuracy": 0.78125,
-    "mean_reciprocal_rank": 0.890625,
-    "average_correct_rank": 1.21875
+    "top1_accuracy": 0.875,
+    "mean_reciprocal_rank": 0.9375,
+    "average_correct_rank": 1.125
   },
   "vjepa": {
-    "top1_accuracy": 0.71875,
-    "mean_reciprocal_rank": 0.859375,
-    "average_correct_rank": 1.28125
+    "top1_accuracy": 1.0,
+    "mean_reciprocal_rank": 1.0,
+    "average_correct_rank": 1.0
+  },
+  "latent_predictor": {
+    "top1_accuracy": 0.5,
+    "mean_reciprocal_rank": 0.7083333333333334,
+    "average_correct_rank": 1.75
   }
 }
