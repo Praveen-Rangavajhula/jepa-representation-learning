@@ -1,0 +1,914 @@
+{
+  "example_index": 0,
+  "correct_index": 1,
+  "vjepa_pipeline_result": {
+    "selected_index": 3,
+    "ranked_candidates": [
+      {
+        "candidate_index": 3,
+        "score": 0.9773304462432861,
+        "components": {
+          "cosine_a_b": 0.995932936668396,
+          "cosine_b_c": 0.9966485500335693,
+          "transition_smoothness": 0.9013671875
+        },
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "evaluator_name": "vjepa2_overlap_transition",
+        "confidence": 5.874037742614746e-05
+      },
+      {
+        "candidate_index": 1,
+        "score": 0.9770991802215576,
+        "components": {
+          "cosine_a_b": 0.9953352808952332,
+          "cosine_b_c": 0.9972782731056213,
+          "transition_smoothness": 0.900390625
+        },
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "evaluator_name": "vjepa2_overlap_transition",
+        "confidence": 5.874037742614746e-05
+      },
+      {
+        "candidate_index": 0,
+        "score": 0.9508732557296753,
+        "components": {
+          "cosine_a_b": 0.9686720967292786,
+          "cosine_b_c": 0.9879788756370544,
+          "transition_smoothness": 0.84130859375
+        },
+        "generation_type": "wrong_direction_continuation",
+        "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+        "evaluator_name": "vjepa2_overlap_transition",
+        "confidence": 5.874037742614746e-05
+      },
+      {
+        "candidate_index": 2,
+        "score": 0.9396715760231018,
+        "components": {
+          "cosine_a_b": 0.9576993584632874,
+          "cosine_b_c": 0.9855958223342896,
+          "transition_smoothness": 0.8115234375
+        },
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
+        "evaluator_name": "vjepa2_overlap_transition",
+        "confidence": 5.874037742614746e-05
+      }
+    ],
+    "critique_messages": [
+      {
+        "candidate_index": 3,
+        "severity": "info",
+        "message": "Candidate 3 is the strongest continuation candidate with score 0.977 under latent compatibility.",
+        "generation_type": "shuffled_temporal_order"
+      },
+      {
+        "candidate_index": 1,
+        "severity": "warning",
+        "message": "Candidate 1 is close to the leader but still loses on latent compatibility; inspect the strongest scoring components. Plan note: Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+        "generation_type": "true_continuation"
+      },
+      {
+        "candidate_index": 0,
+        "severity": "warning",
+        "message": "Candidate 0 is close to the leader but still loses on latent compatibility; inspect the strongest scoring components. Plan note: Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+        "generation_type": "wrong_direction_continuation"
+      },
+      {
+        "candidate_index": 2,
+        "severity": "warning",
+        "message": "Candidate 2 is close to the leader but still loses on latent compatibility; inspect the strongest scoring components. Plan note: Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+        "generation_type": "mirrored_or_perturbed_continuation"
+      }
+    ],
+    "trace": [
+      {
+        "stage": "plan",
+        "message": "Built future-selection plan.",
+        "candidate_index": null,
+        "payload": {
+          "observed_shape": [
+            8,
+            1,
+            64,
+            64
+          ],
+          "candidate_shape": [
+            4,
+            8,
+            1,
+            64,
+            64
+          ],
+          "context_frames": 8,
+          "future_frames": 8,
+          "candidate_count": 4,
+          "evaluator_mode": "representation_only",
+          "candidate_generation_types": [
+            "wrong_direction_continuation",
+            "true_continuation",
+            "mirrored_or_perturbed_continuation",
+            "shuffled_temporal_order"
+          ],
+          "heuristic_weights": {
+            "continuity": 0.0,
+            "extrapolation": 0.0,
+            "direction": 0.0,
+            "speed": 0.0,
+            "smoothness": 0.0
+          },
+          "notes": [
+            "Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+            "A representation model was supplied to the evaluator."
+          ]
+        }
+      },
+      {
+        "stage": "evaluate",
+        "message": "Ranked candidate futures.",
+        "candidate_index": null,
+        "payload": {
+          "evaluation_mode": "representation_only",
+          "ranked_candidates": [
+            {
+              "candidate_index": 3,
+              "score": 0.9773304462432861,
+              "components": {
+                "cosine_a_b": 0.995932936668396,
+                "cosine_b_c": 0.9966485500335693,
+                "transition_smoothness": 0.9013671875
+              },
+              "generation_type": "shuffled_temporal_order",
+              "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+              "evaluator_name": "vjepa2_overlap_transition",
+              "confidence": 5.874037742614746e-05
+            },
+            {
+              "candidate_index": 1,
+              "score": 0.9770991802215576,
+              "components": {
+                "cosine_a_b": 0.9953352808952332,
+                "cosine_b_c": 0.9972782731056213,
+                "transition_smoothness": 0.900390625
+              },
+              "generation_type": "true_continuation",
+              "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+              "evaluator_name": "vjepa2_overlap_transition",
+              "confidence": 5.874037742614746e-05
+            },
+            {
+              "candidate_index": 0,
+              "score": 0.9508732557296753,
+              "components": {
+                "cosine_a_b": 0.9686720967292786,
+                "cosine_b_c": 0.9879788756370544,
+                "transition_smoothness": 0.84130859375
+              },
+              "generation_type": "wrong_direction_continuation",
+              "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+              "evaluator_name": "vjepa2_overlap_transition",
+              "confidence": 5.874037742614746e-05
+            },
+            {
+              "candidate_index": 2,
+              "score": 0.9396715760231018,
+              "components": {
+                "cosine_a_b": 0.9576993584632874,
+                "cosine_b_c": 0.9855958223342896,
+                "transition_smoothness": 0.8115234375
+              },
+              "generation_type": "mirrored_or_perturbed_continuation",
+              "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
+              "evaluator_name": "vjepa2_overlap_transition",
+              "confidence": 5.874037742614746e-05
+            }
+          ]
+        }
+      },
+      {
+        "stage": "critique",
+        "message": "Generated critique messages.",
+        "candidate_index": null,
+        "payload": {
+          "critique_messages": [
+            {
+              "candidate_index": 3,
+              "severity": "info",
+              "message": "Candidate 3 is the strongest continuation candidate with score 0.977 under latent compatibility.",
+              "generation_type": "shuffled_temporal_order"
+            },
+            {
+              "candidate_index": 1,
+              "severity": "warning",
+              "message": "Candidate 1 is close to the leader but still loses on latent compatibility; inspect the strongest scoring components. Plan note: Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+              "generation_type": "true_continuation"
+            },
+            {
+              "candidate_index": 0,
+              "severity": "warning",
+              "message": "Candidate 0 is close to the leader but still loses on latent compatibility; inspect the strongest scoring components. Plan note: Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+              "generation_type": "wrong_direction_continuation"
+            },
+            {
+              "candidate_index": 2,
+              "severity": "warning",
+              "message": "Candidate 2 is close to the leader but still loses on latent compatibility; inspect the strongest scoring components. Plan note: Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+              "generation_type": "mirrored_or_perturbed_continuation"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "select",
+        "message": "Selected final candidate.",
+        "candidate_index": 3,
+        "payload": {
+          "selected_index": 3,
+          "selected_score": 0.9773304462432861,
+          "evaluation_mode": "representation_only"
+        }
+      }
+    ],
+    "plan": {
+      "observed_shape": [
+        8,
+        1,
+        64,
+        64
+      ],
+      "candidate_shape": [
+        4,
+        8,
+        1,
+        64,
+        64
+      ],
+      "context_frames": 8,
+      "future_frames": 8,
+      "candidate_count": 4,
+      "evaluator_mode": "representation_only",
+      "candidate_generation_types": [
+        "wrong_direction_continuation",
+        "true_continuation",
+        "mirrored_or_perturbed_continuation",
+        "shuffled_temporal_order"
+      ],
+      "heuristic_weights": {
+        "continuity": 0.0,
+        "extrapolation": 0.0,
+        "direction": 0.0,
+        "speed": 0.0,
+        "smoothness": 0.0
+      },
+      "notes": [
+        "Observed clip and candidate futures are compared with V-JEPA latent compatibility scores.",
+        "A representation model was supplied to the evaluator."
+      ]
+    }
+  },
+  "heuristic_pipeline_result": {
+    "selected_index": 1,
+    "ranked_candidates": [
+      {
+        "candidate_index": 1,
+        "score": 0.6260618971258913,
+        "components": {
+          "continuity": 0.3917320726126586,
+          "extrapolation": 0.4655531199709686,
+          "direction": 0.967485236749424,
+          "speed": 0.7659075374410548,
+          "smoothness": 0.7608951588206252
+        },
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate; strongest heuristic was direction (0.967).",
+        "evaluator_name": "heuristic",
+        "confidence": null
+      },
+      {
+        "candidate_index": 3,
+        "score": 0.3911813517658619,
+        "components": {
+          "continuity": 0.25438323600479135,
+          "extrapolation": 0.34810133210228206,
+          "direction": 0.939893794724074,
+          "speed": 0.20372662235793962,
+          "smoothness": 0.23196991769332356
+        },
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate; strongest heuristic was direction (0.940).",
+        "evaluator_name": "heuristic",
+        "confidence": null
+      },
+      {
+        "candidate_index": 0,
+        "score": 0.38052681485235024,
+        "components": {
+          "continuity": 0.2456785886347791,
+          "extrapolation": 0.1805110525683943,
+          "direction": 0.016970282619144184,
+          "speed": 0.8819912740464767,
+          "smoothness": 0.8957611077407177
+        },
+        "generation_type": "wrong_direction_continuation",
+        "rationale": "wrong_direction_continuation candidate; strongest heuristic was smoothness (0.896).",
+        "evaluator_name": "heuristic",
+        "confidence": null
+      },
+      {
+        "candidate_index": 2,
+        "score": 0.31192473965911044,
+        "components": {
+          "continuity": 0.05980379488874397,
+          "extrapolation": 0.055081914448783506,
+          "direction": 0.10552818077900172,
+          "speed": 0.9664923032629748,
+          "smoothness": 0.7872369146779119
+        },
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was speed (0.966).",
+        "evaluator_name": "heuristic",
+        "confidence": null
+      }
+    ],
+    "critique_messages": [
+      {
+        "candidate_index": 1,
+        "severity": "info",
+        "message": "Candidate 1 is the strongest continuation candidate with score 0.626 under motion consistency.",
+        "generation_type": "true_continuation"
+      },
+      {
+        "candidate_index": 3,
+        "severity": "warning",
+        "message": "Candidate 3 looks plausible but its shuffled_temporal_order construction is less consistent under heuristic. Plan note: Observed clip is treated as context and candidate futures are compared against its motion profile.",
+        "generation_type": "shuffled_temporal_order"
+      },
+      {
+        "candidate_index": 0,
+        "severity": "warning",
+        "message": "Candidate 0 looks plausible but its wrong_direction_continuation construction is less consistent under heuristic. Plan note: Observed clip is treated as context and candidate futures are compared against its motion profile.",
+        "generation_type": "wrong_direction_continuation"
+      },
+      {
+        "candidate_index": 2,
+        "severity": "warning",
+        "message": "Candidate 2 looks plausible but its mirrored_or_perturbed_continuation construction is less consistent under heuristic. Plan note: Observed clip is treated as context and candidate futures are compared against its motion profile.",
+        "generation_type": "mirrored_or_perturbed_continuation"
+      }
+    ],
+    "trace": [
+      {
+        "stage": "plan",
+        "message": "Built future-selection plan.",
+        "candidate_index": null,
+        "payload": {
+          "observed_shape": [
+            8,
+            1,
+            64,
+            64
+          ],
+          "candidate_shape": [
+            4,
+            8,
+            1,
+            64,
+            64
+          ],
+          "context_frames": 8,
+          "future_frames": 8,
+          "candidate_count": 4,
+          "evaluator_mode": "heuristic",
+          "candidate_generation_types": [
+            "wrong_direction_continuation",
+            "true_continuation",
+            "mirrored_or_perturbed_continuation",
+            "shuffled_temporal_order"
+          ],
+          "heuristic_weights": {
+            "continuity": 0.26,
+            "extrapolation": 0.26,
+            "direction": 0.18,
+            "speed": 0.15,
+            "smoothness": 0.15
+          },
+          "notes": [
+            "Observed clip is treated as context and candidate futures are compared against its motion profile."
+          ]
+        }
+      },
+      {
+        "stage": "evaluate",
+        "message": "Ranked candidate futures.",
+        "candidate_index": null,
+        "payload": {
+          "evaluation_mode": "heuristic",
+          "ranked_candidates": [
+            {
+              "candidate_index": 1,
+              "score": 0.6260618971258913,
+              "components": {
+                "continuity": 0.3917320726126586,
+                "extrapolation": 0.4655531199709686,
+                "direction": 0.967485236749424,
+                "speed": 0.7659075374410548,
+                "smoothness": 0.7608951588206252
+              },
+              "generation_type": "true_continuation",
+              "rationale": "true_continuation candidate; strongest heuristic was direction (0.967).",
+              "evaluator_name": "heuristic",
+              "confidence": null
+            },
+            {
+              "candidate_index": 3,
+              "score": 0.3911813517658619,
+              "components": {
+                "continuity": 0.25438323600479135,
+                "extrapolation": 0.34810133210228206,
+                "direction": 0.939893794724074,
+                "speed": 0.20372662235793962,
+                "smoothness": 0.23196991769332356
+              },
+              "generation_type": "shuffled_temporal_order",
+              "rationale": "shuffled_temporal_order candidate; strongest heuristic was direction (0.940).",
+              "evaluator_name": "heuristic",
+              "confidence": null
+            },
+            {
+              "candidate_index": 0,
+              "score": 0.38052681485235024,
+              "components": {
+                "continuity": 0.2456785886347791,
+                "extrapolation": 0.1805110525683943,
+                "direction": 0.016970282619144184,
+                "speed": 0.8819912740464767,
+                "smoothness": 0.8957611077407177
+              },
+              "generation_type": "wrong_direction_continuation",
+              "rationale": "wrong_direction_continuation candidate; strongest heuristic was smoothness (0.896).",
+              "evaluator_name": "heuristic",
+              "confidence": null
+            },
+            {
+              "candidate_index": 2,
+              "score": 0.31192473965911044,
+              "components": {
+                "continuity": 0.05980379488874397,
+                "extrapolation": 0.055081914448783506,
+                "direction": 0.10552818077900172,
+                "speed": 0.9664923032629748,
+                "smoothness": 0.7872369146779119
+              },
+              "generation_type": "mirrored_or_perturbed_continuation",
+              "rationale": "mirrored_or_perturbed_continuation candidate; strongest heuristic was speed (0.966).",
+              "evaluator_name": "heuristic",
+              "confidence": null
+            }
+          ]
+        }
+      },
+      {
+        "stage": "critique",
+        "message": "Generated critique messages.",
+        "candidate_index": null,
+        "payload": {
+          "critique_messages": [
+            {
+              "candidate_index": 1,
+              "severity": "info",
+              "message": "Candidate 1 is the strongest continuation candidate with score 0.626 under motion consistency.",
+              "generation_type": "true_continuation"
+            },
+            {
+              "candidate_index": 3,
+              "severity": "warning",
+              "message": "Candidate 3 looks plausible but its shuffled_temporal_order construction is less consistent under heuristic. Plan note: Observed clip is treated as context and candidate futures are compared against its motion profile.",
+              "generation_type": "shuffled_temporal_order"
+            },
+            {
+              "candidate_index": 0,
+              "severity": "warning",
+              "message": "Candidate 0 looks plausible but its wrong_direction_continuation construction is less consistent under heuristic. Plan note: Observed clip is treated as context and candidate futures are compared against its motion profile.",
+              "generation_type": "wrong_direction_continuation"
+            },
+            {
+              "candidate_index": 2,
+              "severity": "warning",
+              "message": "Candidate 2 looks plausible but its mirrored_or_perturbed_continuation construction is less consistent under heuristic. Plan note: Observed clip is treated as context and candidate futures are compared against its motion profile.",
+              "generation_type": "mirrored_or_perturbed_continuation"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "select",
+        "message": "Selected final candidate.",
+        "candidate_index": 1,
+        "payload": {
+          "selected_index": 1,
+          "selected_score": 0.6260618971258913,
+          "evaluation_mode": "heuristic"
+        }
+      }
+    ],
+    "plan": {
+      "observed_shape": [
+        8,
+        1,
+        64,
+        64
+      ],
+      "candidate_shape": [
+        4,
+        8,
+        1,
+        64,
+        64
+      ],
+      "context_frames": 8,
+      "future_frames": 8,
+      "candidate_count": 4,
+      "evaluator_mode": "heuristic",
+      "candidate_generation_types": [
+        "wrong_direction_continuation",
+        "true_continuation",
+        "mirrored_or_perturbed_continuation",
+        "shuffled_temporal_order"
+      ],
+      "heuristic_weights": {
+        "continuity": 0.26,
+        "extrapolation": 0.26,
+        "direction": 0.18,
+        "speed": 0.15,
+        "smoothness": 0.15
+      },
+      "notes": [
+        "Observed clip is treated as context and candidate futures are compared against its motion profile."
+      ]
+    }
+  },
+  "comparison_table": [
+    {
+      "evaluator": "vjepa",
+      "evaluator_name": "vjepa2_overlap_transition",
+      "selected_index": 3,
+      "selected_generation_type": "shuffled_temporal_order",
+      "selected_score": 0.9773304462432861,
+      "selected_probability": 0.2540198862552643,
+      "selected_component_highlights": [
+        {
+          "name": "cosine_b_c",
+          "value": 0.9966485500335693
+        },
+        {
+          "name": "cosine_a_b",
+          "value": 0.995932936668396
+        }
+      ],
+      "runner_up_index": 1,
+      "runner_up_generation_type": "true_continuation",
+      "runner_up_score": 0.9770991802215576,
+      "runner_up_probability": 0.25396114587783813,
+      "score_gap_to_runner_up": 0.00023126602172851562,
+      "probability_gap_to_runner_up": 5.874037742614746e-05,
+      "confidence": 5.874037742614746e-05,
+      "uncertainty": "low",
+      "correct_index": 1,
+      "correct_rank": 2,
+      "was_correct": false
+    },
+    {
+      "evaluator": "heuristic",
+      "evaluator_name": "FutureSelectionResult",
+      "selected_index": 1,
+      "selected_generation_type": "true_continuation",
+      "selected_score": 0.6260618971258913,
+      "selected_probability": null,
+      "selected_component_highlights": [
+        {
+          "name": "direction",
+          "value": 0.967485236749424
+        },
+        {
+          "name": "speed",
+          "value": 0.7659075374410548
+        }
+      ],
+      "runner_up_index": 3,
+      "runner_up_generation_type": "shuffled_temporal_order",
+      "runner_up_score": 0.3911813517658619,
+      "runner_up_probability": null,
+      "score_gap_to_runner_up": 0.23488054536002945,
+      "probability_gap_to_runner_up": null,
+      "confidence": null,
+      "uncertainty": null,
+      "correct_index": 1,
+      "correct_rank": 1,
+      "was_correct": true
+    }
+  ],
+  "context_payload": {
+    "task_type": "future_selection",
+    "observed_clip_summary": {
+      "shape": [
+        8,
+        1,
+        64,
+        64
+      ],
+      "frame_count": 8
+    },
+    "candidate_clip_summary": {
+      "shape": [
+        4,
+        8,
+        1,
+        64,
+        64
+      ],
+      "candidate_count": 4,
+      "future_frames": 8
+    },
+    "correct_index": 1,
+    "candidate_score_table": [
+      {
+        "candidate_index": 3,
+        "rank": 1,
+        "score": 0.9773304462432861,
+        "probability": 0.2540198862552643,
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "components": {
+          "cosine_a_b": 0.995932936668396,
+          "cosine_b_c": 0.9966485500335693,
+          "transition_smoothness": 0.9013671875
+        },
+        "is_true": false,
+        "is_correct": false
+      },
+      {
+        "candidate_index": 1,
+        "rank": 2,
+        "score": 0.9770991802215576,
+        "probability": 0.25396114587783813,
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "components": {
+          "cosine_a_b": 0.9953352808952332,
+          "cosine_b_c": 0.9972782731056213,
+          "transition_smoothness": 0.900390625
+        },
+        "is_true": true,
+        "is_correct": true
+      },
+      {
+        "candidate_index": 0,
+        "rank": 3,
+        "score": 0.9508732557296753,
+        "probability": 0.2473873496055603,
+        "generation_type": "wrong_direction_continuation",
+        "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+        "components": {
+          "cosine_a_b": 0.9686720967292786,
+          "cosine_b_c": 0.9879788756370544,
+          "transition_smoothness": 0.84130859375
+        },
+        "is_true": false,
+        "is_correct": false
+      },
+      {
+        "candidate_index": 2,
+        "rank": 4,
+        "score": 0.9396715760231018,
+        "probability": 0.24463167786598206,
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
+        "components": {
+          "cosine_a_b": 0.9576993584632874,
+          "cosine_b_c": 0.9855958223342896,
+          "transition_smoothness": 0.8115234375
+        },
+        "is_true": false,
+        "is_correct": false
+      }
+    ],
+    "ranking_summary": {
+      "evaluator_name": "vjepa2_overlap_transition",
+      "selected_index": 3,
+      "selected_generation_type": "shuffled_temporal_order",
+      "selected_score": 0.9773304462432861,
+      "selected_probability": 0.2540198862552643,
+      "selected_component_highlights": [
+        {
+          "name": "cosine_b_c",
+          "value": 0.9966485500335693
+        },
+        {
+          "name": "cosine_a_b",
+          "value": 0.995932936668396
+        }
+      ],
+      "runner_up_index": 1,
+      "runner_up_generation_type": "true_continuation",
+      "runner_up_score": 0.9770991802215576,
+      "runner_up_probability": 0.25396114587783813,
+      "score_gap_to_runner_up": 0.00023126602172851562,
+      "probability_gap_to_runner_up": 5.874037742614746e-05,
+      "confidence": 5.874037742614746e-05,
+      "uncertainty": "low",
+      "correct_index": 1,
+      "correct_rank": 2,
+      "was_correct": false
+    },
+    "selected_candidate": {
+      "candidate_index": 3,
+      "rank": 1,
+      "score": 0.9773304462432861,
+      "probability": 0.2540198862552643,
+      "generation_type": "shuffled_temporal_order",
+      "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+      "components": {
+        "cosine_a_b": 0.995932936668396,
+        "cosine_b_c": 0.9966485500335693,
+        "transition_smoothness": 0.9013671875
+      },
+      "is_true": false,
+      "is_correct": false
+    },
+    "runner_up_candidate": {
+      "candidate_index": 1,
+      "rank": 2,
+      "score": 0.9770991802215576,
+      "probability": 0.25396114587783813,
+      "generation_type": "true_continuation",
+      "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+      "components": {
+        "cosine_a_b": 0.9953352808952332,
+        "cosine_b_c": 0.9972782731056213,
+        "transition_smoothness": 0.900390625
+      },
+      "is_true": true,
+      "is_correct": true
+    },
+    "evidence_highlights": {
+      "selected_candidate": {
+        "candidate_index": 3,
+        "rank": 1,
+        "score": 0.9773304462432861,
+        "probability": 0.2540198862552643,
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "components": {
+          "cosine_a_b": 0.995932936668396,
+          "cosine_b_c": 0.9966485500335693,
+          "transition_smoothness": 0.9013671875
+        },
+        "is_true": false,
+        "is_correct": false
+      },
+      "runner_up_candidate": {
+        "candidate_index": 1,
+        "rank": 2,
+        "score": 0.9770991802215576,
+        "probability": 0.25396114587783813,
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "components": {
+          "cosine_a_b": 0.9953352808952332,
+          "cosine_b_c": 0.9972782731056213,
+          "transition_smoothness": 0.900390625
+        },
+        "is_true": true,
+        "is_correct": true
+      },
+      "selected_component_highlights": [
+        {
+          "name": "cosine_b_c",
+          "value": 0.9966485500335693
+        },
+        {
+          "name": "cosine_a_b",
+          "value": 0.995932936668396
+        }
+      ],
+      "runner_up_component_highlights": [
+        {
+          "name": "cosine_b_c",
+          "value": 0.9972782731056213
+        },
+        {
+          "name": "cosine_a_b",
+          "value": 0.9953352808952332
+        }
+      ],
+      "score_gap_to_runner_up": 0.00023126602172851562,
+      "probability_gap_to_runner_up": 5.874037742614746e-05
+    },
+    "candidate_metadata": [
+      {
+        "strategy": "wrong_direction_continuation",
+        "generation_type": "wrong_direction_continuation",
+        "is_true": false,
+        "source_index": 0,
+        "details": {
+          "description": "Continuation moving in the opposite direction.",
+          "direction_scale": -1.0
+        }
+      },
+      {
+        "strategy": "true_continuation",
+        "generation_type": "true_continuation",
+        "is_true": true,
+        "source_index": 0,
+        "details": {
+          "description": "Ground-truth future segment."
+        }
+      },
+      {
+        "strategy": "mirrored_or_perturbed_continuation",
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "is_true": false,
+        "source_index": 0,
+        "details": {
+          "description": "Mirrored future with small spatial perturbations."
+        }
+      },
+      {
+        "strategy": "shuffled_temporal_order",
+        "generation_type": "shuffled_temporal_order",
+        "is_true": false,
+        "source_index": 0,
+        "details": {
+          "description": "True future frames in shuffled order."
+        }
+      }
+    ],
+    "notes": [
+      "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
+      "Grayscale Moving MNIST clips are converted to RGB inside preprocessing."
+    ],
+    "baseline_comparison": [
+      {
+        "evaluator": "vjepa",
+        "evaluator_name": "vjepa2_overlap_transition",
+        "selected_index": 3,
+        "selected_generation_type": "shuffled_temporal_order",
+        "selected_score": 0.9773304462432861,
+        "selected_probability": 0.2540198862552643,
+        "selected_component_highlights": [
+          {
+            "name": "cosine_b_c",
+            "value": 0.9966485500335693
+          },
+          {
+            "name": "cosine_a_b",
+            "value": 0.995932936668396
+          }
+        ],
+        "runner_up_index": 1,
+        "runner_up_generation_type": "true_continuation",
+        "runner_up_score": 0.9770991802215576,
+        "runner_up_probability": 0.25396114587783813,
+        "score_gap_to_runner_up": 0.00023126602172851562,
+        "probability_gap_to_runner_up": 5.874037742614746e-05,
+        "confidence": 5.874037742614746e-05,
+        "uncertainty": "low",
+        "correct_index": 1,
+        "correct_rank": 2,
+        "was_correct": false
+      },
+      {
+        "evaluator": "heuristic",
+        "evaluator_name": "FutureSelectionResult",
+        "selected_index": 1,
+        "selected_generation_type": "true_continuation",
+        "selected_score": 0.6260618971258913,
+        "selected_probability": null,
+        "selected_component_highlights": [
+          {
+            "name": "direction",
+            "value": 0.967485236749424
+          },
+          {
+            "name": "speed",
+            "value": 0.7659075374410548
+          }
+        ],
+        "runner_up_index": 3,
+        "runner_up_generation_type": "shuffled_temporal_order",
+        "runner_up_score": 0.3911813517658619,
+        "runner_up_probability": null,
+        "score_gap_to_runner_up": 0.23488054536002945,
+        "probability_gap_to_runner_up": null,
+        "confidence": null,
+        "uncertainty": null,
+        "correct_index": 1,
+        "correct_rank": 1,
+        "was_correct": true
+      }
+    ],
+    "baseline_agreement": false
+  }
+}

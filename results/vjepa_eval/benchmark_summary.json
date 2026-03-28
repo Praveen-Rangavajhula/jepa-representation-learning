@@ -1,0 +1,13 @@
+{
+  "evaluation_count": 64,
+  "heuristic": {
+    "top1_accuracy": 0.78125,
+    "mean_reciprocal_rank": 0.890625,
+    "average_correct_rank": 1.21875
+  },
+  "vjepa": {
+    "top1_accuracy": 0.71875,
+    "mean_reciprocal_rank": 0.859375,
+    "average_correct_rank": 1.28125
+  }
+}

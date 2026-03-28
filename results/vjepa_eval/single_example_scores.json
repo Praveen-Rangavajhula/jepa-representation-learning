@@ -1,0 +1,211 @@
+{
+  "example_index": 0,
+  "correct_index": 1,
+  "runtime_info": {
+    "loaded": true,
+    "backend_used": "huggingface",
+    "model_id": "facebook/vjepa2-vitl-fpc64-256",
+    "fallback_model_name": "vjepa2_vit_large",
+    "device": "cuda",
+    "dtype": "float16",
+    "target_frames": 64,
+    "image_size": 256,
+    "model_class": "VJEPA2Model",
+    "processor_class": "VJEPA2VideoProcessor",
+    "frames_per_clip": 64,
+    "crop_size": 256,
+    "last_load_errors": {}
+  },
+  "vjepa_score_bundle": {
+    "evaluator_name": "vjepa2_overlap_transition",
+    "scoring_variant": "overlap_transition",
+    "model_id": "facebook/vjepa2-vitl-fpc64-256",
+    "backend_used": "huggingface",
+    "selected_index": 3,
+    "confidence": 5.874037742614746e-05,
+    "uncertainty": "low",
+    "candidate_scores": [
+      {
+        "candidate_index": 3,
+        "score": 0.9773304462432861,
+        "probability": 0.2540198862552643,
+        "rank": 1,
+        "components": {
+          "cosine_a_b": 0.995932936668396,
+          "cosine_b_c": 0.9966485500335693,
+          "transition_smoothness": 0.9013671875
+        },
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "source_index": 0,
+        "is_true": false,
+        "details": {
+          "description": "True future frames in shuffled order."
+        }
+      },
+      {
+        "candidate_index": 1,
+        "score": 0.9770991802215576,
+        "probability": 0.25396114587783813,
+        "rank": 2,
+        "components": {
+          "cosine_a_b": 0.9953352808952332,
+          "cosine_b_c": 0.9972782731056213,
+          "transition_smoothness": 0.900390625
+        },
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "source_index": 0,
+        "is_true": true,
+        "details": {
+          "description": "Ground-truth future segment."
+        }
+      },
+      {
+        "candidate_index": 0,
+        "score": 0.9508732557296753,
+        "probability": 0.2473873496055603,
+        "rank": 3,
+        "components": {
+          "cosine_a_b": 0.9686720967292786,
+          "cosine_b_c": 0.9879788756370544,
+          "transition_smoothness": 0.84130859375
+        },
+        "generation_type": "wrong_direction_continuation",
+        "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+        "source_index": 0,
+        "is_true": false,
+        "details": {
+          "description": "Continuation moving in the opposite direction.",
+          "direction_scale": -1.0
+        }
+      },
+      {
+        "candidate_index": 2,
+        "score": 0.9396715760231018,
+        "probability": 0.24463167786598206,
+        "rank": 4,
+        "components": {
+          "cosine_a_b": 0.9576993584632874,
+          "cosine_b_c": 0.9855958223342896,
+          "transition_smoothness": 0.8115234375
+        },
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
+        "source_index": 0,
+        "is_true": false,
+        "details": {
+          "description": "Mirrored future with small spatial perturbations."
+        }
+      }
+    ],
+    "observed_shape": [
+      8,
+      1,
+      64,
+      64
+    ],
+    "candidates_shape": [
+      4,
+      8,
+      1,
+      64,
+      64
+    ],
+    "embedding_dim": 1024,
+    "notes": [
+      "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
+      "Grayscale Moving MNIST clips are converted to RGB inside preprocessing."
+    ]
+  },
+  "candidate_score_table": [
+    {
+      "candidate_index": 3,
+      "rank": 1,
+      "score": 0.9773304462432861,
+      "probability": 0.2540198862552643,
+      "generation_type": "shuffled_temporal_order",
+      "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+      "components": {
+        "cosine_a_b": 0.995932936668396,
+        "cosine_b_c": 0.9966485500335693,
+        "transition_smoothness": 0.9013671875
+      },
+      "is_true": false,
+      "is_correct": false
+    },
+    {
+      "candidate_index": 1,
+      "rank": 2,
+      "score": 0.9770991802215576,
+      "probability": 0.25396114587783813,
+      "generation_type": "true_continuation",
+      "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+      "components": {
+        "cosine_a_b": 0.9953352808952332,
+        "cosine_b_c": 0.9972782731056213,
+        "transition_smoothness": 0.900390625
+      },
+      "is_true": true,
+      "is_correct": true
+    },
+    {
+      "candidate_index": 0,
+      "rank": 3,
+      "score": 0.9508732557296753,
+      "probability": 0.2473873496055603,
+      "generation_type": "wrong_direction_continuation",
+      "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+      "components": {
+        "cosine_a_b": 0.9686720967292786,
+        "cosine_b_c": 0.9879788756370544,
+        "transition_smoothness": 0.84130859375
+      },
+      "is_true": false,
+      "is_correct": false
+    },
+    {
+      "candidate_index": 2,
+      "rank": 4,
+      "score": 0.9396715760231018,
+      "probability": 0.24463167786598206,
+      "generation_type": "mirrored_or_perturbed_continuation",
+      "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
+      "components": {
+        "cosine_a_b": 0.9576993584632874,
+        "cosine_b_c": 0.9855958223342896,
+        "transition_smoothness": 0.8115234375
+      },
+      "is_true": false,
+      "is_correct": false
+    }
+  ],
+  "ranking_summary": {
+    "evaluator_name": "vjepa2_overlap_transition",
+    "selected_index": 3,
+    "selected_generation_type": "shuffled_temporal_order",
+    "selected_score": 0.9773304462432861,
+    "selected_probability": 0.2540198862552643,
+    "selected_component_highlights": [
+      {
+        "name": "cosine_b_c",
+        "value": 0.9966485500335693
+      },
+      {
+        "name": "cosine_a_b",
+        "value": 0.995932936668396
+      }
+    ],
+    "runner_up_index": 1,
+    "runner_up_generation_type": "true_continuation",
+    "runner_up_score": 0.9770991802215576,
+    "runner_up_probability": 0.25396114587783813,
+    "score_gap_to_runner_up": 0.00023126602172851562,
+    "probability_gap_to_runner_up": 5.874037742614746e-05,
+    "confidence": 5.874037742614746e-05,
+    "uncertainty": "low",
+    "correct_index": 1,
+    "correct_rank": 2,
+    "was_correct": false
+  }
+}
