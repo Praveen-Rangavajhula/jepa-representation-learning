@@ -1,6 +1,10 @@
 numpy>=1.26,<3
 pillow>=10,<13
+datasets>=3,<5
+torchcodec>=0.2,<1
+av>=14,<16
 transformers>=4.57,<5
 accelerate>=1.7,<2
 huggingface_hub>=0.33,<1
 safetensors>=0.4.5,<1
+openai>=1.0,<2

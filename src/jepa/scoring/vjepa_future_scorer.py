@@ -9,12 +9,12 @@ import torch
 from torch import Tensor
 
 from .compatibility_metrics import (
+    confidence_tier,
     cosine_similarity,
     latent_transition_smoothness,
     rank_indices,
     softmax_normalize,
     top1_confidence_margin,
-    uncertainty_bucket,
 )
 
 
@@ -76,7 +76,7 @@ class VJEPAFutureScoreBundle:
     backend_used: str
     selected_index: int
     confidence: float
-    uncertainty: str
+    confidence_tier: str
     candidate_scores: List[VJEPAFutureCandidateScore]
     observed_shape: Tuple[int, ...]
     candidates_shape: Tuple[int, ...]
@@ -91,13 +91,19 @@ class VJEPAFutureScoreBundle:
             "backend_used": self.backend_used,
             "selected_index": self.selected_index,
             "confidence": self.confidence,
-            "uncertainty": self.uncertainty,
+            "confidence_tier": self.confidence_tier,
             "candidate_scores": [item.as_dict() for item in self.candidate_scores],
             "observed_shape": list(self.observed_shape),
             "candidates_shape": list(self.candidates_shape),
             "embedding_dim": self.embedding_dim,
             "notes": list(self.notes),
         }
+
+    @property
+    def uncertainty(self) -> str:
+        """Backward-compatible alias for older callers."""
+
+        return self.confidence_tier
 
 
 class VJEPAFutureScorer:
@@ -179,7 +185,7 @@ class VJEPAFutureScorer:
         probabilities = softmax_normalize(scores_tensor)
         ordering = rank_indices(scores_tensor, descending=True)
         confidence = top1_confidence_margin(probabilities)
-        uncertainty = uncertainty_bucket(confidence)
+        tier = confidence_tier(confidence)
 
         rank_lookup = {candidate_index: rank + 1 for rank, candidate_index in enumerate(ordering)}
         for item in candidate_scores:
@@ -192,7 +198,7 @@ class VJEPAFutureScorer:
         runtime = self.adapter.describe_runtime() if hasattr(self.adapter, "describe_runtime") else {}
         notes = [
             "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
-            "Grayscale Moving MNIST clips are converted to RGB inside preprocessing.",
+            "Single-channel clips are converted to RGB inside preprocessing when needed.",
         ]
 
         return VJEPAFutureScoreBundle(
@@ -202,7 +208,7 @@ class VJEPAFutureScorer:
             backend_used=str(runtime.get("backend_used") or getattr(self.adapter, "backend_used", "unknown")),
             selected_index=selected_index,
             confidence=confidence,
-            uncertainty=uncertainty,
+            confidence_tier=tier,
             candidate_scores=candidate_scores,
             observed_shape=tuple(int(dim) for dim in observed_tensor.shape),
             candidates_shape=tuple(int(dim) for dim in candidates_tensor.shape),

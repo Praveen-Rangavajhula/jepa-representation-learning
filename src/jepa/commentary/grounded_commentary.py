@@ -130,11 +130,16 @@ class DeterministicCommentaryGenerator:
         )
         evaluator_name = str(ranking_summary.get("evaluator_name", evidence.get("evaluator_name", "unknown")))
         score_gap = _as_float(
-            ranking_summary.get("score_gap_to_runner_up"),
+            ranking_summary.get("score_margin", ranking_summary.get("score_gap_to_runner_up")),
             _as_float(selected.get("score")) - _as_float(runner_up.get("score")),
         )
         confidence = ranking_summary.get("confidence")
-        uncertainty = str(ranking_summary.get("uncertainty") or "unknown")
+        confidence_tier = str(
+            ranking_summary.get("confidence_tier")
+            or ranking_summary.get("uncertainty")
+            or evidence.get("confidence_tier")
+            or "unknown"
+        )
 
         top_components = _component_highlights(selected.get("components", {}))
         runner_up_index = runner_up.get("candidate_index")
@@ -155,7 +160,7 @@ class DeterministicCommentaryGenerator:
 
         uncertainty_statement = self._uncertainty_statement(
             confidence=confidence,
-            uncertainty=uncertainty,
+            confidence_tier=confidence_tier,
             score_gap=score_gap,
             candidate_count=candidate_count,
         )
@@ -163,7 +168,7 @@ class DeterministicCommentaryGenerator:
         close_warning = self._close_alternative_warning(
             runner_up=runner_up,
             confidence=confidence,
-            uncertainty=uncertainty,
+            confidence_tier=confidence_tier,
             score_gap=score_gap,
         )
 
@@ -214,7 +219,7 @@ class DeterministicCommentaryGenerator:
         self,
         *,
         confidence: Any,
-        uncertainty: str,
+        confidence_tier: str,
         score_gap: float,
         candidate_count: int,
     ) -> str:
@@ -225,12 +230,12 @@ class DeterministicCommentaryGenerator:
             )
 
         confidence_value = _as_float(confidence)
-        if uncertainty == "high":
+        if confidence_tier == "high":
             return (
                 f"Confidence is high with a top-two margin of {confidence_value:.4f}, so the selected "
                 "future is meaningfully separated from the alternatives."
             )
-        if uncertainty == "medium":
+        if confidence_tier == "medium":
             return (
                 f"Confidence is moderate with a top-two margin of {confidence_value:.4f}; the leading "
                 "candidate is plausible, but an alternative still remains competitive."
@@ -250,13 +255,13 @@ class DeterministicCommentaryGenerator:
         *,
         runner_up: Mapping[str, Any],
         confidence: Any,
-        uncertainty: str,
+        confidence_tier: str,
         score_gap: float,
     ) -> Optional[str]:
         if not runner_up:
             return None
         if (
-            uncertainty != "low"
+            confidence_tier != "low"
             and _as_float(confidence, default=1.0) >= self.low_confidence_threshold
             and score_gap > self.close_score_gap_threshold
         ):
@@ -309,8 +314,9 @@ class DeterministicCommentaryGenerator:
 
         confidence = ranking_summary.get("confidence")
         if confidence is not None:
+            confidence_tier = ranking_summary.get("confidence_tier", ranking_summary.get("uncertainty", "unknown"))
             highlights.append(
-                f"Confidence margin = {_as_float(confidence):.4f} ({ranking_summary.get('uncertainty', 'unknown')})"
+                f"Confidence margin = {_as_float(confidence):.4f} ({confidence_tier})"
             )
         highlights.append(f"Score gap to runner-up = {score_gap:.4f}")
 
@@ -350,6 +356,10 @@ class LLMReadyCommentaryBuilder:
             "runner_up_candidate": evidence.get("runner_up_candidate"),
             "candidate_score_table": evidence.get("candidate_score_table"),
             "candidate_metadata": evidence.get("candidate_metadata"),
+            "candidate_descriptions": evidence.get("candidate_descriptions"),
+            "score_margin": evidence.get("score_margin"),
+            "confidence_margin": evidence.get("confidence_margin"),
+            "confidence_tier": evidence.get("confidence_tier"),
             "baseline_comparison": evidence.get("baseline_comparison"),
             "baseline_agreement": evidence.get("baseline_agreement"),
             "evidence_highlights": evidence.get("evidence_highlights"),
@@ -359,7 +369,7 @@ class LLMReadyCommentaryBuilder:
         system_instructions = (
             "You are writing grounded anticipatory commentary for a future-selection benchmark. "
             "Use only the provided evidence. State the selected candidate, explain why it ranked "
-            "highest, describe the system's certainty, warn when the margin is small, and note "
+            "highest, describe the system's certainty using the confidence_margin and confidence_tier, warn when the margin is small, and note "
             "baseline disagreement if present. Do not invent storylines, object identities, or causes."
         )
         user_prompt = (

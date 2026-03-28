@@ -15,17 +15,28 @@ V-JEPA is pretrained for natural video, so zero-shot performance on Moving MNIST
 - the engineered and learned scorers both operate on observed clips and candidate futures
 - benchmark reporting is evaluator-based rather than dataset-specific
 
-## What would change for real-world video
+## What has now changed for real-world video
 
-- replace the dataset loader
-- redesign candidate-future construction to use real action or motion negatives
-- revisit preprocessing choices such as frame sampling and crop strategy
-- possibly add richer observed clip summaries for commentary
+- the repo now includes a generic real-video adapter that still emits the existing future-selection example format
+- the primary real-world path is a Something-Something V2 subset adapter with cacheable 16-frame clips
+- candidate construction now supports:
+  - true continuation
+  - shuffled temporal order
+  - same-template other-sample future
+  - paired-template counterfactual future with fallback logic
+- commentary inputs now accept neutral observed descriptions plus human-readable candidate descriptions
 
-## Default next dataset
+## Why this is still portable
 
-KTH Actions is the default next target because it is:
+- the future-selection task remains clip-based, not dataset-specific
+- the engineered scorer still operates on observed clip + candidate futures
+- the commentary layer consumes structured evidence, not dataset-specific tensors
+- a local JSONL manifest adapter is available for future non-Hugging-Face datasets without changing the downstream evaluation path
 
-- lightweight enough for Colab
-- visually interpretable for a professor-facing demo
-- more aligned with V-JEPA than Moving MNIST
+## Default real-world dataset
+
+The default real-world dataset is now a lightweight Something-Something V2 subset because it is:
+
+- strong on temporal reasoning
+- visually understandable for a class demo
+- more aligned with V-JEPA than Moving MNIST while still being manageable on Colab when cached as a small subset

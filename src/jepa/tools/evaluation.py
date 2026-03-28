@@ -7,6 +7,7 @@ import json
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+from statistics import fmean, pvariance
 from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Sequence
 
 from jepa.agents import run_future_selection_pipeline
@@ -52,6 +53,8 @@ def run_future_selection_benchmark(
     count = min(len(dataset), int(evaluation_count or len(dataset)))
     correct_counts: Dict[str, int] = {name: 0 for name in evaluators}
     correct_ranks: Dict[str, List[int]] = {name: [] for name in evaluators}
+    score_margins: Dict[str, List[float]] = {name: [] for name in evaluators}
+    confidence_margins: Dict[str, List[float]] = {name: [] for name in evaluators}
     per_negative: Dict[str, MutableMapping[str, Dict[str, int]]] = {
         name: defaultdict(lambda: {"count": 0, "correct": 0})
         for name in evaluators
@@ -73,11 +76,29 @@ def run_future_selection_benchmark(
             bundle = _score_example(example, evaluator_name=evaluator_name, evaluator=evaluator)
             summary = build_ranking_summary(bundle, correct_index=example.correct_index)
             table = build_candidate_score_table(bundle, correct_index=example.correct_index)
+            stored_summary = dict(summary)
+            stored_summary.pop("uncertainty", None)
+            candidate_descriptions = [row.get("candidate_description") for row in table]
+            score_margin = summary.get("score_margin")
+            if score_margin is None:
+                score_margin = summary.get("score_gap_to_runner_up")
+            confidence_margin = summary.get("confidence_margin")
+            if confidence_margin is None:
+                confidence_margin = summary.get("probability_gap_to_runner_up")
+            confidence_tier = summary.get("confidence_tier")
+            if confidence_tier is None:
+                confidence_tier = summary.get("uncertainty")
+            if confidence_tier is None:
+                confidence_tier = "unknown"
 
             if summary["was_correct"]:
                 correct_counts[evaluator_name] += 1
             if summary["correct_rank"] is not None:
                 correct_ranks[evaluator_name].append(int(summary["correct_rank"]))
+            if score_margin is not None:
+                score_margins[evaluator_name].append(float(score_margin))
+            if confidence_margin is not None:
+                confidence_margins[evaluator_name].append(float(confidence_margin))
 
             for strategy in negative_types:
                 per_negative[evaluator_name][strategy]["count"] += 1
@@ -94,17 +115,23 @@ def run_future_selection_benchmark(
                         "score": row["score"],
                         "probability": row["probability"],
                         "generation_type": row["generation_type"],
+                        "candidate_description": row.get("candidate_description"),
                         "is_correct_candidate": row["is_correct"],
                         "selected_index": summary["selected_index"],
                         "correct_index": int(example.correct_index),
-                        "confidence": summary.get("confidence"),
-                        "uncertainty": summary.get("uncertainty"),
+                        "score_margin": score_margin,
+                        "confidence_margin": confidence_margin,
+                        "confidence_tier": confidence_tier,
                     }
                 )
 
             example_record["evaluators"][evaluator_name] = {
-                "ranking_summary": summary,
+                "ranking_summary": stored_summary,
                 "candidate_score_table": table,
+                "score_margin": score_margin,
+                "confidence_margin": confidence_margin,
+                "confidence_tier": confidence_tier,
+                "candidate_descriptions": candidate_descriptions,
             }
 
         per_example.append(example_record)
@@ -119,10 +146,18 @@ def run_future_selection_benchmark(
         "evaluation_count": count,
     }
     for evaluator_name in evaluators:
+        score_margin_mean, score_margin_variance = _mean_and_variance(score_margins[evaluator_name])
+        confidence_margin_mean, confidence_margin_variance = _mean_and_variance(
+            confidence_margins[evaluator_name]
+        )
         summary[evaluator_name] = {
             "top1_accuracy": correct_counts[evaluator_name] / max(count, 1),
             "mean_reciprocal_rank": mean_reciprocal_rank(correct_ranks[evaluator_name]),
             "average_correct_rank": average_correct_rank(correct_ranks[evaluator_name]),
+            "score_margin_mean": score_margin_mean,
+            "score_margin_variance": score_margin_variance,
+            "confidence_margin_mean": confidence_margin_mean,
+            "confidence_margin_variance": confidence_margin_variance,
         }
 
     per_negative_type: Dict[str, Dict[str, Dict[str, float]]] = {}
@@ -177,11 +212,13 @@ def save_future_selection_benchmark_artifacts(
                 "score",
                 "probability",
                 "generation_type",
+                "candidate_description",
                 "is_correct_candidate",
                 "selected_index",
                 "correct_index",
-                "confidence",
-                "uncertainty",
+                "score_margin",
+                "confidence_margin",
+                "confidence_tier",
             ],
         )
         writer.writeheader()
@@ -261,9 +298,26 @@ def _render_markdown_summary(
         lines.append(f"- {evaluator_name} Top-1 accuracy: {payload['top1_accuracy']:.4f}")
         lines.append(f"- {evaluator_name} MRR: {payload['mean_reciprocal_rank']:.4f}")
         lines.append(f"- {evaluator_name} average correct rank: {payload['average_correct_rank']:.4f}")
+        lines.append(f"- {evaluator_name} score margin mean: {payload['score_margin_mean']:.4f}")
+        lines.append(f"- {evaluator_name} score margin variance: {payload['score_margin_variance']:.4f}")
+        lines.append(
+            f"- {evaluator_name} confidence margin mean: {payload['confidence_margin_mean']:.4f}"
+        )
+        lines.append(
+            f"- {evaluator_name} confidence margin variance: {payload['confidence_margin_variance']:.4f}"
+        )
     lines.append("")
 
     lines.append("## Artifact paths")
     for name, path in artifact_paths.items():
         lines.append(f"- {name}: `{path}`")
     return "\n".join(lines).strip() + "\n"
+
+
+def _mean_and_variance(values: Sequence[float]) -> tuple[float, float]:
+    if not values:
+        return 0.0, 0.0
+    floats = [float(value) for value in values]
+    if len(floats) == 1:
+        return floats[0], 0.0
+    return float(fmean(floats)), float(pvariance(floats))

@@ -9,7 +9,7 @@ from torch import Tensor
 
 from jepa.latent import LatentFuturePredictor
 
-from .compatibility_metrics import rank_indices, softmax_normalize, top1_confidence_margin, uncertainty_bucket
+from .compatibility_metrics import confidence_tier, rank_indices, softmax_normalize, top1_confidence_margin
 from .vjepa_future_scorer import (
     VJEPAFutureCandidateScore,
     VJEPAFutureScoreBundle,
@@ -94,7 +94,7 @@ class LatentFuturePredictorScorer:
         probabilities = softmax_normalize(scores)
         ordering = rank_indices(scores, descending=True)
         confidence = top1_confidence_margin(probabilities)
-        uncertainty = uncertainty_bucket(confidence)
+        tier = confidence_tier(confidence)
         rank_lookup = {candidate_index: rank + 1 for rank, candidate_index in enumerate(ordering)}
 
         candidate_scores = []
@@ -142,7 +142,7 @@ class LatentFuturePredictorScorer:
             backend_used=str(runtime.get("backend_used") or getattr(self.adapter, "backend_used", "unknown")),
             selected_index=selected_index,
             confidence=confidence,
-            uncertainty=uncertainty,
+            confidence_tier=tier,
             candidate_scores=candidate_scores,
             observed_shape=tuple(int(dim) for dim in observed_tensor.shape),
             candidates_shape=tuple(int(dim) for dim in candidates_tensor.shape),

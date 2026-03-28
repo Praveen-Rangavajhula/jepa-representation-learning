@@ -31,9 +31,10 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 ## Commentary design
 
 - The human-facing layer is grounded anticipatory commentary, not free-form narration.
-- Commentary must be supported by the actual ranking summary, candidate score table, component breakdowns, confidence, uncertainty, and optional baseline comparison.
+- Commentary must be supported by the actual ranking summary, candidate score table, component breakdowns, confidence margins, confidence tiers, and optional baseline comparison.
 - A deterministic template-based commentary path is always available locally.
-- An LLM-ready commentary package is built from the same tensor-free evidence so a later language layer can be added without touching raw tensors.
+- An LLM-ready commentary package is built from the same tensor-free evidence so a live language layer can be added without touching raw tensors.
+- A live OpenAI Responses API backend is optional and only used when credentials and the `openai` package are available; otherwise the system falls back to the deterministic commentary path.
 - Commentary should warn explicitly when confidence is low or when the heuristic baseline disagrees with the representation-based evaluator.
 
 ## Runtime behavior
@@ -45,9 +46,11 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 
 ## Evaluation defaults
 
-- The first small benchmark run uses `N=64` task examples by default to stay practical on Colab GPU.
+- The Moving MNIST control benchmark can still use a small slice for quick checks.
+- The default real-world evaluation slice is `128` examples, with `320` examples reserved as the more confident validation pass.
 - Confidence is defined as the softmax top-1 minus top-2 margin over candidate scores.
-- Uncertainty buckets are:
+- The canonical categorical label for that margin is now `confidence_tier`; legacy `uncertainty` fields are treated as compatibility aliases only.
+- Confidence tiers are:
   - `high >= 0.25`
   - `medium >= 0.10 and < 0.25`
   - `low < 0.10`
@@ -57,11 +60,13 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 - Moving MNIST remains a controlled benchmark even though it is mismatched with V-JEPA's natural-video pretraining domain.
 - The learned latent predictor is intentionally small and benchmark-focused; it is a first serious world-model-style step, not a final world model.
 - No pixel-space future generation is attempted in this stage.
-- No live LLM runtime is required yet; the LLM-facing path currently stops at grounded prompt/context packaging.
+- A live LLM runtime is optional rather than required; when it is unavailable, the repo falls back to deterministic grounded commentary.
 - The current desktop workspace does not expose a straightforward local Python runtime for full end-to-end execution, so the primary runtime verification target remains Colab.
 
 ## Real-world readiness
 
 - The future-selection task API remains clip-based so that dataset swaps do not require major scorer or commentary rewrites.
 - Moving-MNIST-specific preprocessing assumptions are isolated in the data and model preprocessing layers.
-- The next intended real-world dataset is KTH Actions because it is lightweight, visually interpretable, and better aligned with V-JEPA than Moving MNIST.
+- The primary real-world track is now a lightweight Something-Something V2 subset with cacheable 16-frame clips built from a fixed set of eight interpretable templates.
+- Real-video candidates are constructed from a fixed recipe (true continuation, temporal shuffle, same-template other sample, paired-template counterfactual/fallback) and then shuffled deterministically before scoring so the correct answer is not tied to a single slot.
+- The cache root defaults to `data/real_video_cache`, and cached clip manifests are treated as reusable notebook artifacts.

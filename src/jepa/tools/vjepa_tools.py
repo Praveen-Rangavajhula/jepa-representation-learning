@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping, Optional
 
+from jepa.scoring.compatibility_metrics import confidence_tier as _confidence_tier
 
 def _candidate_rows_from_bundle(bundle: Any) -> List[Dict[str, Any]]:
     if hasattr(bundle, "candidate_scores"):
         rows = []
         for item in bundle.candidate_scores:
+            details = dict(getattr(item, "details", {}) or {})
             rows.append(
                 {
                     "candidate_index": item.candidate_index,
@@ -19,6 +21,9 @@ def _candidate_rows_from_bundle(bundle: Any) -> List[Dict[str, Any]]:
                     "rationale": item.rationale,
                     "components": dict(item.components),
                     "is_true": getattr(item, "is_true", None),
+                    "source_index": getattr(item, "source_index", None),
+                    "candidate_description": details.get("description"),
+                    "candidate_metadata": details,
                 }
             )
         return rows
@@ -26,6 +31,7 @@ def _candidate_rows_from_bundle(bundle: Any) -> List[Dict[str, Any]]:
     if hasattr(bundle, "ranked_candidates"):
         rows = []
         for rank, item in enumerate(bundle.ranked_candidates, start=1):
+            details = dict(getattr(item, "details", {}) or {})
             rows.append(
                 {
                     "candidate_index": item.candidate_index,
@@ -36,6 +42,9 @@ def _candidate_rows_from_bundle(bundle: Any) -> List[Dict[str, Any]]:
                     "rationale": item.rationale,
                     "components": dict(item.components),
                     "is_true": None,
+                    "source_index": getattr(item, "source_index", None),
+                    "candidate_description": details.get("description"),
+                    "candidate_metadata": details,
                 }
             )
         return rows
@@ -77,6 +86,8 @@ def build_evidence_highlights(bundle: Any, *, correct_index: Optional[int] = Non
     runner_up = dict(rows[1]) if len(rows) > 1 else None
     score_gap = None
     probability_gap = None
+    confidence_margin = getattr(bundle, "confidence", None)
+    confidence_tier = getattr(bundle, "confidence_tier", None) or getattr(bundle, "uncertainty", None)
     if selected is not None and runner_up is not None:
         score_gap = float(selected["score"]) - float(runner_up["score"])
         if selected.get("probability") is not None and runner_up.get("probability") is not None:
@@ -87,6 +98,9 @@ def build_evidence_highlights(bundle: Any, *, correct_index: Optional[int] = Non
         "runner_up_candidate": runner_up,
         "selected_component_highlights": build_component_highlights(selected["components"]) if selected else [],
         "runner_up_component_highlights": build_component_highlights(runner_up["components"]) if runner_up else [],
+        "score_margin": score_gap,
+        "confidence_margin": probability_gap if probability_gap is not None else confidence_margin,
+        "confidence_tier": confidence_tier,
         "score_gap_to_runner_up": score_gap,
         "probability_gap_to_runner_up": probability_gap,
     }
@@ -103,32 +117,58 @@ def build_ranking_summary(bundle: Any, *, correct_index: Optional[int] = None) -
                 correct_rank = int(row["rank"])
                 break
 
+    selected_probability = selected["probability"] if selected else None
+    runner_up_probability = runner_up["probability"] if runner_up else None
+    confidence_margin = (
+        float(selected_probability) - float(runner_up_probability)
+        if selected is not None
+        and runner_up is not None
+        and selected_probability is not None
+        and runner_up_probability is not None
+        else None
+    )
+    confidence = getattr(bundle, "confidence", None)
+    confidence_tier = getattr(bundle, "confidence_tier", None) or getattr(bundle, "uncertainty", None)
+    if confidence_tier is None and confidence is not None:
+        confidence_tier = _confidence_tier(float(confidence))
+    if confidence_tier is None:
+        confidence_tier = "unknown"
+
     return {
         "evaluator_name": getattr(bundle, "evaluator_name", type(bundle).__name__),
         "selected_index": selected["candidate_index"] if selected else -1,
         "selected_generation_type": selected["generation_type"] if selected else "unknown",
         "selected_score": selected["score"] if selected else None,
-        "selected_probability": selected["probability"] if selected else None,
+        "selected_probability": selected_probability,
         "selected_component_highlights": build_component_highlights(selected["components"]) if selected else [],
         "runner_up_index": runner_up["candidate_index"] if runner_up else None,
         "runner_up_generation_type": runner_up["generation_type"] if runner_up else None,
         "runner_up_score": runner_up["score"] if runner_up else None,
-        "runner_up_probability": runner_up["probability"] if runner_up else None,
+        "runner_up_probability": runner_up_probability,
         "score_gap_to_runner_up": (
             float(selected["score"]) - float(runner_up["score"])
             if selected is not None and runner_up is not None
             else None
         ),
-        "probability_gap_to_runner_up": (
-            float(selected["probability"]) - float(runner_up["probability"])
-            if selected is not None
-            and runner_up is not None
-            and selected.get("probability") is not None
-            and runner_up.get("probability") is not None
+        "score_margin": (
+            float(selected["score"]) - float(runner_up["score"])
+            if selected is not None and runner_up is not None
             else None
         ),
-        "confidence": getattr(bundle, "confidence", None),
-        "uncertainty": getattr(bundle, "uncertainty", None),
+        "probability_gap_to_runner_up": confidence_margin,
+        "confidence_margin": confidence_margin,
+        "confidence_tier": confidence_tier,
+        "selected_description": selected.get("candidate_description") if selected else None,
+        "runner_up_description": runner_up.get("candidate_description") if runner_up else None,
+        "probability_gap_to_runner_up_legacy": (
+            float(selected_probability) - float(runner_up_probability)
+            if selected is not None
+            and runner_up is not None
+            and selected_probability is not None
+            and runner_up_probability is not None
+            else None
+        ),
+        "confidence": confidence,
         "correct_index": int(correct_index) if correct_index is not None else None,
         "correct_rank": correct_rank,
         "was_correct": bool(correct_index is not None and selected is not None and selected["candidate_index"] == int(correct_index)),

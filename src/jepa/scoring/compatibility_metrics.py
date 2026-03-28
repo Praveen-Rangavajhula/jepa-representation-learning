@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from statistics import fmean, pvariance
 from typing import List, Sequence
 
 import torch
@@ -43,12 +44,21 @@ def top1_confidence_margin(probabilities: Tensor) -> float:
     return float((top2[0] - top2[1]).item())
 
 
-def uncertainty_bucket(confidence: float) -> str:
+def confidence_tier(confidence: float) -> str:
     if confidence >= 0.25:
         return "high"
     if confidence >= 0.10:
         return "medium"
     return "low"
+
+
+def uncertainty_bucket(confidence: float) -> str:
+    """Backward-compatible alias for legacy readers.
+
+    The canonical categorical term for the pipeline is now ``confidence_tier``.
+    """
+
+    return confidence_tier(confidence)
 
 
 def rank_indices(scores: Tensor, *, descending: bool = True) -> List[int]:
@@ -74,3 +84,14 @@ def average_correct_rank(correct_ranks: Sequence[int]) -> float:
     if not correct_ranks:
         return 0.0
     return float(sum(correct_ranks) / len(correct_ranks))
+
+
+def mean_and_variance(values: Sequence[float]) -> tuple[float, float]:
+    """Return population mean and variance for a numeric sequence."""
+
+    if not values:
+        return 0.0, 0.0
+    floats = [float(value) for value in values]
+    if len(floats) == 1:
+        return floats[0], 0.0
+    return float(fmean(floats)), float(pvariance(floats))

@@ -2,6 +2,7 @@
 
 from .compatibility_metrics import (
     average_correct_rank,
+    confidence_tier,
     cosine_similarity,
     latent_acceleration_penalty,
     latent_transition_smoothness,
@@ -25,6 +26,7 @@ __all__ = [
     "VJEPAFutureScoreBundle",
     "VJEPAFutureScorer",
     "average_correct_rank",
+    "confidence_tier",
     "cosine_similarity",
     "latent_acceleration_penalty",
     "latent_transition_smoothness",
