@@ -12,6 +12,7 @@ from .compatibility_metrics import (
     top1_confidence_margin,
     uncertainty_bucket,
 )
+from .latent_future_scorer import LatentFuturePredictorScorer
 from .vjepa_future_scorer import (
     VJEPAFutureCandidateScore,
     VJEPAFutureScoreBundle,
@@ -19,6 +20,7 @@ from .vjepa_future_scorer import (
 )
 
 __all__ = [
+    "LatentFuturePredictorScorer",
     "VJEPAFutureCandidateScore",
     "VJEPAFutureScoreBundle",
     "VJEPAFutureScorer",

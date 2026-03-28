@@ -25,6 +25,16 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 - The default scoring variant is `overlap_transition`, which scores three overlapping 8-frame segments from each 16-frame observed+candidate clip.
 - The lighter `prefix_future_cosine` method is implemented as an ablation, not the default evaluator.
 - The heuristic motion-based evaluator is retained only as a baseline and fallback.
+- The next modeling step keeps V-JEPA frozen and adds a small predictor head that maps observed-prefix latents to expected future latents.
+- The first learned latent scorer ranks candidates by similarity to the predicted future latent rather than by pixel-space reconstruction.
+
+## Commentary design
+
+- The human-facing layer is grounded anticipatory commentary, not free-form narration.
+- Commentary must be supported by the actual ranking summary, candidate score table, component breakdowns, confidence, uncertainty, and optional baseline comparison.
+- A deterministic template-based commentary path is always available locally.
+- An LLM-ready commentary package is built from the same tensor-free evidence so a later language layer can be added without touching raw tensors.
+- Commentary should warn explicitly when confidence is low or when the heuristic baseline disagrees with the representation-based evaluator.
 
 ## Runtime behavior
 
@@ -44,6 +54,14 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 
 ## Known limitations
 
-- No learned compatibility head is introduced in this stage.
-- No training loop for the V-JEPA compatibility metric is introduced in this stage.
+- Moving MNIST remains a controlled benchmark even though it is mismatched with V-JEPA's natural-video pretraining domain.
+- The learned latent predictor is intentionally small and benchmark-focused; it is a first serious world-model-style step, not a final world model.
+- No pixel-space future generation is attempted in this stage.
+- No live LLM runtime is required yet; the LLM-facing path currently stops at grounded prompt/context packaging.
 - The current desktop workspace does not expose a straightforward local Python runtime for full end-to-end execution, so the primary runtime verification target remains Colab.
+
+## Real-world readiness
+
+- The future-selection task API remains clip-based so that dataset swaps do not require major scorer or commentary rewrites.
+- Moving-MNIST-specific preprocessing assumptions are isolated in the data and model preprocessing layers.
+- The next intended real-world dataset is KTH Actions because it is lightweight, visually interpretable, and better aligned with V-JEPA than Moving MNIST.
