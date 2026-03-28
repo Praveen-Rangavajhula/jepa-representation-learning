@@ -1,16 +1,19 @@
 # V-JEPA Evaluation Summary
 
-This file is intended to be refreshed by the notebook after the first Colab-backed evaluation run.
+## Run status
+- Evaluation count: 64
+- Model: facebook/vjepa2-vitl-fpc64-256
+- Backend used: huggingface
 
-## Status
+## Metrics
+- Heuristic Top-1 accuracy: 0.7812
+- Heuristic MRR: 0.8906
+- Heuristic average correct rank: 1.2188
+- V-JEPA Top-1 accuracy: 0.7188
+- V-JEPA MRR: 0.8594
+- V-JEPA average correct rank: 1.2812
 
-- Repo-side integration work is in place.
-- Quantitative V-JEPA benchmark results are pending the first Colab GPU execution of the updated notebook.
-
-## Expected metrics
-
-- Top-1 accuracy
-- Mean reciprocal rank
-- Average correct-candidate rank
-- Per-negative-type summary
-- Heuristic baseline versus V-JEPA comparison
+## Artifact paths
+- `/content/jepa-representation-learning/results/vjepa_eval/benchmark_summary.json`
+- `/content/jepa-representation-learning/results/vjepa_eval/per_negative_type.json`
+- `/content/jepa-representation-learning/results/vjepa_eval/candidate_rankings.csv`
