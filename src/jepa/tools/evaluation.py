@@ -43,6 +43,8 @@ def run_future_selection_benchmark(
     evaluators: Mapping[str, Any],
     *,
     evaluation_count: Optional[int] = None,
+    show_progress: bool = False,
+    progress_interval: int = 1,
 ) -> FutureSelectionBenchmarkResult:
     if not evaluators:
         raise ValueError("At least one evaluator is required.")
@@ -106,6 +108,12 @@ def run_future_selection_benchmark(
             }
 
         per_example.append(example_record)
+        if show_progress and (
+            index == 0
+            or index + 1 == count
+            or ((index + 1) % max(progress_interval, 1) == 0)
+        ):
+            print(f"Benchmark progress: {index + 1}/{count} examples evaluated.")
 
     summary = {
         "evaluation_count": count,

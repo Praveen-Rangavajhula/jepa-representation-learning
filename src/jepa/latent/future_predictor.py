@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
@@ -91,6 +92,10 @@ class LatentFuturePredictorTrainingSummary:
     best_epoch: int
     final_train_loss: float
     best_validation_loss: float
+    embedding_cache_hit: bool = False
+    embedding_extraction_seconds: float = 0.0
+    training_seconds: float = 0.0
+    total_seconds: float = 0.0
     loss_history: List[Dict[str, float]] = field(default_factory=list)
 
     def as_dict(self) -> Dict[str, Any]:
@@ -102,6 +107,10 @@ class LatentFuturePredictorTrainingSummary:
             "best_epoch": self.best_epoch,
             "final_train_loss": self.final_train_loss,
             "best_validation_loss": self.best_validation_loss,
+            "embedding_cache_hit": self.embedding_cache_hit,
+            "embedding_extraction_seconds": self.embedding_extraction_seconds,
+            "training_seconds": self.training_seconds,
+            "total_seconds": self.total_seconds,
             "loss_history": list(self.loss_history),
         }
 
@@ -129,6 +138,7 @@ class LatentFuturePredictor:
         self.model: Optional[_LatentPredictorNetwork] = None
         self.embedding_dim: Optional[int] = None
         self.training_summary: Optional[LatentFuturePredictorTrainingSummary] = None
+        self._training_embedding_cache: Dict[tuple[Any, ...], tuple[Tensor, Tensor]] = {}
 
     def fit(
         self,
@@ -137,7 +147,8 @@ class LatentFuturePredictor:
         adapter: Any,
         max_examples: Optional[int] = None,
     ) -> LatentFuturePredictorTrainingSummary:
-        observed_embeddings, future_embeddings = self._build_training_embeddings(
+        total_start = time.perf_counter()
+        observed_embeddings, future_embeddings, cache_hit, embedding_extraction_seconds = self._build_training_embeddings(
             dataset,
             adapter=adapter,
             max_examples=max_examples,
@@ -174,6 +185,7 @@ class LatentFuturePredictor:
         history: List[Dict[str, float]] = []
 
         self.model.train()
+        training_start = time.perf_counter()
         for epoch in range(self.config.epochs):
             permutation = torch.randperm(train_observed.shape[0], generator=generator)
             running_loss = 0.0
@@ -181,8 +193,8 @@ class LatentFuturePredictor:
 
             for start in range(0, train_observed.shape[0], self.config.batch_size):
                 batch_indices = permutation[start : start + self.config.batch_size]
-                batch_observed = train_observed[batch_indices].to(self.device)
-                batch_future = train_future[batch_indices].to(self.device)
+                batch_observed = train_observed[batch_indices].to(device=self.device, dtype=torch.float32)
+                batch_future = train_future[batch_indices].to(device=self.device, dtype=torch.float32)
 
                 optimizer.zero_grad(set_to_none=True)
                 predicted = self.model(batch_observed)
@@ -214,6 +226,8 @@ class LatentFuturePredictor:
         if best_state is not None:
             self.model.load_state_dict(best_state)
         self.model.eval()
+        training_seconds = float(time.perf_counter() - training_start)
+        total_seconds = float(time.perf_counter() - total_start)
 
         self.training_summary = LatentFuturePredictorTrainingSummary(
             embedding_dim=embedding_dim,
@@ -223,6 +237,10 @@ class LatentFuturePredictor:
             best_epoch=best_epoch,
             final_train_loss=float(history[-1]["train_loss"]),
             best_validation_loss=best_validation_loss,
+            embedding_cache_hit=cache_hit,
+            embedding_extraction_seconds=float(embedding_extraction_seconds),
+            training_seconds=training_seconds,
+            total_seconds=total_seconds,
             loss_history=history,
         )
         return self.training_summary
@@ -254,10 +272,13 @@ class LatentFuturePredictor:
                     "or (B, T, C, H, W)."
                 )
 
-        observed_embeddings = F.normalize(observed_embeddings.to(self.device), dim=-1)
+        observed_embeddings = F.normalize(
+            observed_embeddings.to(device=self.device, dtype=torch.float32),
+            dim=-1,
+        )
         with torch.no_grad():
             predicted = self.model(observed_embeddings)
-        return F.normalize(predicted, dim=-1).detach().cpu()
+        return F.normalize(predicted.to(dtype=torch.float32), dim=-1).detach().cpu()
 
     def score_candidates(
         self,
@@ -277,7 +298,7 @@ class LatentFuturePredictor:
         candidate_embeddings = adapter.encode_batch(
             candidate_tensor,
             batch_size=self.config.adapter_batch_size,
-        ).detach().cpu()
+        ).detach().to(dtype=torch.float32).cpu()
         candidate_embeddings = F.normalize(candidate_embeddings, dim=-1)
 
         cosine_scores = (candidate_embeddings * predicted_future.unsqueeze(0)).sum(dim=-1)
@@ -297,8 +318,19 @@ class LatentFuturePredictor:
         *,
         adapter: Any,
         max_examples: Optional[int],
-    ) -> tuple[Tensor, Tensor]:
+    ) -> tuple[Tensor, Tensor, bool, float]:
         example_count = min(len(dataset), int(max_examples or self.config.max_training_examples))
+        cache_key = self._training_embedding_cache_key(
+            dataset,
+            adapter=adapter,
+            example_count=example_count,
+        )
+        cached = self._training_embedding_cache.get(cache_key)
+        if cached is not None:
+            observed_cached, future_cached = cached
+            return observed_cached.clone(), future_cached.clone(), True, 0.0
+
+        extraction_start = time.perf_counter()
         observed_clips: List[Tensor] = []
         future_clips: List[Tensor] = []
         for index in range(example_count):
@@ -315,15 +347,44 @@ class LatentFuturePredictor:
         observed_embeddings = adapter.encode_batch(
             observed_batch,
             batch_size=self.config.adapter_batch_size,
-        ).detach().cpu()
+        ).detach().to(dtype=torch.float32).cpu()
         future_embeddings = adapter.encode_batch(
             future_batch,
             batch_size=self.config.adapter_batch_size,
-        ).detach().cpu()
+        ).detach().to(dtype=torch.float32).cpu()
 
-        return (
+        normalized = (
             F.normalize(observed_embeddings, dim=-1),
             F.normalize(future_embeddings, dim=-1),
+        )
+        self._training_embedding_cache[cache_key] = (
+            normalized[0].clone(),
+            normalized[1].clone(),
+        )
+        extraction_seconds = float(time.perf_counter() - extraction_start)
+        return normalized[0], normalized[1], False, extraction_seconds
+
+    def _training_embedding_cache_key(
+        self,
+        dataset: Sequence[Any],
+        *,
+        adapter: Any,
+        example_count: int,
+    ) -> tuple[Any, ...]:
+        runtime: Mapping[str, Any] = {}
+        if hasattr(adapter, "describe_runtime"):
+            try:
+                runtime = adapter.describe_runtime()
+            except Exception:
+                runtime = {}
+
+        return (
+            id(dataset),
+            example_count,
+            self.config.adapter_batch_size,
+            str(runtime.get("model_id", "")),
+            str(runtime.get("backend_used", "")),
+            str(runtime.get("dtype", "")),
         )
 
     def _ensure_model(self, embedding_dim: int) -> None:
@@ -334,14 +395,14 @@ class LatentFuturePredictor:
             embedding_dim=embedding_dim,
             hidden_dim=self.config.hidden_dim,
             dropout=self.config.dropout,
-        ).to(self.device)
+        ).to(device=self.device, dtype=torch.float32)
 
     def _evaluate_loss(self, observed_embeddings: Tensor, future_embeddings: Tensor) -> float:
         self._require_trained_model()
         self.model.eval()
         with torch.no_grad():
-            predicted = self.model(observed_embeddings.to(self.device))
-            loss = self._loss(predicted, future_embeddings.to(self.device))
+            predicted = self.model(observed_embeddings.to(device=self.device, dtype=torch.float32))
+            loss = self._loss(predicted, future_embeddings.to(device=self.device, dtype=torch.float32))
         self.model.train()
         return float(loss.item())
 
