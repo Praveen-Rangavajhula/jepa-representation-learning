@@ -708,7 +708,11 @@ class VJEPAFutureScorer:
             candidates,
             candidate_metadata=candidate_metadata,
         )
-        overlap_score_tensor = torch.tensor([item.score for item in overlap_scores], dtype=torch.float32)
+        overlap_score_tensor = torch.tensor(
+            [item.score for item in overlap_scores],
+            dtype=boundary_alignment.dtype,
+            device=boundary_alignment.device,
+        )
         total_scores = (
             0.45 * boundary_alignment
             + 0.15 * future_alignment
