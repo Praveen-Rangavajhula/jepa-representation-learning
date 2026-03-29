@@ -23,6 +23,7 @@ class FutureSelectionBenchmarkResult:
     evaluation_count: int
     summary: Dict[str, Any]
     per_negative_type: Dict[str, Dict[str, Dict[str, float]]]
+    confusion_report: Dict[str, Dict[str, Dict[str, float]]] = field(default_factory=dict)
     candidate_rows: List[Dict[str, Any]] = field(default_factory=list)
     per_example: List[Dict[str, Any]] = field(default_factory=list)
 
@@ -33,6 +34,10 @@ class FutureSelectionBenchmarkResult:
             "per_negative_type": {
                 evaluator: {strategy: dict(values) for strategy, values in strategy_map.items()}
                 for evaluator, strategy_map in self.per_negative_type.items()
+            },
+            "confusion_report": {
+                evaluator: {strategy: dict(values) for strategy, values in strategy_map.items()}
+                for evaluator, strategy_map in self.confusion_report.items()
             },
             "candidate_rows": list(self.candidate_rows),
             "per_example": list(self.per_example),
@@ -57,6 +62,10 @@ def run_future_selection_benchmark(
     confidence_margins: Dict[str, List[float]] = {name: [] for name in evaluators}
     per_negative: Dict[str, MutableMapping[str, Dict[str, int]]] = {
         name: defaultdict(lambda: {"count": 0, "correct": 0})
+        for name in evaluators
+    }
+    confusion_counts: Dict[str, MutableMapping[str, Dict[str, int]]] = {
+        name: defaultdict(lambda: {"count": 0})
         for name in evaluators
     }
     candidate_rows: List[Dict[str, Any]] = []
@@ -104,6 +113,9 @@ def run_future_selection_benchmark(
                 per_negative[evaluator_name][strategy]["count"] += 1
                 if summary["was_correct"]:
                     per_negative[evaluator_name][strategy]["correct"] += 1
+            if not summary["was_correct"]:
+                selected_type = str(summary.get("selected_generation_type") or "unknown")
+                confusion_counts[evaluator_name][selected_type]["count"] += 1
 
             for row in table:
                 candidate_rows.append(
@@ -161,6 +173,7 @@ def run_future_selection_benchmark(
         }
 
     per_negative_type: Dict[str, Dict[str, Dict[str, float]]] = {}
+    confusion_report: Dict[str, Dict[str, Dict[str, float]]] = {}
     for evaluator_name, strategy_map in per_negative.items():
         per_negative_type[evaluator_name] = {}
         for strategy, payload in strategy_map.items():
@@ -171,11 +184,23 @@ def run_future_selection_benchmark(
                     float(payload["correct"]) / float(strategy_count) if strategy_count else 0.0
                 ),
             }
+        evaluator_errors = max(count - correct_counts[evaluator_name], 0)
+        confusion_report[evaluator_name] = {}
+        for strategy, payload in confusion_counts[evaluator_name].items():
+            confusion_count = int(payload["count"])
+            confusion_report[evaluator_name][strategy] = {
+                "count": confusion_count,
+                "fraction_of_errors": (
+                    float(confusion_count) / float(evaluator_errors) if evaluator_errors else 0.0
+                ),
+                "fraction_of_examples": float(confusion_count) / float(max(count, 1)),
+            }
 
     return FutureSelectionBenchmarkResult(
         evaluation_count=count,
         summary=summary,
         per_negative_type=per_negative_type,
+        confusion_report=confusion_report,
         candidate_rows=candidate_rows,
         per_example=per_example,
     )
@@ -194,11 +219,13 @@ def save_future_selection_benchmark_artifacts(
 
     benchmark_summary_path = output_dir / "benchmark_summary.json"
     per_negative_type_path = output_dir / "per_negative_type.json"
+    confusion_report_path = output_dir / "confusion_report.json"
     candidate_rankings_path = output_dir / "candidate_rankings.csv"
     per_example_path = output_dir / "per_example_rankings.json"
 
     benchmark_summary_path.write_text(json.dumps(benchmark.summary, indent=2), encoding="utf-8")
     per_negative_type_path.write_text(json.dumps(benchmark.per_negative_type, indent=2), encoding="utf-8")
+    confusion_report_path.write_text(json.dumps(benchmark.confusion_report, indent=2), encoding="utf-8")
     per_example_path.write_text(json.dumps(benchmark.per_example, indent=2), encoding="utf-8")
 
     with candidate_rankings_path.open("w", newline="", encoding="utf-8") as handle:
@@ -227,6 +254,7 @@ def save_future_selection_benchmark_artifacts(
     saved = {
         "benchmark_summary": benchmark_summary_path,
         "per_negative_type": per_negative_type_path,
+        "confusion_report": confusion_report_path,
         "candidate_rankings": candidate_rankings_path,
         "per_example_rankings": per_example_path,
     }
@@ -307,6 +335,21 @@ def _render_markdown_summary(
             f"- {evaluator_name} confidence margin variance: {payload['confidence_margin_variance']:.4f}"
         )
     lines.append("")
+
+    if metadata and metadata.get("confusion_report"):
+        lines.append("## Focused Confusions")
+        confusion_report = metadata["confusion_report"]
+        for evaluator_name, payload in confusion_report.items():
+            if not payload:
+                lines.append(f"- {evaluator_name}: no wrong selections recorded")
+                continue
+            ordered = sorted(payload.items(), key=lambda item: item[1].get("count", 0), reverse=True)
+            for strategy, values in ordered:
+                lines.append(
+                    f"- {evaluator_name} -> {strategy}: count={values['count']}, "
+                    f"fraction_of_errors={values['fraction_of_errors']:.4f}"
+                )
+        lines.append("")
 
     lines.append("## Artifact paths")
     for name, path in artifact_paths.items():

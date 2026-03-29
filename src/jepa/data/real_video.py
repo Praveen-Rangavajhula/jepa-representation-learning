@@ -148,6 +148,20 @@ def _sample_video_to_length(frames: Tensor, target_frames: int) -> Tensor:
     return frames.index_select(0, index_tensor)
 
 
+def _center_local_window(frames: Tensor, window_length: int) -> Tensor:
+    frames = torch.as_tensor(frames)
+    if frames.ndim != 4:
+        raise ValueError(f"Expected (T, C, H, W) tensor, got {tuple(frames.shape)}.")
+    if window_length <= 0:
+        raise ValueError("window_length must be positive.")
+    num_frames = int(frames.shape[0])
+    if num_frames <= window_length:
+        return frames
+    start = max(0, (num_frames - window_length) // 2)
+    stop = start + window_length
+    return frames[start:stop]
+
+
 def _decode_torchcodec_video(video: Any, *, max_chunk_size: int = 64) -> Tensor:
     if not hasattr(video, "get_frames_in_range"):
         raise TypeError("Video object does not expose get_frames_in_range().")
@@ -385,6 +399,7 @@ class RealVideoSubsetConfig:
 
     dataset_name: str = "mteb/SomethingSomethingV2"
     cache_root: str = "data/real_video_cache"
+    source_window_length: int = 32
     sequence_length: int = 16
     observed_length: int = 8
     future_length: int = 8
@@ -404,6 +419,8 @@ class RealVideoSubsetConfig:
     local_manifest_path: Optional[str] = None
 
     def validate(self) -> "RealVideoSubsetConfig":
+        if self.source_window_length < 1:
+            raise ValueError("source_window_length must be positive.")
         if self.sequence_length != self.observed_length + self.future_length:
             raise ValueError("sequence_length must equal observed_length + future_length.")
         if self.observed_length < 1 or self.future_length < 1:
@@ -442,6 +459,7 @@ class RealVideoSubsetConfig:
         return {
             "dataset_name": self.dataset_name,
             "cache_root": self.cache_root,
+            "source_window_length": self.source_window_length,
             "sequence_length": self.sequence_length,
             "observed_length": self.observed_length,
             "future_length": self.future_length,
@@ -543,17 +561,20 @@ class RealVideoFutureSelectionDataset(Dataset):
             )
         )
 
-        shuffled = self._shuffle_future(future, rng)
-        candidates.append(shuffled)
+        temporal_negative, temporal_negative_mode, temporal_negative_details = self._build_temporal_negative(future, rng)
+        candidates.append(temporal_negative)
         candidate_metadata.append(
             self._candidate_metadata(
                 source=source,
-                strategy="shuffled_temporal_order",
-                generation_type="shuffled_temporal_order",
+                strategy=temporal_negative_mode,
+                generation_type=temporal_negative_mode,
                 is_true=False,
-                description_suffix="temporal order shuffled",
+                description_suffix=self._strategy_description(temporal_negative_mode),
                 source_video_id=source.video_id,
-                details={"candidate_role": "same_clip_temporal_shuffle"},
+                details={
+                    "candidate_role": "same_clip_temporal_negative",
+                    **temporal_negative_details,
+                },
             )
         )
 
@@ -661,10 +682,48 @@ class RealVideoFutureSelectionDataset(Dataset):
         _, future = self._split_clip(record.clip)
         return future
 
-    def _shuffle_future(self, future: Tensor, rng: np.random.Generator) -> Tensor:
-        order = np.arange(int(future.shape[0]))
-        rng.shuffle(order)
-        return future[torch.as_tensor(order, dtype=torch.long)]
+    def _build_temporal_negative(
+        self,
+        future: Tensor,
+        rng: np.random.Generator,
+    ) -> Tuple[Tensor, str, Dict[str, Any]]:
+        future = torch.as_tensor(future)
+        if future.ndim != 4:
+            raise RealVideoDataError(f"Expected future clip to have shape (T, C, H, W); got {tuple(future.shape)}.")
+
+        frame_count = int(future.shape[0])
+        if frame_count >= 4 and frame_count % 2 == 0:
+            block_size = frame_count // 2
+            first_block = future[:block_size]
+            second_block = future[block_size:]
+            mode = "temporal_order_two_block_swap" if int(rng.integers(0, 2)) == 0 else "temporal_order_block_reverse"
+            if mode == "temporal_order_two_block_swap":
+                negative = torch.cat([second_block, first_block], dim=0)
+            else:
+                negative = torch.cat([first_block.flip(0), second_block.flip(0)], dim=0)
+            return (
+                negative.contiguous(),
+                mode,
+                {
+                    "temporal_negative_mode": mode,
+                    "block_count": 2,
+                    "block_size": block_size,
+                    "source_frame_count": frame_count,
+                },
+            )
+
+        negative = future.flip(0)
+        mode = "temporal_order_reverse"
+        return (
+            negative.contiguous(),
+            mode,
+            {
+                "temporal_negative_mode": mode,
+                "block_count": 1,
+                "block_size": frame_count,
+                "source_frame_count": frame_count,
+            },
+        )
 
     def _pick_same_template_other(self, *, index: int, rng: np.random.Generator) -> RealVideoClipRecord:
         source = self.records[index]
@@ -727,6 +786,9 @@ class RealVideoFutureSelectionDataset(Dataset):
             "paired_template_counterfactual": "paired counterfactual",
             "same_pair_fallback": "same-pair fallback future",
             "random_future_fallback": "generic random future",
+            "temporal_order_two_block_swap": "two-block temporal swap",
+            "temporal_order_block_reverse": "reverse-block temporal negative",
+            "temporal_order_reverse": "reversed temporal order",
         }
         return descriptions.get(strategy, strategy)
 
@@ -768,7 +830,8 @@ class RealVideoDatasetAdapter:
         self._cache_root = _repo_root() / self.config.cache_root
 
     def cache_root_for_split(self, split: str) -> Path:
-        return self._cache_root / self.dataset_slug / split
+        window_tag = f"srcwin{self.config.source_window_length}"
+        return self._cache_root / f"{self.dataset_slug}_{window_tag}" / split
 
     def source_split_for_request(self, split: str) -> str:
         normalized = split.strip().lower()
@@ -884,6 +947,7 @@ class RealVideoDatasetAdapter:
     def _prepare_clip(self, clip: Tensor) -> Tensor:
         clip = _to_tchw(clip)
         clip = _normalize_video_tensor(clip)
+        clip = _center_local_window(clip, self.config.source_window_length)
         clip = _sample_video_to_length(clip, self.config.sequence_length)
         clip = _resize_video_tensor(clip, self.config.image_size)
         return clip.contiguous()

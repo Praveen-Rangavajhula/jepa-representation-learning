@@ -110,15 +110,24 @@ class VJEPAFutureScorer:
     """Score candidate futures with a V-JEPA 2 encoder backbone."""
 
     MASKED_RUNTIME_SIGNATURE = "single_mask_boundary_blocks_v2"
+    BOUNDARY_HYBRID_SIGNATURE = "masked_boundary_hybrid_v1"
 
-    def __init__(self, adapter: Optional[Any] = None, *, scoring_variant: str = "masked_future_prediction") -> None:
+    def __init__(
+        self,
+        adapter: Optional[Any] = None,
+        *,
+        scoring_variant: str = "masked_future_prediction",
+        auto_route_real_video: bool = True,
+    ) -> None:
         if adapter is None:
             from jepa.models import VJEPA2Adapter
 
             adapter = VJEPA2Adapter()
         self.adapter = adapter
         self.scoring_variant = scoring_variant
+        self.auto_route_real_video = auto_route_real_video
         self.masked_runtime_signature = self.MASKED_RUNTIME_SIGNATURE
+        self.boundary_hybrid_signature = self.BOUNDARY_HYBRID_SIGNATURE
         self._predictor_mask_cache: Dict[Tuple[int, int, int, int], tuple[List[Tensor], List[Tensor], int]] = {}
 
     def score_context_future(
@@ -169,11 +178,56 @@ class VJEPAFutureScorer:
             raise ValueError("At least one candidate future is required.")
 
         variant = scoring_variant or self.scoring_variant
+        if (
+            self.auto_route_real_video
+            and variant == "masked_future_prediction"
+            and self._looks_like_real_video_metadata(candidate_metadata)
+        ):
+            variant = "masked_boundary_hybrid"
         effective_variant = variant
-        if variant not in {"masked_future_prediction", "overlap_transition", "prefix_future_cosine"}:
+        if variant not in {
+            "masked_future_prediction",
+            "masked_boundary_hybrid",
+            "overlap_transition",
+            "prefix_future_cosine",
+        }:
             raise ValueError(f"Unsupported V-JEPA scoring variant: {variant}")
 
-        if variant == "masked_future_prediction":
+        if variant == "masked_boundary_hybrid":
+            try:
+                candidate_scores, embedding_dim, extra_notes = self._score_masked_boundary_hybrid(
+                    observed_tensor,
+                    candidates_tensor,
+                    candidate_metadata=candidate_metadata,
+                )
+            except Exception as exc:
+                masked_failure = f"{type(exc).__name__}: {exc}"
+                if getattr(self.adapter, "device", None) is not None and getattr(self.adapter.device, "type", "") == "cuda":
+                    raise RuntimeError(
+                        "The boundary-focused masked hybrid scorer failed on CUDA. We do not try an in-place "
+                        "fallback in the same runtime because a failed predictor call can leave the CUDA context in "
+                        "an unstable state and waste Colab time. Restart the Colab runtime, make sure the latest repo "
+                        "state is loaded, and rerun from the top. "
+                        f"Masked scorer error: {masked_failure}"
+                    ) from exc
+                effective_variant = "overlap_transition"
+                try:
+                    candidate_scores, embedding_dim = self._score_overlap_transition(
+                        observed_tensor,
+                        candidates_tensor,
+                        candidate_metadata=candidate_metadata,
+                    )
+                    extra_notes = [
+                        "Boundary-focused masked hybrid was requested but unavailable in this runtime; "
+                        "the scorer fell back to overlap_transition.",
+                        f"Masked scorer error: {masked_failure}",
+                    ]
+                except Exception as fallback_exc:
+                    raise RuntimeError(
+                        "The boundary-focused masked hybrid scorer failed, and the encoder-only overlap fallback also "
+                        "failed in the same runtime. Restart the Colab runtime and rerun from the top."
+                    ) from fallback_exc
+        elif variant == "masked_future_prediction":
             try:
                 candidate_scores, embedding_dim, extra_notes = self._score_masked_future_prediction(
                     observed_tensor,
@@ -258,6 +312,27 @@ class VJEPAFutureScorer:
             embedding_dim=embedding_dim,
             notes=notes,
         )
+
+    @staticmethod
+    def _looks_like_real_video_metadata(metadata: Optional[Sequence[Mapping[str, Any]]]) -> bool:
+        if not metadata:
+            return False
+        for item in metadata:
+            if any(key in item for key in ("pair_group", "label_template", "paired_template", "source_video_id")):
+                return True
+        return False
+
+    @staticmethod
+    def _swap_future_blocks(future: Tensor) -> Tensor:
+        future = torch.as_tensor(future)
+        if future.ndim != 4:
+            raise ValueError(f"Future clip must have shape (T, C, H, W); got {tuple(future.shape)}.")
+        if future.shape[0] < 2:
+            return future
+        half = int(future.shape[0] // 2)
+        if future.shape[0] % 2 == 0 and half >= 1:
+            return torch.cat([future[half:], future[:half]], dim=0)
+        return torch.flip(future, dims=[0])
 
     @staticmethod
     def _temporal_range_to_token_indices(
@@ -507,6 +582,172 @@ class VJEPAFutureScorer:
             f"Each predictor block uses {mask_token_count} masked tokens per candidate.",
             f"Masked scorer implementation signature: {self.masked_runtime_signature}.",
             "Predictor masks are cached by token layout and observed/future split so repeated notebook runs avoid rebuilding them.",
+        ]
+        return candidate_scores, int(masked_blocks[0].hidden_size), notes
+
+    def _score_masked_boundary_hybrid(
+        self,
+        observed: Tensor,
+        candidates: Tensor,
+        *,
+        candidate_metadata: Optional[Sequence[Mapping[str, Any]]],
+    ) -> tuple[List[VJEPAFutureCandidateScore], int, list[str]]:
+        base_scores, embedding_dim, base_notes = self._score_masked_boundary_hybrid_base(
+            observed,
+            candidates,
+            candidate_metadata=candidate_metadata,
+        )
+
+        candidate_scores: List[VJEPAFutureCandidateScore] = []
+        block_swap_scores: List[float] = [0.0 for _ in range(candidates.shape[0])]
+        order_margin_raw = torch.zeros(candidates.shape[0], dtype=torch.float32)
+        block_swapped_available = False
+
+        if candidates.shape[1] >= 2:
+            swapped_candidates = torch.stack(
+                [self._swap_future_blocks(candidate) for candidate in candidates],
+                dim=0,
+            )
+            swapped_scores, _, _ = self._score_masked_boundary_hybrid_base(
+                observed,
+                swapped_candidates,
+                candidate_metadata=candidate_metadata,
+            )
+            block_swapped_available = True
+            for index, swapped in enumerate(swapped_scores):
+                block_swap_scores[index] = float(swapped.score)
+
+        for index, base in enumerate(base_scores):
+            swapped_score = block_swap_scores[index] if block_swapped_available else float(base.score)
+            order_margin_raw[index] = float(base.score) - float(swapped_score)
+            final_score = float(base.score) + 0.10 * float(order_margin_raw[index].item())
+            components = dict(base.components)
+            components.update(
+                {
+                    "boundary_hybrid_base_score": float(base.score),
+                    "boundary_hybrid_block_swapped_score": float(swapped_score),
+                    "boundary_hybrid_order_margin": float(order_margin_raw[index].item()),
+                }
+            )
+            candidate_scores.append(
+                VJEPAFutureCandidateScore(
+                    candidate_index=base.candidate_index,
+                    score=final_score,
+                    probability=0.0,
+                    rank=-1,
+                    components=components,
+                    generation_type=base.generation_type,
+                    rationale=self._build_rationale(components, base.generation_type, "masked_boundary_hybrid"),
+                    source_index=base.source_index,
+                    is_true=base.is_true,
+                    details=base.details,
+                )
+            )
+
+        notes = [
+            "This scorer uses V-JEPA predictor outputs plus a boundary overlap encoder check and a direct block-swap order margin.",
+            "The real-video path is auto-routed to this variant when candidate metadata looks like a clip-based real-video example.",
+            "Masked predictor calls stay single-mask and fail fast on CUDA to avoid poisoned-runtime fallbacks.",
+            f"Boundary hybrid implementation signature: {self.boundary_hybrid_signature}.",
+        ]
+        notes.extend(base_notes)
+        return candidate_scores, embedding_dim, notes
+
+    def _score_masked_boundary_hybrid_base(
+        self,
+        observed: Tensor,
+        candidates: Tensor,
+        *,
+        candidate_metadata: Optional[Sequence[Mapping[str, Any]]],
+    ) -> tuple[List[VJEPAFutureCandidateScore], int, list[str]]:
+        combined_clips = torch.stack([torch.cat([observed, candidate], dim=0) for candidate in candidates], dim=0)
+        context_masks, target_masks, block_count = self._build_predictor_masks(
+            batch_size=int(combined_clips.shape[0]),
+            observed_length=int(observed.shape[0]),
+            future_length=int(candidates.shape[1]),
+        )
+        mask_token_count = self._validate_predictor_mask_groups(
+            context_masks=context_masks,
+            target_masks=target_masks,
+            batch_size=int(combined_clips.shape[0]),
+        )
+
+        masked_blocks: list[Any] = []
+        for context_mask, target_mask in zip(context_masks, target_masks):
+            masked_blocks.append(
+                self.adapter.predict_masked_tokens(
+                    combined_clips,
+                    context_masks=[context_mask],
+                    target_masks=[target_mask],
+                    batch_size=2,
+                )
+            )
+
+        predicted_blocks = torch.cat([block.predicted_tokens for block in masked_blocks], dim=1)
+        target_blocks = torch.cat([block.target_tokens for block in masked_blocks], dim=1)
+
+        token_aligned = cosine_similarity(predicted_blocks, target_blocks)
+        block_token_alignment = token_aligned.mean(dim=2)
+        predicted = predicted_blocks.mean(dim=2)
+        target = target_blocks.mean(dim=2)
+        aligned = cosine_similarity(predicted, target)
+
+        if block_count >= 2:
+            boundary_alignment = block_token_alignment[:, 0]
+            future_alignment = block_token_alignment[:, -1]
+            predicted_delta = predicted[:, 1:] - predicted[:, :-1]
+            target_delta = target[:, 1:] - target[:, :-1]
+            transition_consistency = (cosine_similarity(predicted_delta, target_delta).mean(dim=1) + 1.0) / 2.0
+        else:
+            boundary_alignment = block_token_alignment[:, 0]
+            future_alignment = block_token_alignment[:, 0]
+            transition_consistency = aligned[:, 0]
+
+        overlap_scores, _ = self._score_overlap_transition(
+            observed,
+            candidates,
+            candidate_metadata=candidate_metadata,
+        )
+        overlap_score_tensor = torch.tensor([item.score for item in overlap_scores], dtype=torch.float32)
+        total_scores = (
+            0.45 * boundary_alignment
+            + 0.15 * future_alignment
+            + 0.20 * overlap_score_tensor
+            + 0.10 * transition_consistency
+        )
+
+        candidate_scores: List[VJEPAFutureCandidateScore] = []
+        for index in range(candidates.shape[0]):
+            generation_type = _candidate_generation_type(candidate_metadata, index)
+            metadata = _candidate_details(candidate_metadata, index)
+            components = {
+                "predictor_boundary_alignment": float(boundary_alignment[index].item()),
+                "predictor_future_alignment": float(future_alignment[index].item()),
+                "encoder_boundary_overlap": float(overlap_score_tensor[index].item()),
+                "transition_delta_consistency": float(transition_consistency[index].item()),
+                "predictor_aligned_mean": float(aligned[index].mean().item()),
+                "predictor_block_token_alignment_mean": float(block_token_alignment[index].mean().item()),
+                "predictor_mask_token_count": float(mask_token_count),
+            }
+            candidate_scores.append(
+                VJEPAFutureCandidateScore(
+                    candidate_index=index,
+                    score=float(total_scores[index].item()),
+                    probability=0.0,
+                    rank=-1,
+                    components=components,
+                    generation_type=generation_type,
+                    rationale=self._build_rationale(components, generation_type, "masked_boundary_hybrid"),
+                    source_index=metadata.get("source_index"),
+                    is_true=metadata.get("is_true"),
+                    details=metadata.get("details", {}),
+                )
+            )
+
+        notes = [
+            "Boundary hybrid scores predictor alignment near the observed/future boundary, overlap-transition compatibility, and transition delta consistency.",
+            "The overlap component is measured on short windows straddling the observed/future boundary.",
+            "The predictor component is kept frozen and evaluated with single-mask calls only.",
         ]
         return candidate_scores, int(masked_blocks[0].hidden_size), notes
 

@@ -11,6 +11,8 @@ import torch
 
 
 BackendName = Literal["huggingface", "torch_hub"]
+DEFAULT_GENERIC_VJEPA_MODEL_ID = "facebook/vjepa2-vitl-fpc64-256"
+DEFAULT_SSV2_VJEPA_MODEL_ID = "facebook/vjepa2-vitl-fpc16-256-ssv2"
 
 
 def is_colab_runtime() -> bool:
@@ -37,7 +39,7 @@ def _default_dtype_name() -> str:
 class VJEPA2AdapterConfig:
     """Runtime configuration for the V-JEPA 2 adapter."""
 
-    model_id: str = "facebook/vjepa2-vitl-fpc64-256"
+    model_id: str = DEFAULT_GENERIC_VJEPA_MODEL_ID
     backend: BackendName = "huggingface"
     fallback_backend: BackendName = "torch_hub"
     fallback_model_name: str = "vjepa2_vit_large"
@@ -98,3 +100,41 @@ class VJEPA2AdapterConfig:
             "local_files_only": self.local_files_only,
             "is_colab_runtime": is_colab_runtime(),
         }
+
+
+def make_generic_vjepa_config(**overrides: Any) -> VJEPA2AdapterConfig:
+    """Create the default generic V-JEPA 2 config used for control benchmarks."""
+
+    clean_overrides = {key: value for key, value in overrides.items() if value is not None}
+    config = VJEPA2AdapterConfig(**clean_overrides)
+    return config.validate()
+
+
+def make_ssv2_vjepa_config(
+    base: VJEPA2AdapterConfig | None = None,
+    **overrides: Any,
+) -> VJEPA2AdapterConfig:
+    """Create the SSV2-aligned V-JEPA 2 config for the real-video branch."""
+
+    seed_config = base or VJEPA2AdapterConfig()
+    config_kwargs = dict(seed_config.as_dict())
+    config_kwargs.update(overrides)
+    config_kwargs["model_id"] = DEFAULT_SSV2_VJEPA_MODEL_ID
+    config_kwargs["target_frames"] = 16
+    config_kwargs["image_size"] = 256
+    config_kwargs.pop("is_colab_runtime", None)
+    config_kwargs.pop("dtype", None)
+    config = VJEPA2AdapterConfig(
+        model_id=str(config_kwargs.get("model_id", DEFAULT_SSV2_VJEPA_MODEL_ID)),
+        backend=config_kwargs.get("backend", seed_config.backend),
+        fallback_backend=config_kwargs.get("fallback_backend", seed_config.fallback_backend),
+        fallback_model_name=str(config_kwargs.get("fallback_model_name", seed_config.fallback_model_name)),
+        target_frames=int(config_kwargs.get("target_frames", 16)),
+        image_size=int(config_kwargs.get("image_size", 256)),
+        dtype=str(config_kwargs.get("dtype", seed_config.resolved_dtype_name())),
+        attn_implementation=str(config_kwargs.get("attn_implementation", seed_config.attn_implementation)),
+        cache_dir=str(config_kwargs.get("cache_dir", seed_config.cache_dir)),
+        device=config_kwargs.get("device", seed_config.device),
+        local_files_only=bool(config_kwargs.get("local_files_only", seed_config.local_files_only)),
+    )
+    return config.validate()
