@@ -5,6 +5,7 @@
 - Added a reusable V-JEPA 2 adapter layer under `src/jepa/models/`.
 - Added reusable preprocessing for grayscale-to-RGB conversion, spatial resizing, and temporal resampling.
 - Added V-JEPA-specific scoring utilities and a modular future scorer under `src/jepa/scoring/`.
+- Upgraded the primary V-JEPA scorer from pooled encoder-only overlap scoring to a predictor-aware masked future scorer that uses context/target masks and frozen V-JEPA predictor outputs.
 - Added a real-world dataset path under `src/jepa/data/real_video.py` with:
   - a generic clip-based adapter
   - a primary Something-Something V2 adapter using a standard parquet/video dataset path
@@ -76,7 +77,7 @@
 - Run the notebook on Colab GPU and confirm:
   - Something-Something V2 subset caching
   - or explicit UCF101 fallback if the Something-Something ingest path is blocked
-  - one real-video example with engineered V-JEPA scoring
+  - one real-video example with masked predictor-aware V-JEPA scoring
   - grounded LLM commentary or deterministic fallback
   - 5-example live agent loop artifacts
   - 128-example real-world evaluation artifacts

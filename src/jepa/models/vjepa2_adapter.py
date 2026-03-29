@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import torch
@@ -14,6 +15,28 @@ from .video_preprocessing import (
     preprocess_for_vjepa,
     summarize_preprocessed_clip,
 )
+
+
+@dataclass(slots=True)
+class VJEPA2MaskedPredictionResult:
+    """Structured masked-prediction outputs for future scoring."""
+
+    predicted_tokens: Tensor
+    target_tokens: Tensor
+    num_masks: int
+    mask_token_count: int
+    hidden_size: int
+    preprocessed_shape: tuple[int, ...]
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "predicted_tokens_shape": list(self.predicted_tokens.shape),
+            "target_tokens_shape": list(self.target_tokens.shape),
+            "num_masks": self.num_masks,
+            "mask_token_count": self.mask_token_count,
+            "hidden_size": self.hidden_size,
+            "preprocessed_shape": list(self.preprocessed_shape),
+        }
 
 
 class VJEPA2Adapter:
@@ -201,7 +224,27 @@ class VJEPA2Adapter:
                 moved[key] = value
         return moved
 
-    def _forward_embeddings(self, preprocessed: Tensor) -> Tensor:
+    def _move_masks_to_device(self, masks: Sequence[Tensor] | None) -> list[Tensor] | None:
+        if masks is None:
+            return None
+        moved: list[Tensor] = []
+        for mask in masks:
+            tensor = torch.as_tensor(mask, dtype=torch.long, device=self.device)
+            if tensor.ndim != 2:
+                raise ValueError(
+                    f"Expected mask tensor with shape (batch_size, num_token_indices); got {tuple(tensor.shape)}."
+                )
+            moved.append(tensor)
+        return moved
+
+    def _model_forward(
+        self,
+        preprocessed: Tensor,
+        *,
+        context_masks: Sequence[Tensor] | None = None,
+        target_masks: Sequence[Tensor] | None = None,
+        skip_predictor: bool = True,
+    ) -> Any:
         if not self.loaded:
             self.load()
 
@@ -209,18 +252,48 @@ class VJEPA2Adapter:
         inputs = self._processor_call(videos)
         inputs = self._move_inputs_to_device(inputs)
 
+        model_kwargs: Dict[str, Any] = dict(inputs)
+        context_masks = self._move_masks_to_device(context_masks)
+        target_masks = self._move_masks_to_device(target_masks)
+        if context_masks is not None:
+            model_kwargs["context_mask"] = context_masks
+        if target_masks is not None:
+            model_kwargs["target_mask"] = target_masks
+
         with torch.no_grad():
             try:
-                outputs = self.model(**inputs, skip_predictor=True)
+                outputs = self.model(**model_kwargs, skip_predictor=skip_predictor)
             except TypeError:
-                outputs = self.model(**inputs)
+                if skip_predictor:
+                    outputs = self.model(**model_kwargs)
+                else:
+                    outputs = self.model(**model_kwargs)
+        return outputs
 
+    def _forward_embeddings(self, preprocessed: Tensor) -> Tensor:
+        outputs = self._model_forward(preprocessed, skip_predictor=True)
         if not hasattr(outputs, "last_hidden_state"):
             raise RuntimeError("Model output does not expose `last_hidden_state` for feature extraction.")
 
         hidden = outputs.last_hidden_state
         pooled = hidden.mean(dim=1)
         return F.normalize(pooled, dim=-1)
+
+    def _reshape_masked_sequence(
+        self,
+        tensor: Tensor,
+        *,
+        batch_size: int,
+        num_masks: int,
+    ) -> Tensor:
+        if tensor.ndim != 3:
+            raise RuntimeError(f"Expected masked sequence tensor with 3 dims; got {tuple(tensor.shape)}.")
+        if int(tensor.shape[0]) != int(batch_size * num_masks):
+            raise RuntimeError(
+                "Masked sequence batch dimension does not match batch_size * num_masks. "
+                f"Got {tuple(tensor.shape)}, batch_size={batch_size}, num_masks={num_masks}."
+            )
+        return tensor.view(num_masks, batch_size, tensor.shape[1], tensor.shape[2]).transpose(0, 1).contiguous()
 
     def encode_batch(self, clips: Tensor | Any, *, batch_size: int = 4) -> Tensor:
         batch = ensure_video_batch(clips)
@@ -249,12 +322,101 @@ class VJEPA2Adapter:
     def encode_video(self, clip: Tensor | Any) -> Tensor:
         return self.encode_batch(clip, batch_size=1)[0]
 
+    def describe_token_layout(self) -> Dict[str, int]:
+        if not self.loaded:
+            self.load()
+        model_config = getattr(self.model, "config", None)
+        patch_size = int(getattr(model_config, "patch_size", 16))
+        tubelet_size = int(getattr(model_config, "tubelet_size", 2))
+        frames = int(self.config.target_frames)
+        image_size = int(self.config.image_size)
+        temporal_tokens = max(1, frames // max(tubelet_size, 1))
+        spatial_tokens = max(1, (image_size // max(patch_size, 1)) ** 2)
+        return {
+            "patch_size": patch_size,
+            "tubelet_size": tubelet_size,
+            "frames": frames,
+            "image_size": image_size,
+            "temporal_tokens": temporal_tokens,
+            "spatial_tokens_per_temporal_step": spatial_tokens,
+            "sequence_length": temporal_tokens * spatial_tokens,
+        }
+
+    def predict_masked_tokens(
+        self,
+        clips: Tensor | Any,
+        *,
+        context_masks: Sequence[Tensor],
+        target_masks: Sequence[Tensor],
+        batch_size: int = 4,
+    ) -> VJEPA2MaskedPredictionResult:
+        if not context_masks or not target_masks:
+            raise ValueError("context_masks and target_masks must both be non-empty.")
+        if len(context_masks) != len(target_masks):
+            raise ValueError("context_masks and target_masks must have the same number of mask groups.")
+        if batch_size < 1:
+            raise ValueError("batch_size must be at least 1.")
+
+        batch = ensure_video_batch(clips)
+        preprocessed = self.preprocess(batch)
+        num_masks = len(target_masks)
+
+        predicted_chunks: list[Tensor] = []
+        target_chunks: list[Tensor] = []
+        start = 0
+        current_batch_size = min(batch_size, int(preprocessed.shape[0]))
+        while start < int(preprocessed.shape[0]):
+            end = min(start + current_batch_size, int(preprocessed.shape[0]))
+            mini = preprocessed[start:end]
+            mini_context_masks = [torch.as_tensor(mask[start:end], dtype=torch.long) for mask in context_masks]
+            mini_target_masks = [torch.as_tensor(mask[start:end], dtype=torch.long) for mask in target_masks]
+
+            try:
+                outputs = self._model_forward(
+                    mini,
+                    context_masks=mini_context_masks,
+                    target_masks=mini_target_masks,
+                    skip_predictor=False,
+                )
+                predictor_output = getattr(outputs, "predictor_output", None)
+                if predictor_output is None:
+                    raise RuntimeError("Model output did not include predictor_output.")
+                predicted = getattr(predictor_output, "last_hidden_state", None)
+                target = getattr(predictor_output, "target_hidden_state", None)
+                if predicted is None or target is None:
+                    raise RuntimeError(
+                        "Predictor output must expose both last_hidden_state and target_hidden_state."
+                    )
+                mini_batch_size = int(end - start)
+                predicted = self._reshape_masked_sequence(predicted, batch_size=mini_batch_size, num_masks=num_masks)
+                target = self._reshape_masked_sequence(target, batch_size=mini_batch_size, num_masks=num_masks)
+                predicted_chunks.append(F.normalize(predicted, dim=-1))
+                target_chunks.append(F.normalize(target, dim=-1))
+                start = end
+            except RuntimeError as exc:
+                if "out of memory" not in str(exc).lower() or current_batch_size == 1:
+                    raise
+                if self.device.type == "cuda":
+                    torch.cuda.empty_cache()
+                current_batch_size = max(1, current_batch_size // 2)
+
+        predicted_tokens = torch.cat(predicted_chunks, dim=0)
+        target_tokens = torch.cat(target_chunks, dim=0)
+        return VJEPA2MaskedPredictionResult(
+            predicted_tokens=predicted_tokens,
+            target_tokens=target_tokens,
+            num_masks=num_masks,
+            mask_token_count=int(predicted_tokens.shape[2]),
+            hidden_size=int(predicted_tokens.shape[-1]),
+            preprocessed_shape=tuple(int(dim) for dim in preprocessed.shape),
+        )
+
     def score_future_candidates(
         self,
         observed_clip: Tensor | Any,
         candidate_futures: Tensor | Any,
         *,
-        scoring_variant: str = "overlap_transition",
+        scoring_variant: str = "masked_future_prediction",
         candidate_metadata: Optional[Sequence[Mapping[str, Any]]] = None,
     ) -> Any:
         from jepa.scoring.vjepa_future_scorer import VJEPAFutureScorer
@@ -269,7 +431,7 @@ class VJEPA2Adapter:
 
     def describe_runtime(self) -> Dict[str, Any]:
         model_config = getattr(self.model, "config", None)
-        return {
+        runtime = {
             "loaded": self.loaded,
             "backend_used": self.backend_used,
             "model_id": self.config.model_id,
@@ -282,5 +444,10 @@ class VJEPA2Adapter:
             "processor_class": type(self.processor).__name__ if self.processor is not None else None,
             "frames_per_clip": getattr(model_config, "frames_per_clip", None),
             "crop_size": getattr(model_config, "crop_size", None),
+            "patch_size": getattr(model_config, "patch_size", None),
+            "tubelet_size": getattr(model_config, "tubelet_size", None),
             "last_load_errors": dict(self.last_load_errors),
         }
+        if self.loaded:
+            runtime["token_layout"] = self.describe_token_layout()
+        return runtime

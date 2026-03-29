@@ -11,11 +11,12 @@ from .video_preprocessing import (
     temporal_resample_batch,
     temporal_resample_indices,
 )
-from .vjepa2_adapter import VJEPA2Adapter
+from .vjepa2_adapter import VJEPA2Adapter, VJEPA2MaskedPredictionResult
 
 __all__ = [
     "VJEPA2Adapter",
     "VJEPA2AdapterConfig",
+    "VJEPA2MaskedPredictionResult",
     "clip_to_processor_videos",
     "convert_grayscale_to_rgb",
     "ensure_video_batch",

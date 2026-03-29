@@ -109,13 +109,14 @@ class VJEPAFutureScoreBundle:
 class VJEPAFutureScorer:
     """Score candidate futures with a V-JEPA 2 encoder backbone."""
 
-    def __init__(self, adapter: Optional[Any] = None, *, scoring_variant: str = "overlap_transition") -> None:
+    def __init__(self, adapter: Optional[Any] = None, *, scoring_variant: str = "masked_future_prediction") -> None:
         if adapter is None:
             from jepa.models import VJEPA2Adapter
 
             adapter = VJEPA2Adapter()
         self.adapter = adapter
         self.scoring_variant = scoring_variant
+        self._predictor_mask_cache: Dict[Tuple[int, int, int, int], tuple[Tensor, List[Tensor], int]] = {}
 
     def score_context_future(
         self,
@@ -165,21 +166,43 @@ class VJEPAFutureScorer:
             raise ValueError("At least one candidate future is required.")
 
         variant = scoring_variant or self.scoring_variant
-        if variant not in {"overlap_transition", "prefix_future_cosine"}:
+        effective_variant = variant
+        if variant not in {"masked_future_prediction", "overlap_transition", "prefix_future_cosine"}:
             raise ValueError(f"Unsupported V-JEPA scoring variant: {variant}")
 
-        if variant == "prefix_future_cosine":
+        if variant == "masked_future_prediction":
+            try:
+                candidate_scores, embedding_dim, extra_notes = self._score_masked_future_prediction(
+                    observed_tensor,
+                    candidates_tensor,
+                    candidate_metadata=candidate_metadata,
+                )
+            except Exception as exc:
+                effective_variant = "overlap_transition"
+                candidate_scores, embedding_dim = self._score_overlap_transition(
+                    observed_tensor,
+                    candidates_tensor,
+                    candidate_metadata=candidate_metadata,
+                )
+                extra_notes = [
+                    "Masked future prediction was requested but unavailable in this runtime; "
+                    "the scorer fell back to overlap_transition.",
+                    f"Masked scorer error: {type(exc).__name__}: {exc}",
+                ]
+        elif variant == "prefix_future_cosine":
             candidate_scores, embedding_dim = self._score_prefix_future_cosine(
                 observed_tensor,
                 candidates_tensor,
                 candidate_metadata=candidate_metadata,
             )
+            extra_notes = []
         else:
             candidate_scores, embedding_dim = self._score_overlap_transition(
                 observed_tensor,
                 candidates_tensor,
                 candidate_metadata=candidate_metadata,
             )
+            extra_notes = []
 
         scores_tensor = torch.tensor([item.score for item in candidate_scores], dtype=torch.float32)
         probabilities = softmax_normalize(scores_tensor)
@@ -200,10 +223,11 @@ class VJEPAFutureScorer:
             "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
             "Single-channel clips are converted to RGB inside preprocessing when needed.",
         ]
+        notes.extend(extra_notes)
 
         return VJEPAFutureScoreBundle(
-            evaluator_name=f"vjepa2_{variant}",
-            scoring_variant=variant,
+            evaluator_name=f"vjepa2_{effective_variant}",
+            scoring_variant=effective_variant,
             model_id=str(runtime.get("model_id") or getattr(self.adapter.config, "model_id", "unknown")),
             backend_used=str(runtime.get("backend_used") or getattr(self.adapter, "backend_used", "unknown")),
             selected_index=selected_index,
@@ -215,6 +239,170 @@ class VJEPAFutureScorer:
             embedding_dim=embedding_dim,
             notes=notes,
         )
+
+    @staticmethod
+    def _temporal_range_to_token_indices(
+        *,
+        start: int,
+        stop: int,
+        spatial_tokens_per_step: int,
+    ) -> Tensor:
+        temporal = torch.arange(start, stop, dtype=torch.long)
+        if temporal.numel() == 0:
+            raise ValueError("Temporal token range must contain at least one step.")
+        base = temporal.unsqueeze(1) * int(spatial_tokens_per_step)
+        spatial = torch.arange(int(spatial_tokens_per_step), dtype=torch.long).unsqueeze(0)
+        return (base + spatial).reshape(-1)
+
+    def _build_predictor_masks(
+        self,
+        *,
+        batch_size: int,
+        observed_length: int,
+        future_length: int,
+    ) -> tuple[list[Tensor], list[Tensor], int]:
+        layout = self.adapter.describe_token_layout()
+        total_temporal_tokens = int(layout["temporal_tokens"])
+        spatial_tokens = int(layout["spatial_tokens_per_temporal_step"])
+        cache_key = (
+            int(total_temporal_tokens),
+            int(spatial_tokens),
+            int(observed_length),
+            int(future_length),
+        )
+        cached = self._predictor_mask_cache.get(cache_key)
+        if cached is None:
+            observed_fraction = float(observed_length) / float(max(observed_length + future_length, 1))
+            context_stop = int(round(total_temporal_tokens * observed_fraction))
+            context_stop = max(1, min(total_temporal_tokens - 1, context_stop))
+            future_temporal_tokens = total_temporal_tokens - context_stop
+
+            if future_temporal_tokens >= 4 and future_temporal_tokens % 4 == 0:
+                block_count = 4
+                block_size = future_temporal_tokens // 4
+            elif future_temporal_tokens >= 2 and future_temporal_tokens % 2 == 0:
+                block_count = 2
+                block_size = future_temporal_tokens // 2
+            else:
+                block_count = 1
+                block_size = future_temporal_tokens
+
+            target_ranges = [
+                (context_stop + block_index * block_size, context_stop + (block_index + 1) * block_size)
+                for block_index in range(block_count)
+            ]
+            context_indices = self._temporal_range_to_token_indices(
+                start=0,
+                stop=context_stop,
+                spatial_tokens_per_step=spatial_tokens,
+            )
+            target_index_groups = [
+                self._temporal_range_to_token_indices(
+                    start=start,
+                    stop=stop,
+                    spatial_tokens_per_step=spatial_tokens,
+                )
+                for start, stop in target_ranges
+            ]
+            cached = (context_indices, target_index_groups, block_count)
+            self._predictor_mask_cache[cache_key] = cached
+
+        context_indices, target_index_groups, block_count = cached
+        context_masks = [context_indices.unsqueeze(0).repeat(batch_size, 1) for _ in target_index_groups]
+        target_masks = [
+            target_indices.unsqueeze(0).repeat(batch_size, 1)
+            for target_indices in target_index_groups
+        ]
+        return context_masks, target_masks, block_count
+
+    def _score_masked_future_prediction(
+        self,
+        observed: Tensor,
+        candidates: Tensor,
+        *,
+        candidate_metadata: Optional[Sequence[Mapping[str, Any]]],
+    ) -> tuple[List[VJEPAFutureCandidateScore], int, list[str]]:
+        combined_clips = torch.stack([torch.cat([observed, candidate], dim=0) for candidate in candidates], dim=0)
+        context_masks, target_masks, block_count = self._build_predictor_masks(
+            batch_size=int(combined_clips.shape[0]),
+            observed_length=int(observed.shape[0]),
+            future_length=int(candidates.shape[1]),
+        )
+        masked = self.adapter.predict_masked_tokens(
+            combined_clips,
+            context_masks=context_masks,
+            target_masks=target_masks,
+            batch_size=2,
+        )
+
+        token_aligned = cosine_similarity(masked.predicted_tokens, masked.target_tokens)
+        block_token_alignment = token_aligned.mean(dim=2)
+        predicted = masked.predicted_tokens.mean(dim=2)
+        target = masked.target_tokens.mean(dim=2)
+        aligned = cosine_similarity(predicted, target)
+
+        if block_count >= 2:
+            reversed_target = torch.flip(target, dims=[1])
+            reversed_alignment = cosine_similarity(predicted, reversed_target)
+            order_margin_raw = block_token_alignment.mean(dim=1) - reversed_alignment.mean(dim=1)
+            order_score = (torch.clamp(order_margin_raw, min=-1.0, max=1.0) + 1.0) / 2.0
+            boundary_alignment = block_token_alignment[:, 0]
+            future_alignment = block_token_alignment.mean(dim=1)
+            worst_block_alignment = block_token_alignment.min(dim=1).values
+            predicted_delta = predicted[:, 1:] - predicted[:, :-1]
+            target_delta = target[:, 1:] - target[:, :-1]
+            transition_consistency = (cosine_similarity(predicted_delta, target_delta).mean(dim=1) + 1.0) / 2.0
+            total_scores = (
+                0.30 * boundary_alignment
+                + 0.25 * future_alignment
+                + 0.25 * order_score
+                + 0.10 * worst_block_alignment
+                + 0.10 * transition_consistency
+            )
+        else:
+            order_margin_raw = torch.zeros_like(aligned[:, 0])
+            order_score = torch.full_like(aligned[:, 0], 0.5)
+            boundary_alignment = block_token_alignment[:, 0]
+            future_alignment = block_token_alignment[:, 0]
+            worst_block_alignment = block_token_alignment[:, 0]
+            transition_consistency = aligned[:, 0]
+            total_scores = aligned[:, 0]
+
+        candidate_scores: List[VJEPAFutureCandidateScore] = []
+        for index in range(candidates.shape[0]):
+            generation_type = _candidate_generation_type(candidate_metadata, index)
+            metadata = _candidate_details(candidate_metadata, index)
+            components = {
+                "predictor_boundary_alignment": float(boundary_alignment[index].item()),
+                "predictor_future_alignment": float(future_alignment[index].item()),
+                "predictor_worst_block_alignment": float(worst_block_alignment[index].item()),
+                "predictor_order_score": float(order_score[index].item()),
+                "predictor_transition_consistency": float(transition_consistency[index].item()),
+                "predictor_order_margin_raw": float(order_margin_raw[index].item()),
+                "predictor_block_token_alignment_mean": float(block_token_alignment[index].mean().item()),
+                "predictor_aligned_mean": float(aligned[index].mean().item()),
+            }
+            candidate_scores.append(
+                VJEPAFutureCandidateScore(
+                    candidate_index=index,
+                    score=float(total_scores[index].item()),
+                    probability=0.0,
+                    rank=-1,
+                    components=components,
+                    generation_type=generation_type,
+                    rationale=self._build_rationale(components, generation_type, "masked_future_prediction"),
+                    source_index=metadata.get("source_index"),
+                    is_true=metadata.get("is_true"),
+                    details=metadata.get("details", {}),
+                )
+            )
+
+        notes = [
+            "This scorer uses V-JEPA predictor outputs with context and target masks rather than encoder-only pooling.",
+            f"Future prediction is scored over {block_count} equal temporal block(s) to retain order sensitivity.",
+            "Predictor masks are cached by token layout and observed/future split so repeated notebook runs avoid rebuilding them.",
+        ]
+        return candidate_scores, int(masked.hidden_size), notes
 
     def _score_prefix_future_cosine(
         self,

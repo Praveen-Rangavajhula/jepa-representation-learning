@@ -22,7 +22,9 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 ## Scoring design
 
 - The first V-JEPA scorer is representation-based and engineered, not learned.
-- The default scoring variant is `overlap_transition`, which scores three overlapping 8-frame segments from each 16-frame observed+candidate clip.
+- The default scoring variant is `masked_future_prediction`, which uses V-JEPA predictor outputs together with context/target masks to score whether the candidate future matches the latent future predicted from the observed prefix.
+- The masked scorer uses equal future mask groups when possible so temporal order mistakes such as shuffled futures are penalized more directly than with pooled clip similarity alone.
+- `overlap_transition` remains available as an encoder-only fallback/baseline scorer that compares three overlapping 8-frame segments from each 16-frame observed+candidate clip.
 - The lighter `prefix_future_cosine` method is implemented as an ablation, not the default evaluator.
 - The heuristic motion-based evaluator is retained only as a baseline and fallback.
 - The next modeling step keeps V-JEPA frozen and adds a small predictor head that maps observed-prefix latents to expected future latents.
