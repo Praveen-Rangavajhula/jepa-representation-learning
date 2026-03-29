@@ -69,7 +69,7 @@ class FrozenFeatureRerankerConfig:
     seed: int = 23
     device: Optional[str] = None
     cache_dir: Optional[str] = None
-    cache_version: str = "frozen_feature_reranker_v1"
+    cache_version: str = "frozen_feature_reranker_v2"
 
     def validate(self) -> "FrozenFeatureRerankerConfig":
         if self.model_kind not in {"linear", "mlp"}:
@@ -584,59 +584,152 @@ class FrozenFeatureRerankerScorer:
         candidate_metadata: Optional[Sequence[Mapping[str, Any]]],
     ) -> List[Dict[str, float]]:
         candidate_indices = sorted(rows_by_evaluator["boundary_hybrid"].keys())
+        active_evaluator_names = [
+            evaluator_name
+            for evaluator_name in rows_by_evaluator
+            if evaluator_name != "heuristic" or self.config.include_heuristic_features
+        ]
         top_rows = {
-            evaluator_name: max(row_map.values(), key=lambda item: float(item["score"]))
-            for evaluator_name, row_map in rows_by_evaluator.items()
+            evaluator_name: max(rows_by_evaluator[evaluator_name].values(), key=lambda item: float(item["score"]))
+            for evaluator_name in active_evaluator_names
         }
+        evaluator_stats: Dict[str, Dict[str, float | None]] = {}
+        for evaluator_name in active_evaluator_names:
+            ordered_rows = [rows_by_evaluator[evaluator_name][candidate_index] for candidate_index in candidate_indices]
+            score_values = torch.tensor([float(item["score"]) for item in ordered_rows], dtype=torch.float32)
+            sorted_scores, _ = torch.sort(score_values, descending=True)
+            probability_values = [item.get("probability") for item in ordered_rows]
+            probability_stats_available = all(value is not None for value in probability_values)
+            probability_tensor = (
+                torch.tensor([float(value) for value in probability_values], dtype=torch.float32)
+                if probability_stats_available
+                else None
+            )
+            evaluator_stats[evaluator_name] = {
+                "score_mean": float(score_values.mean().item()),
+                "score_std": float(score_values.std(unbiased=False).item()) if score_values.numel() > 1 else 0.0,
+                "top_score": float(sorted_scores[0].item()),
+                "runner_up_score": float(sorted_scores[1].item()) if sorted_scores.numel() > 1 else float(sorted_scores[0].item()),
+                "score_range": float((sorted_scores[0] - sorted_scores[-1]).item()) if sorted_scores.numel() > 1 else 0.0,
+                "probability_mean": (
+                    float(probability_tensor.mean().item()) if probability_tensor is not None else None
+                ),
+                "probability_std": (
+                    float(probability_tensor.std(unbiased=False).item()) if probability_tensor is not None and probability_tensor.numel() > 1 else 0.0
+                ),
+                "top_probability": (
+                    float(torch.max(probability_tensor).item()) if probability_tensor is not None else None
+                ),
+                "runner_up_probability": (
+                    float(torch.sort(probability_tensor, descending=True).values[1].item())
+                    if probability_tensor is not None and probability_tensor.numel() > 1
+                    else (float(torch.max(probability_tensor).item()) if probability_tensor is not None else None)
+                ),
+            }
         feature_maps: List[Dict[str, float]] = []
 
         for candidate_index in candidate_indices:
             feature_map: Dict[str, float] = {}
             ranks: Dict[str, float] = {}
+            scores: Dict[str, float] = {}
+            probabilities: Dict[str, float] = {}
             top_indicators: Dict[str, float] = {}
-            for evaluator_name, row_map in rows_by_evaluator.items():
+            for evaluator_name in active_evaluator_names:
+                row_map = rows_by_evaluator[evaluator_name]
                 row = row_map[candidate_index]
                 ranks[evaluator_name] = float(row["rank"])
+                scores[evaluator_name] = float(row["score"])
                 top_row = top_rows[evaluator_name]
                 top_indicators[evaluator_name] = 1.0 if int(row["rank"]) == 1 else 0.0
-
-                if evaluator_name == "heuristic" and not self.config.include_heuristic_features:
-                    continue
+                stats = evaluator_stats[evaluator_name]
+                candidate_count = max(len(candidate_indices), 1)
 
                 feature_map[f"{evaluator_name}_score"] = float(row["score"])
                 feature_map[f"{evaluator_name}_rank"] = float(row["rank"])
                 feature_map[f"{evaluator_name}_inverse_rank"] = 1.0 / max(float(row["rank"]), 1.0)
+                feature_map[f"{evaluator_name}_normalized_rank"] = (
+                    1.0 - ((float(row["rank"]) - 1.0) / max(float(candidate_count - 1), 1.0))
+                )
                 feature_map[f"{evaluator_name}_is_top"] = top_indicators[evaluator_name]
                 feature_map[f"{evaluator_name}_score_gap_from_top"] = float(top_row["score"]) - float(row["score"])
+                feature_map[f"{evaluator_name}_score_centered"] = float(row["score"]) - float(stats["score_mean"])
+                feature_map[f"{evaluator_name}_score_z"] = (
+                    (float(row["score"]) - float(stats["score_mean"])) / max(float(stats["score_std"] or 0.0), 1e-6)
+                )
+                feature_map[f"{evaluator_name}_score_gap_from_runner_up"] = float(row["score"]) - float(
+                    stats["runner_up_score"]
+                )
+                feature_map[f"{evaluator_name}_score_fraction_of_range"] = (
+                    (float(row["score"]) - (float(stats["top_score"]) - float(stats["score_range"])))
+                    / max(float(stats["score_range"] or 0.0), 1e-6)
+                )
                 if row.get("probability") is not None and top_row.get("probability") is not None:
+                    probability_value = float(row["probability"])
+                    probabilities[evaluator_name] = probability_value
                     feature_map[f"{evaluator_name}_probability"] = float(row["probability"])
                     feature_map[f"{evaluator_name}_prob_gap_from_top"] = float(top_row["probability"]) - float(
                         row["probability"]
                     )
+                    probability_mean = float(stats["probability_mean"] or 0.0)
+                    probability_std = float(stats["probability_std"] or 0.0)
+                    runner_up_probability = float(stats["runner_up_probability"] or 0.0)
+                    feature_map[f"{evaluator_name}_prob_centered"] = probability_value - probability_mean
+                    feature_map[f"{evaluator_name}_prob_z"] = (
+                        (probability_value - probability_mean) / max(probability_std, 1e-6)
+                    )
+                    feature_map[f"{evaluator_name}_prob_gap_from_runner_up"] = probability_value - runner_up_probability
                 for component_name, component_value in sorted((row.get("components") or {}).items()):
                     feature_map[f"{evaluator_name}_component_{_safe_key(component_name)}"] = float(component_value)
 
-            feature_map["rank_gap_heuristic_masked_only"] = abs(ranks["heuristic"] - ranks["masked_only"])
-            feature_map["rank_gap_heuristic_boundary_hybrid"] = abs(
-                ranks["heuristic"] - ranks["boundary_hybrid"]
-            )
-            feature_map["rank_gap_masked_only_boundary_hybrid"] = abs(
-                ranks["masked_only"] - ranks["boundary_hybrid"]
-            )
-            feature_map["rank_match_heuristic_masked_only"] = 1.0 if ranks["heuristic"] == ranks["masked_only"] else 0.0
-            feature_map["rank_match_heuristic_boundary_hybrid"] = (
-                1.0 if ranks["heuristic"] == ranks["boundary_hybrid"] else 0.0
-            )
-            feature_map["rank_match_masked_only_boundary_hybrid"] = (
-                1.0 if ranks["masked_only"] == ranks["boundary_hybrid"] else 0.0
-            )
-            feature_map["all_evaluators_top_agree"] = (
-                1.0
-                if top_indicators["heuristic"] == 1.0
-                and top_indicators["masked_only"] == 1.0
-                and top_indicators["boundary_hybrid"] == 1.0
-                else 0.0
-            )
+            pair_names = [
+                ("heuristic", "masked_only"),
+                ("heuristic", "boundary_hybrid"),
+                ("masked_only", "boundary_hybrid"),
+            ]
+            for left_name, right_name in pair_names:
+                if left_name not in ranks or right_name not in ranks:
+                    continue
+                feature_map[f"rank_gap_{left_name}_{right_name}"] = abs(ranks[left_name] - ranks[right_name])
+                feature_map[f"rank_match_{left_name}_{right_name}"] = 1.0 if ranks[left_name] == ranks[right_name] else 0.0
+                feature_map[f"score_diff_{left_name}_{right_name}"] = scores[left_name] - scores[right_name]
+                feature_map[f"score_abs_diff_{left_name}_{right_name}"] = abs(scores[left_name] - scores[right_name])
+                feature_map[f"score_product_{left_name}_{right_name}"] = scores[left_name] * scores[right_name]
+                feature_map[f"top_pair_agree_{left_name}_{right_name}"] = (
+                    1.0 if top_indicators[left_name] == 1.0 and top_indicators[right_name] == 1.0 else 0.0
+                )
+                if left_name in probabilities and right_name in probabilities:
+                    feature_map[f"prob_diff_{left_name}_{right_name}"] = (
+                        probabilities[left_name] - probabilities[right_name]
+                    )
+                    feature_map[f"prob_abs_diff_{left_name}_{right_name}"] = abs(
+                        probabilities[left_name] - probabilities[right_name]
+                    )
+                    feature_map[f"prob_product_{left_name}_{right_name}"] = (
+                        probabilities[left_name] * probabilities[right_name]
+                    )
+
+            score_values = list(scores.values())
+            rank_values = list(ranks.values())
+            top_votes = sum(top_indicators.values())
+            feature_map["score_mean_across_evaluators"] = sum(score_values) / max(len(score_values), 1)
+            feature_map["score_max_across_evaluators"] = max(score_values)
+            feature_map["score_min_across_evaluators"] = min(score_values)
+            feature_map["score_range_across_evaluators"] = max(score_values) - min(score_values)
+            feature_map["rank_mean_across_evaluators"] = sum(rank_values) / max(len(rank_values), 1)
+            feature_map["best_rank_across_evaluators"] = min(rank_values)
+            feature_map["worst_rank_across_evaluators"] = max(rank_values)
+            feature_map["top_vote_count"] = top_votes
+            feature_map["top_vote_fraction"] = top_votes / max(float(len(active_evaluator_names)), 1.0)
+            feature_map["all_evaluators_top_agree"] = 1.0 if top_votes == float(len(active_evaluator_names)) else 0.0
+            if probabilities:
+                probability_values = list(probabilities.values())
+                feature_map["probability_mean_across_evaluators"] = sum(probability_values) / max(
+                    len(probability_values),
+                    1,
+                )
+                feature_map["probability_max_across_evaluators"] = max(probability_values)
+                feature_map["probability_min_across_evaluators"] = min(probability_values)
+                feature_map["probability_range_across_evaluators"] = max(probability_values) - min(probability_values)
 
             if self.config.include_candidate_type_indicators:
                 feature_map.update(self._optional_candidate_source_features(candidate_metadata, candidate_index))
