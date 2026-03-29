@@ -116,7 +116,7 @@ class VJEPAFutureScorer:
             adapter = VJEPA2Adapter()
         self.adapter = adapter
         self.scoring_variant = scoring_variant
-        self._predictor_mask_cache: Dict[Tuple[int, int, int, int], tuple[Tensor, List[Tensor], int]] = {}
+        self._predictor_mask_cache: Dict[Tuple[int, int, int, int], tuple[List[Tensor], List[Tensor], int]] = {}
 
     def score_context_future(
         self,
@@ -179,16 +179,28 @@ class VJEPAFutureScorer:
                 )
             except Exception as exc:
                 effective_variant = "overlap_transition"
-                candidate_scores, embedding_dim = self._score_overlap_transition(
-                    observed_tensor,
-                    candidates_tensor,
-                    candidate_metadata=candidate_metadata,
-                )
-                extra_notes = [
-                    "Masked future prediction was requested but unavailable in this runtime; "
-                    "the scorer fell back to overlap_transition.",
-                    f"Masked scorer error: {type(exc).__name__}: {exc}",
-                ]
+                if getattr(self.adapter, "device", None) is not None and getattr(self.adapter.device, "type", "") == "cuda":
+                    try:
+                        torch.cuda.empty_cache()
+                    except Exception:
+                        pass
+                try:
+                    candidate_scores, embedding_dim = self._score_overlap_transition(
+                        observed_tensor,
+                        candidates_tensor,
+                        candidate_metadata=candidate_metadata,
+                    )
+                    extra_notes = [
+                        "Masked future prediction was requested but unavailable in this runtime; "
+                        "the scorer fell back to overlap_transition.",
+                        f"Masked scorer error: {type(exc).__name__}: {exc}",
+                    ]
+                except Exception as fallback_exc:
+                    raise RuntimeError(
+                        "The masked future prediction scorer failed, and the encoder-only overlap fallback also failed "
+                        "in the same runtime. This usually means the first masked attempt left the CUDA context in a bad "
+                        "state. Restart the Colab runtime and rerun from the top."
+                    ) from fallback_exc
         elif variant == "prefix_future_cosine":
             candidate_scores, embedding_dim = self._score_prefix_future_cosine(
                 observed_tensor,
@@ -277,25 +289,38 @@ class VJEPAFutureScorer:
             context_stop = max(1, min(total_temporal_tokens - 1, context_stop))
             future_temporal_tokens = total_temporal_tokens - context_stop
 
-            if future_temporal_tokens >= 4 and future_temporal_tokens % 4 == 0:
+            usable_temporal_tokens = min(context_stop, future_temporal_tokens)
+            if usable_temporal_tokens >= 4 and usable_temporal_tokens % 4 == 0:
                 block_count = 4
-                block_size = future_temporal_tokens // 4
-            elif future_temporal_tokens >= 2 and future_temporal_tokens % 2 == 0:
+                block_size = usable_temporal_tokens // 4
+            elif usable_temporal_tokens >= 2 and usable_temporal_tokens % 2 == 0:
                 block_count = 2
-                block_size = future_temporal_tokens // 2
+                block_size = usable_temporal_tokens // 2
             else:
                 block_count = 1
-                block_size = future_temporal_tokens
+                block_size = usable_temporal_tokens
 
+            if block_size < 1:
+                raise ValueError("Predictor mask block size must be positive.")
+
+            # Keep context and target blocks equal-sized and anchored near the observed/future boundary.
+            context_start = max(0, context_stop - (block_count * block_size))
+            context_ranges = [
+                (context_start + block_index * block_size, context_start + (block_index + 1) * block_size)
+                for block_index in range(block_count)
+            ]
             target_ranges = [
                 (context_stop + block_index * block_size, context_stop + (block_index + 1) * block_size)
                 for block_index in range(block_count)
             ]
-            context_indices = self._temporal_range_to_token_indices(
-                start=0,
-                stop=context_stop,
-                spatial_tokens_per_step=spatial_tokens,
-            )
+            context_index_groups = [
+                self._temporal_range_to_token_indices(
+                    start=start,
+                    stop=stop,
+                    spatial_tokens_per_step=spatial_tokens,
+                )
+                for start, stop in context_ranges
+            ]
             target_index_groups = [
                 self._temporal_range_to_token_indices(
                     start=start,
@@ -304,11 +329,14 @@ class VJEPAFutureScorer:
                 )
                 for start, stop in target_ranges
             ]
-            cached = (context_indices, target_index_groups, block_count)
+            cached = (context_index_groups, target_index_groups, block_count)
             self._predictor_mask_cache[cache_key] = cached
 
-        context_indices, target_index_groups, block_count = cached
-        context_masks = [context_indices.unsqueeze(0).repeat(batch_size, 1) for _ in target_index_groups]
+        context_index_groups, target_index_groups, block_count = cached
+        context_masks = [
+            context_indices.unsqueeze(0).repeat(batch_size, 1)
+            for context_indices in context_index_groups
+        ]
         target_masks = [
             target_indices.unsqueeze(0).repeat(batch_size, 1)
             for target_indices in target_index_groups
@@ -400,6 +428,7 @@ class VJEPAFutureScorer:
         notes = [
             "This scorer uses V-JEPA predictor outputs with context and target masks rather than encoder-only pooling.",
             f"Future prediction is scored over {block_count} equal temporal block(s) to retain order sensitivity.",
+            "Context masks use equal-sized near-boundary observed blocks so predictor context and target groups stay shape-compatible.",
             "Predictor masks are cached by token layout and observed/future split so repeated notebook runs avoid rebuilding them.",
         ]
         return candidate_scores, int(masked.hidden_size), notes
