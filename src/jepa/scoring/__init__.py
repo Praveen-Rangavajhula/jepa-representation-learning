@@ -13,6 +13,12 @@ from .compatibility_metrics import (
     top1_confidence_margin,
     uncertainty_bucket,
 )
+from .frozen_feature_reranker import (
+    FrozenFeatureCache,
+    FrozenFeatureRerankerConfig,
+    FrozenFeatureRerankerScorer,
+    FrozenFeatureRerankerTrainingSummary,
+)
 from .latent_future_scorer import LatentFuturePredictorScorer
 from .vjepa_future_scorer import (
     VJEPAFutureCandidateScore,
@@ -22,6 +28,10 @@ from .vjepa_future_scorer import (
 
 __all__ = [
     "LatentFuturePredictorScorer",
+    "FrozenFeatureCache",
+    "FrozenFeatureRerankerConfig",
+    "FrozenFeatureRerankerScorer",
+    "FrozenFeatureRerankerTrainingSummary",
     "VJEPAFutureCandidateScore",
     "VJEPAFutureScoreBundle",
     "VJEPAFutureScorer",
