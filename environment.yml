@@ -20,5 +20,6 @@ dependencies:
   - notebook
   - ipykernel
   - pip:
+      - google-genai>=1.0,<2
       - torchcodec>=0.2,<1
       - openai>=1.0,<2

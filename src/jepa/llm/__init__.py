@@ -4,6 +4,7 @@ from .backends import (
     BackendStatus,
     CommentaryBackend,
     DeterministicCommentaryBackend,
+    GeminiCommentaryBackend,
     OpenAIResponsesCommentaryBackend,
     build_default_commentary_backend,
 )
@@ -27,6 +28,7 @@ __all__ = [
     "CommentaryGenerationResult",
     "CommentarySchemaError",
     "DeterministicCommentaryBackend",
+    "GeminiCommentaryBackend",
     "LLMCommentaryService",
     "OpenAIResponsesCommentaryBackend",
     "ValidatedCommentaryPayload",

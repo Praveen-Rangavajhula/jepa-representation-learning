@@ -16,7 +16,8 @@
   - notebook-visible commentary artifacts
 - Added a live LLM commentary path under `src/jepa/llm/` with:
   - a provider-agnostic backend interface
-  - an optional OpenAI Responses API backend
+  - a Gemini-first live backend that can read Colab secrets such as `google-api-key`
+  - a secondary OpenAI Responses API backend
   - strict JSON validation and candidate-index grounding checks
   - deterministic fallback when no live backend is available
 - Added a live agent demo helper under `src/jepa/tools/live_agent.py` that processes one example at a time and saves JSONL/Markdown transcripts.

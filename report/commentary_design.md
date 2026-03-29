@@ -40,6 +40,8 @@ The repo now supports both:
 - an LLM-ready prompt/context package
 - an optional live LLM path with deterministic fallback
 
+The default live backend is now Gemini through the Google GenAI SDK, with support for Colab secrets such as `google-api-key`. An OpenAI backend remains available as a secondary option.
+
 The live path prepares:
 
 - system instructions describing the grounding rules

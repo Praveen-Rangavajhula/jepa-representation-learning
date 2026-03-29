@@ -34,7 +34,9 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 - Commentary must be supported by the actual ranking summary, candidate score table, component breakdowns, confidence margins, confidence tiers, and optional baseline comparison.
 - A deterministic template-based commentary path is always available locally.
 - An LLM-ready commentary package is built from the same tensor-free evidence so a live language layer can be added without touching raw tensors.
-- A live OpenAI Responses API backend is optional and only used when credentials and the `openai` package are available; otherwise the system falls back to the deterministic commentary path.
+- A live Gemini backend is now the default when `GEMINI_API_KEY`, `GOOGLE_API_KEY`, or a Colab secret such as `google-api-key` is available.
+- An OpenAI Responses API backend remains supported as a secondary live option when OpenAI credentials are available.
+- If no live backend is available, the system falls back to the deterministic commentary path automatically.
 - Commentary should warn explicitly when confidence is low or when the heuristic baseline disagrees with the representation-based evaluator.
 
 ## Runtime behavior
@@ -42,6 +44,7 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 - The notebook is the primary execution surface.
 - The intended execution backend is a Colab-connected Jupyter kernel, including the PyCharm-to-Colab workflow.
 - Hugging Face model files are cached under `/content/.cache/huggingface` in Colab by default.
+- The default live-LLM path in Colab is Gemini via the Google GenAI SDK, and the backend will attempt to read Colab secrets such as `google-api-key` automatically.
 - Extra fallback dependencies such as `timm` and `einops` are not installed unless the torch-hub path is explicitly needed.
 
 ## Evaluation defaults
