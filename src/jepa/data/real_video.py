@@ -158,6 +158,9 @@ def _decode_torchcodec_video(video: Any, *, max_chunk_size: int = 64) -> Tensor:
         try:
             batch = video.get_frames_in_range(start, start + max_chunk_size, 1)
         except Exception as exc:  # pragma: no cover - backend-specific failure path
+            message = str(exc).lower()
+            if chunks and "no more frames left to decode" in message:
+                break
             raise RealVideoDataError(
                 "Failed to decode a video via the torchcodec/VideoDecoder path. "
                 "Verify that the dataset exposes a readable video object."
@@ -896,6 +899,216 @@ class RealVideoDatasetAdapter:
     def _load_source_records(self, split: str) -> List[RealVideoClipRecord]:
         raise NotImplementedError
 
+    def _template_targets_for_split(self, split: str) -> Dict[str, int]:
+        count = self.config.target_examples_for_split(split) // len(self.config.template_specs)
+        return {_normalize_template(spec.label_template): count for spec in self.config.template_specs}
+
+    def _record_from_row(self, row: Mapping[str, Any], *, split: str) -> RealVideoClipRecord:
+        label_template = str(
+            row.get(self.config.text_column)
+            or row.get("text")
+            or row.get("template")
+            or row.get("label")
+            or row.get("label_template")
+            or ""
+        )
+        if not label_template:
+            raise RealVideoDataError("Each source row must contain a text/label_template field.")
+        norm_template = _normalize_template(label_template)
+        spec = self.config.template_lookup.get(norm_template)
+        if spec is None:
+            raise RealVideoDataError(
+                f"Row does not match one of the configured real-video templates: {row!r}"
+            )
+
+        placeholders = _as_tuple(row.get(self.config.placeholders_column) or row.get("placeholders"))
+        video_id = str(
+            row.get(self.config.video_id_column)
+            or row.get("video_id")
+            or row.get("id")
+            or row.get("name")
+            or ""
+        )
+        if not video_id:
+            video_id = f"{split}_{abs(hash(json.dumps(_jsonable(row), sort_keys=True, ensure_ascii=False))) % (10**12)}"
+
+        description = str(row.get("description") or _format_description(spec.label_template, placeholders))
+        return RealVideoClipRecord(
+            video_id=video_id,
+            label_template=spec.label_template,
+            pair_group=spec.pair_group,
+            paired_template=spec.paired_template,
+            placeholders=placeholders,
+            description=description,
+            split=split,
+            raw_metadata=dict(row),
+            source_path=str(
+                row.get("video_path")
+                or row.get("path")
+                or row.get("file")
+                or row.get("source_path")
+                or ""
+            ),
+        )
+
+    def _materialize_source_record(
+        self,
+        record: RealVideoClipRecord,
+        row: Mapping[str, Any],
+    ) -> RealVideoClipRecord:
+        video_value = (
+            row.get(self.config.video_column)
+            or row.get("video")
+            or row.get("path")
+            or row.get("video_path")
+        )
+        if video_value is None and not record.source_path:
+            raise RealVideoDataError(
+                f"Row for video_id {record.video_id!r} did not provide a decodable video object or path."
+            )
+        clip = _decode_video_value(
+            video_value,
+            video_path=_ensure_path(record.source_path) if record.source_path else None,
+        )
+        clip = self._prepare_clip(clip)
+        return RealVideoClipRecord(
+            video_id=record.video_id,
+            label_template=record.label_template,
+            pair_group=record.pair_group,
+            paired_template=record.paired_template,
+            placeholders=record.placeholders,
+            description=record.description,
+            split=record.split,
+            raw_metadata=dict(row),
+            clip=clip,
+            source_path=record.source_path,
+        )
+
+    def _collect_records_from_dataset(
+        self,
+        dataset: Any,
+        *,
+        split: str,
+        label_feature: Any = None,
+    ) -> List[RealVideoClipRecord]:
+        template_targets = self._template_targets_for_split(split)
+        target_total = sum(template_targets.values())
+        collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
+        seen_ids: set[str] = set()
+        skipped_rows = 0
+        decode_failures = 0
+
+        for row_index, row in enumerate(dataset):
+            if row_index >= self.config.max_source_scan:
+                break
+            if label_feature is not None and hasattr(label_feature, "int2str"):
+                label_value = row.get(self.config.text_column)
+                if isinstance(label_value, (int, np.integer)):
+                    row = dict(row)
+                    row[self.config.text_column] = label_feature.int2str(int(label_value))
+            try:
+                record = self._record_from_row(row, split=split)
+            except RealVideoDataError:
+                skipped_rows += 1
+                continue
+            norm_template = _normalize_template(record.label_template)
+            if norm_template not in collected:
+                skipped_rows += 1
+                continue
+            if record.video_id in seen_ids:
+                skipped_rows += 1
+                continue
+            if len(collected[norm_template]) >= template_targets[norm_template]:
+                skipped_rows += 1
+                continue
+
+            try:
+                record = self._materialize_source_record(record, row)
+            except RealVideoDataError:
+                decode_failures += 1
+                continue
+
+            collected[norm_template].append(record)
+            seen_ids.add(record.video_id)
+
+            if all(len(items) >= template_targets[key] for key, items in collected.items()):
+                break
+
+        records = [record for items in collected.values() for record in items]
+        if len(records) < target_total:
+            available = len(records)
+            raise RealVideoDataError(
+                f"Collected only {available} video records for split {split!r}, but the requested subset "
+                f"requires {target_total}. Skipped {skipped_rows} non-matching/duplicate rows and "
+                f"{decode_failures} decode failures. Try increasing max_source_scan or using a larger split."
+            )
+        return records
+
+    def _load_records_from_rows(
+        self,
+        rows: Sequence[Mapping[str, Any]],
+        *,
+        split: str,
+        manifest_dir: Path,
+        source_split: Optional[str] = None,
+    ) -> List[RealVideoClipRecord]:
+        template_targets = self._template_targets_for_split(split)
+        target_total = sum(template_targets.values())
+        collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
+        effective_split = source_split or self.source_split_for_request(split)
+
+        for row in rows:
+            row_split = str(row.get("split") or effective_split)
+            if row_split != effective_split:
+                continue
+            try:
+                record = self._record_from_row(row, split=split)
+            except RealVideoDataError:
+                continue
+            norm_template = _normalize_template(record.label_template)
+            if norm_template not in collected:
+                continue
+            if len(collected[norm_template]) >= template_targets[norm_template]:
+                continue
+
+            clip = None
+            cache_path = row.get("cache_path") or row.get("clip_path")
+            source_path = row.get("source_path") or row.get("video_path") or row.get("path")
+            if cache_path:
+                cache_file = _resolve_path(manifest_dir, cache_path)
+                if cache_file.exists():
+                    clip = torch.load(cache_file, map_location="cpu")
+            if clip is None and source_path:
+                try:
+                    clip = self._prepare_clip(self._decode_clip(_resolve_path(manifest_dir, source_path), row))
+                except RealVideoDataError:
+                    continue
+
+            collected[norm_template].append(
+                RealVideoClipRecord(
+                    video_id=record.video_id,
+                    label_template=record.label_template,
+                    pair_group=record.pair_group,
+                    paired_template=record.paired_template,
+                    placeholders=record.placeholders,
+                    description=record.description,
+                    split=split,
+                    raw_metadata=dict(row),
+                    clip=clip,
+                    cache_path=str(manifest_dir / str(cache_path)) if cache_path else None,
+                    source_path=str(source_path) if source_path else None,
+                )
+            )
+            if all(len(items) >= template_targets[key] for key, items in collected.items()):
+                break
+
+        records = [record for items in collected.values() for record in items]
+        if len(records) < target_total:
+            raise RealVideoDataError(
+                f"Loaded only {len(records)} records from the manifest/cache rows, but {target_total} were required."
+            )
+        return records
+
 
 class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
     """Subset adapter for Something-Something-style datasets with label text and optional placeholders."""
@@ -936,7 +1149,6 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
                 self.config.dataset_name,
                 split=self.source_split_for_request(split),
                 streaming=self.config.streaming,
-                trust_remote_code=True,
             )
         except Exception as exc:  # pragma: no cover - dataset/network dependent
             raise RealVideoDataError(
@@ -951,44 +1163,7 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
                 label_feature = features.get(self.config.text_column)
         except Exception:
             label_feature = None
-
-        template_targets = self._template_targets_for_split(split)
-        target_total = sum(template_targets.values())
-        collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
-        seen_ids: set[str] = set()
-
-        for row_index, row in enumerate(dataset):
-            if row_index >= self.config.max_source_scan:
-                break
-            if label_feature is not None and hasattr(label_feature, "int2str"):
-                label_value = row.get(self.config.text_column)
-                if isinstance(label_value, (int, np.integer)):
-                    row = dict(row)
-                    row[self.config.text_column] = label_feature.int2str(int(label_value))
-            record = self._record_from_row(row, split=split)
-            norm_template = _normalize_template(record.label_template)
-            if norm_template not in collected:
-                continue
-            if record.video_id in seen_ids:
-                continue
-            if len(collected[norm_template]) >= template_targets[norm_template]:
-                continue
-
-            record = self._materialize_source_record(record, row)
-            collected[norm_template].append(record)
-            seen_ids.add(record.video_id)
-
-            if all(len(items) >= template_targets[key] for key, items in collected.items()):
-                break
-
-        records = [record for items in collected.values() for record in items]
-        if len(records) < target_total:
-            available = len(records)
-            raise RealVideoDataError(
-                f"Collected only {available} video records for split {split!r}, but the requested "
-                f"subset requires {target_total}. Try increasing max_source_scan or using a larger split."
-            )
-        return records
+        return self._collect_records_from_dataset(dataset, split=split, label_feature=label_feature)
 
 
 class UCF101SubsetAdapter(SomethingSomethingV2SubsetAdapter):
@@ -1066,167 +1241,7 @@ class UCF101SubsetAdapter(SomethingSomethingV2SubsetAdapter):
                 label_feature = features.get(self.config.text_column)
         except Exception:
             label_feature = None
-
-        template_targets = self._template_targets_for_split(split)
-        target_total = sum(template_targets.values())
-        collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
-        seen_ids: set[str] = set()
-
-        for row_index, row in enumerate(dataset):
-            if row_index >= self.config.max_source_scan:
-                break
-            if label_feature is not None and hasattr(label_feature, "int2str"):
-                label_value = row.get(self.config.text_column)
-                if isinstance(label_value, (int, np.integer)):
-                    row = dict(row)
-                    row[self.config.text_column] = label_feature.int2str(int(label_value))
-            record = self._record_from_row(row, split=split)
-            norm_template = _normalize_template(record.label_template)
-            if norm_template not in collected:
-                continue
-            if record.video_id in seen_ids:
-                continue
-            if len(collected[norm_template]) >= template_targets[norm_template]:
-                continue
-
-            record = self._materialize_source_record(record, row)
-            collected[norm_template].append(record)
-            seen_ids.add(record.video_id)
-
-            if all(len(items) >= template_targets[key] for key, items in collected.items()):
-                break
-
-        records = [record for items in collected.values() for record in items]
-        if len(records) < target_total:
-            raise RealVideoDataError(
-                f"Collected only {len(records)} UCF101 video records for split {split!r}, but the requested "
-                f"subset requires {target_total}. Try increasing max_source_scan or lowering examples per template."
-            )
-        return records
-
-    def _load_records_from_rows(
-        self,
-        rows: Sequence[Mapping[str, Any]],
-        *,
-        split: str,
-        manifest_dir: Path,
-        source_split: Optional[str] = None,
-    ) -> List[RealVideoClipRecord]:
-        template_targets = self._template_targets_for_split(split)
-        target_total = sum(template_targets.values())
-        collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
-        effective_split = source_split or self.source_split_for_request(split)
-
-        for row in rows:
-            row_split = str(row.get("split") or effective_split)
-            if row_split != effective_split:
-                continue
-            record = self._record_from_row(row, split=split)
-            norm_template = _normalize_template(record.label_template)
-            if norm_template not in collected:
-                continue
-            if len(collected[norm_template]) >= template_targets[norm_template]:
-                continue
-
-            clip = None
-            cache_path = row.get("cache_path") or row.get("clip_path")
-            source_path = row.get("source_path") or row.get("video_path") or row.get("path")
-            if cache_path:
-                cache_file = _resolve_path(manifest_dir, cache_path)
-                if cache_file.exists():
-                    clip = torch.load(cache_file, map_location="cpu")
-            if clip is None and source_path:
-                clip = self._prepare_clip(self._decode_clip(_resolve_path(manifest_dir, source_path), row))
-
-            collected[norm_template].append(
-                RealVideoClipRecord(
-                    video_id=record.video_id,
-                    label_template=record.label_template,
-                    pair_group=record.pair_group,
-                    paired_template=record.paired_template,
-                    placeholders=record.placeholders,
-                    description=record.description,
-                    split=split,
-                    raw_metadata=dict(row),
-                    clip=clip,
-                    cache_path=str(manifest_dir / str(cache_path)) if cache_path else None,
-                    source_path=str(source_path) if source_path else None,
-                )
-            )
-            if all(len(items) >= template_targets[key] for key, items in collected.items()):
-                break
-
-        records = [record for items in collected.values() for record in items]
-        if len(records) < target_total:
-            raise RealVideoDataError(
-                f"Loaded only {len(records)} records from local manifest, but {target_total} were required."
-            )
-        return records
-
-    def _template_targets_for_split(self, split: str) -> Dict[str, int]:
-        count = self.config.target_examples_for_split(split) // len(self.config.template_specs)
-        return {_normalize_template(spec.label_template): count for spec in self.config.template_specs}
-
-    def _record_from_row(self, row: Mapping[str, Any], *, split: str) -> RealVideoClipRecord:
-        label_template = str(
-            row.get(self.config.text_column)
-            or row.get("text")
-            or row.get("template")
-            or row.get("label")
-            or row.get("label_template")
-            or ""
-        )
-        if not label_template:
-            raise RealVideoDataError("Each source row must contain a text/label_template field.")
-        norm_template = _normalize_template(label_template)
-        spec = self.config.template_lookup.get(norm_template)
-        if spec is None:
-            raise RealVideoDataError(
-                f"Row does not match one of the configured real-video templates: {row!r}"
-            )
-
-        placeholders = _as_tuple(row.get(self.config.placeholders_column) or row.get("placeholders"))
-        video_id = str(row.get(self.config.video_id_column) or row.get("video_id") or row.get("id") or row.get("name") or "")
-        if not video_id:
-            video_id = f"{split}_{abs(hash(json.dumps(_jsonable(row), sort_keys=True, ensure_ascii=False))) % (10**12)}"
-
-        description = str(row.get("description") or _format_description(spec.label_template, placeholders))
-        return RealVideoClipRecord(
-            video_id=video_id,
-            label_template=spec.label_template,
-            pair_group=spec.pair_group,
-            paired_template=spec.paired_template,
-            placeholders=placeholders,
-            description=description,
-            split=split,
-            raw_metadata=dict(row),
-            source_path=str(row.get("video_path") or row.get("path") or row.get("file") or row.get("source_path") or ""),
-        )
-
-    def _materialize_source_record(
-        self,
-        record: RealVideoClipRecord,
-        row: Mapping[str, Any],
-    ) -> RealVideoClipRecord:
-        video_value = row.get(self.config.video_column) or row.get("video") or row.get("path") or row.get("video_path")
-        if video_value is None and not record.source_path:
-            raise RealVideoDataError(
-                f"Row for video_id {record.video_id!r} did not provide a decodable video object or path."
-            )
-        clip = _decode_video_value(video_value, video_path=_ensure_path(record.source_path) if record.source_path else None)
-        clip = self._prepare_clip(clip)
-        return RealVideoClipRecord(
-            video_id=record.video_id,
-            label_template=record.label_template,
-            pair_group=record.pair_group,
-            paired_template=record.paired_template,
-            placeholders=record.placeholders,
-            description=record.description,
-            split=record.split,
-            raw_metadata=dict(row),
-            clip=clip,
-            source_path=record.source_path,
-        )
+        return self._collect_records_from_dataset(dataset, split=split, label_feature=label_feature)
 
 
 class LocalVideoManifestAdapter(RealVideoDatasetAdapter):
@@ -1262,7 +1277,10 @@ class LocalVideoManifestAdapter(RealVideoDatasetAdapter):
             row_split = self.source_split_for_request(str(row.get("split") or effective_split))
             if row_split != effective_split:
                 continue
-            record = self._record_from_row(row, split=split)
+            try:
+                record = self._record_from_row(row, split=split)
+            except RealVideoDataError:
+                continue
             norm_template = _normalize_template(record.label_template)
             if norm_template not in collected:
                 continue
@@ -1277,7 +1295,10 @@ class LocalVideoManifestAdapter(RealVideoDatasetAdapter):
                 if cache_file.exists():
                     clip = torch.load(cache_file, map_location="cpu")
             if clip is None and source_path:
-                clip = self._prepare_clip(self._decode_clip(_resolve_path(manifest_dir, source_path), row))
+                try:
+                    clip = self._prepare_clip(self._decode_clip(_resolve_path(manifest_dir, source_path), row))
+                except RealVideoDataError:
+                    continue
 
             collected[norm_template].append(
                 RealVideoClipRecord(
