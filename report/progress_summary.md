@@ -7,7 +7,8 @@
 - Added V-JEPA-specific scoring utilities and a modular future scorer under `src/jepa/scoring/`.
 - Added a real-world dataset path under `src/jepa/data/real_video.py` with:
   - a generic clip-based adapter
-  - a Something-Something V2 subset adapter
+  - a primary Something-Something V2 adapter using a standard parquet/video dataset path
+  - a UCF101 fallback adapter for cases where Something-Something ingest is unavailable
   - a local JSONL manifest adapter
   - cacheable 16-frame clips that preserve the existing future-selection task contract
 - Added a grounded commentary layer with:
@@ -73,7 +74,8 @@
 ## Current priority
 
 - Run the notebook on Colab GPU and confirm:
-  - Something-Something subset caching
+  - Something-Something V2 subset caching
+  - or explicit UCF101 fallback if the Something-Something ingest path is blocked
   - one real-video example with engineered V-JEPA scoring
   - grounded LLM commentary or deterministic fallback
   - 5-example live agent loop artifacts

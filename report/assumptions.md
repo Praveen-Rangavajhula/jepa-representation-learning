@@ -70,6 +70,7 @@ This file is the authoritative assumptions log for the V-JEPA-backed stage of th
 
 - The future-selection task API remains clip-based so that dataset swaps do not require major scorer or commentary rewrites.
 - Moving-MNIST-specific preprocessing assumptions are isolated in the data and model preprocessing layers.
-- The primary real-world track is now a lightweight Something-Something V2 subset with cacheable 16-frame clips built from a fixed set of eight interpretable templates.
+- The primary real-world track is Something-Something V2 through a standard parquet/video Hugging Face dataset path, with the older script-based Hugging Face loader path treated as unsupported in current `datasets` runtimes.
+- UCF101 is kept as a temporary runnable fallback when the Something-Something ingest path is unavailable.
 - Real-video candidates are constructed from a fixed recipe (true continuation, temporal shuffle, same-template other sample, paired-template counterfactual/fallback) and then shuffled deterministically before scoring so the correct answer is not tied to a single slot.
 - The cache root defaults to `data/real_video_cache`, and cached clip manifests are treated as reusable notebook artifacts.

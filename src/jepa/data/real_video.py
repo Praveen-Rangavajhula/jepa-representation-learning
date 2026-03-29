@@ -6,9 +6,10 @@ This module keeps the current future-selection contract intact:
 - candidate futures: ``(K, T_future, C, H, W)``
 - one correct future and several plausible negatives
 
-The primary intended source is Something-Something V2, but the adapter
-layer is generic enough to support a local video manifest later without
-changing the downstream task, scoring, or evaluation code.
+The default intended source is Something-Something V2 hosted in standard
+Hugging Face video/parquet format, but the adapter layer is generic
+enough to support UCF101 fallback or other local video manifests later
+without changing the downstream task, scoring, or evaluation code.
 """
 
 from __future__ import annotations
@@ -323,11 +324,63 @@ DEFAULT_SOMETHING_SOMETHING_TEMPLATE_SPECS: Tuple[RealVideoTemplateSpec, ...] = 
 )
 
 
+DEFAULT_UCF101_TEMPLATE_SPECS: Tuple[RealVideoTemplateSpec, ...] = (
+    RealVideoTemplateSpec(
+        label_template="ApplyEyeMakeup",
+        pair_group="face_grooming",
+        paired_template="ApplyLipstick",
+        description_hint="Applying eye makeup to the face.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="ApplyLipstick",
+        pair_group="face_grooming",
+        paired_template="ApplyEyeMakeup",
+        description_hint="Applying lipstick to the face.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="BoxingPunchingBag",
+        pair_group="boxing_motion",
+        paired_template="BoxingSpeedBag",
+        description_hint="Repeated punching against a punching bag.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="BoxingSpeedBag",
+        pair_group="boxing_motion",
+        paired_template="BoxingPunchingBag",
+        description_hint="Repeated striking of a speed bag.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="BreastStroke",
+        pair_group="swimming_style",
+        paired_template="FrontCrawl",
+        description_hint="Swimming with breaststroke-style arm and body motion.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="FrontCrawl",
+        pair_group="swimming_style",
+        paired_template="BreastStroke",
+        description_hint="Swimming with front-crawl-style arm and body motion.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="PullUps",
+        pair_group="upper_body_exercise",
+        paired_template="PushUps",
+        description_hint="Up-and-down pull-up exercise motion.",
+    ),
+    RealVideoTemplateSpec(
+        label_template="PushUps",
+        pair_group="upper_body_exercise",
+        paired_template="PullUps",
+        description_hint="Up-and-down push-up exercise motion.",
+    ),
+)
+
+
 @dataclass(slots=True)
 class RealVideoSubsetConfig:
-    """Configuration for a lightweight Something-Something subset."""
+    """Configuration for a lightweight real-video subset."""
 
-    dataset_name: str = "HuggingFaceM4/something_something_v2"
+    dataset_name: str = "mteb/SomethingSomethingV2"
     cache_root: str = "data/real_video_cache"
     sequence_length: int = 16
     observed_length: int = 8
@@ -339,7 +392,7 @@ class RealVideoSubsetConfig:
     max_source_scan: int = 20_000
     seed: int = 13
     split_column: str = "split"
-    text_column: str = "text"
+    text_column: str = "label"
     video_id_column: str = "video_id"
     placeholders_column: str = "placeholders"
     video_column: str = "video"
@@ -716,6 +769,11 @@ class RealVideoDatasetAdapter:
 
     def source_split_for_request(self, split: str) -> str:
         normalized = split.strip().lower()
+        dataset_name = _normalize_template(self.config.dataset_name)
+        if "somethingsomethingv2" in dataset_name or "something_something_v2" in dataset_name:
+            return "test"
+        if "ucf-101" in dataset_name or "ucf101" in dataset_name:
+            return "train"
         if normalized in {"validation", "val", "test", "evaluation", "eval", "confident_eval", "large_eval"}:
             return "validation"
         if normalized in {"train", "training"}:
@@ -840,7 +898,7 @@ class RealVideoDatasetAdapter:
 
 
 class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
-    """Subset adapter for Something-Something V2."""
+    """Subset adapter for Something-Something-style datasets with label text and optional placeholders."""
 
     def __init__(self, config: Optional[RealVideoSubsetConfig] = None) -> None:
         super().__init__(config or RealVideoSubsetConfig())
@@ -869,7 +927,7 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
             from datasets import load_dataset
         except Exception as exc:  # pragma: no cover - optional dependency
             raise RealVideoDependencyError(
-                "The 'datasets' package is required to load Something-Something V2 from Hugging Face. "
+                "The 'datasets' package is required to load the configured real-video dataset from Hugging Face. "
                 "Install datasets, torchvision, av, and torchcodec for the notebook demo."
             ) from exc
 
@@ -886,6 +944,14 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
                 "Check internet access, the dataset name, and Hugging Face credentials if required."
             ) from exc
 
+        label_feature = None
+        try:
+            features = getattr(dataset, "features", None)
+            if features is not None:
+                label_feature = features.get(self.config.text_column)
+        except Exception:
+            label_feature = None
+
         template_targets = self._template_targets_for_split(split)
         target_total = sum(template_targets.values())
         collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
@@ -894,6 +960,11 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
         for row_index, row in enumerate(dataset):
             if row_index >= self.config.max_source_scan:
                 break
+            if label_feature is not None and hasattr(label_feature, "int2str"):
+                label_value = row.get(self.config.text_column)
+                if isinstance(label_value, (int, np.integer)):
+                    row = dict(row)
+                    row[self.config.text_column] = label_feature.int2str(int(label_value))
             record = self._record_from_row(row, split=split)
             norm_template = _normalize_template(record.label_template)
             if norm_template not in collected:
@@ -916,6 +987,120 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
             raise RealVideoDataError(
                 f"Collected only {available} video records for split {split!r}, but the requested "
                 f"subset requires {target_total}. Try increasing max_source_scan or using a larger split."
+            )
+        return records
+
+
+class UCF101SubsetAdapter(SomethingSomethingV2SubsetAdapter):
+    """Subset adapter for UCF101 hosted as a standard Hugging Face video dataset."""
+
+    def __init__(self, config: Optional[RealVideoSubsetConfig] = None) -> None:
+        base_config = config or RealVideoSubsetConfig()
+        super().__init__(
+            RealVideoSubsetConfig(
+                dataset_name=base_config.dataset_name,
+                cache_root=base_config.cache_root,
+                sequence_length=base_config.sequence_length,
+                observed_length=base_config.observed_length,
+                future_length=base_config.future_length,
+                image_size=base_config.image_size,
+                train_examples_per_template=base_config.train_examples_per_template,
+                eval_examples_per_template=base_config.eval_examples_per_template,
+                confident_eval_examples_per_template=base_config.confident_eval_examples_per_template,
+                max_source_scan=base_config.max_source_scan,
+                seed=base_config.seed,
+                split_column=base_config.split_column,
+                text_column=base_config.text_column or "label",
+                video_id_column=base_config.video_id_column or "video_id",
+                placeholders_column=base_config.placeholders_column,
+                video_column=base_config.video_column or "video",
+                template_specs=base_config.template_specs or DEFAULT_UCF101_TEMPLATE_SPECS,
+                streaming=base_config.streaming,
+                local_manifest_path=base_config.local_manifest_path,
+            )
+        )
+
+    def _load_source_records(self, split: str) -> List[RealVideoClipRecord]:
+        if self.config.local_manifest_path:
+            return self._load_from_local_manifest(split, Path(self.config.local_manifest_path))
+        return self._load_from_hf_dataset(split)
+
+    def _load_from_local_manifest(self, split: str, manifest_path: Path) -> List[RealVideoClipRecord]:
+        if not manifest_path.exists():
+            raise RealVideoDataError(
+                f"Local manifest file does not exist: {manifest_path}. "
+                "Provide a JSONL manifest with video_path, label, and optional description fields."
+            )
+        rows = _read_jsonl(manifest_path)
+        return self._load_records_from_rows(
+            rows,
+            split=split,
+            manifest_dir=manifest_path.parent,
+            source_split=self.source_split_for_request(split),
+        )
+
+    def _load_from_hf_dataset(self, split: str) -> List[RealVideoClipRecord]:
+        try:
+            from datasets import load_dataset
+        except Exception as exc:  # pragma: no cover
+            raise RealVideoDependencyError(
+                "The 'datasets' package is required to load the default UCF101 fallback subset from Hugging Face."
+            ) from exc
+
+        try:
+            dataset = load_dataset(
+                self.config.dataset_name,
+                split=self.source_split_for_request(split),
+                streaming=self.config.streaming,
+            )
+        except Exception as exc:  # pragma: no cover
+            raise RealVideoDataError(
+                f"Failed to load dataset {self.config.dataset_name!r} split {split!r}. "
+                "Check internet access, the dataset name, and Hugging Face availability."
+            ) from exc
+
+        label_feature = None
+        try:
+            features = getattr(dataset, "features", None)
+            if features is not None:
+                label_feature = features.get(self.config.text_column)
+        except Exception:
+            label_feature = None
+
+        template_targets = self._template_targets_for_split(split)
+        target_total = sum(template_targets.values())
+        collected: Dict[str, List[RealVideoClipRecord]] = {key: [] for key in template_targets}
+        seen_ids: set[str] = set()
+
+        for row_index, row in enumerate(dataset):
+            if row_index >= self.config.max_source_scan:
+                break
+            if label_feature is not None and hasattr(label_feature, "int2str"):
+                label_value = row.get(self.config.text_column)
+                if isinstance(label_value, (int, np.integer)):
+                    row = dict(row)
+                    row[self.config.text_column] = label_feature.int2str(int(label_value))
+            record = self._record_from_row(row, split=split)
+            norm_template = _normalize_template(record.label_template)
+            if norm_template not in collected:
+                continue
+            if record.video_id in seen_ids:
+                continue
+            if len(collected[norm_template]) >= template_targets[norm_template]:
+                continue
+
+            record = self._materialize_source_record(record, row)
+            collected[norm_template].append(record)
+            seen_ids.add(record.video_id)
+
+            if all(len(items) >= template_targets[key] for key, items in collected.items()):
+                break
+
+        records = [record for items in collected.values() for record in items]
+        if len(records) < target_total:
+            raise RealVideoDataError(
+                f"Collected only {len(records)} UCF101 video records for split {split!r}, but the requested "
+                f"subset requires {target_total}. Try increasing max_source_scan or lowering examples per template."
             )
         return records
 
@@ -997,7 +1182,7 @@ class SomethingSomethingV2SubsetAdapter(RealVideoDatasetAdapter):
         spec = self.config.template_lookup.get(norm_template)
         if spec is None:
             raise RealVideoDataError(
-                f"Row does not match one of the configured Something-Something templates: {row!r}"
+                f"Row does not match one of the configured real-video templates: {row!r}"
             )
 
         placeholders = _as_tuple(row.get(self.config.placeholders_column) or row.get("placeholders"))
@@ -1183,5 +1368,39 @@ def save_real_video_manifest(records: Sequence[RealVideoClipRecord], path: str |
     return path
 
 
+def make_ucf101_fallback_config(base_config: Optional[RealVideoSubsetConfig] = None) -> RealVideoSubsetConfig:
+    config = (base_config or RealVideoSubsetConfig()).validate()
+    return RealVideoSubsetConfig(
+        dataset_name="MichiganNLP/ucf-101",
+        cache_root=config.cache_root,
+        sequence_length=config.sequence_length,
+        observed_length=config.observed_length,
+        future_length=config.future_length,
+        image_size=config.image_size,
+        train_examples_per_template=config.train_examples_per_template,
+        eval_examples_per_template=config.eval_examples_per_template,
+        confident_eval_examples_per_template=config.confident_eval_examples_per_template,
+        max_source_scan=config.max_source_scan,
+        seed=config.seed,
+        split_column=config.split_column,
+        text_column="label",
+        video_id_column=config.video_id_column,
+        placeholders_column=config.placeholders_column,
+        video_column=config.video_column,
+        template_specs=DEFAULT_UCF101_TEMPLATE_SPECS,
+        streaming=config.streaming,
+        local_manifest_path=config.local_manifest_path,
+    )
+
+
 def available_something_something_templates() -> Tuple[str, ...]:
     return tuple(spec.label_template for spec in DEFAULT_SOMETHING_SOMETHING_TEMPLATE_SPECS)
+
+
+def available_ucf101_templates() -> Tuple[str, ...]:
+    return tuple(spec.label_template for spec in DEFAULT_UCF101_TEMPLATE_SPECS)
+
+
+def available_real_video_templates(config: Optional[RealVideoSubsetConfig] = None) -> Tuple[str, ...]:
+    active_config = config or RealVideoSubsetConfig()
+    return tuple(spec.label_template for spec in active_config.template_specs)

@@ -18,7 +18,9 @@ V-JEPA is pretrained for natural video, so zero-shot performance on Moving MNIST
 ## What has now changed for real-world video
 
 - the repo now includes a generic real-video adapter that still emits the existing future-selection example format
-- the primary real-world path is a Something-Something V2 subset adapter with cacheable 16-frame clips
+- the primary real-world path is now a Something-Something V2 adapter that targets a standard parquet/video Hugging Face dataset route
+- the earlier script-based Something-Something Hugging Face loader path is still unsupported in current `datasets` runtimes, so the adapter no longer relies on that route
+- a UCF101 fallback adapter is available when the Something-Something ingest path is unavailable in a given runtime
 - candidate construction now supports:
   - true continuation
   - shuffled temporal order
@@ -35,8 +37,14 @@ V-JEPA is pretrained for natural video, so zero-shot performance on Moving MNIST
 
 ## Default real-world dataset
 
-The default real-world dataset is now a lightweight Something-Something V2 subset because it is:
+The primary target real-world dataset is now Something-Something V2 because it is:
 
 - strong on temporal reasoning
 - visually understandable for a class demo
-- more aligned with V-JEPA than Moving MNIST while still being manageable on Colab when cached as a small subset
+- better aligned with the future-selection objective than generic action classification datasets
+
+The temporary runnable fallback is UCF101 because it is:
+
+- available in a standard parquet-backed Hugging Face video dataset
+- visually understandable for a class demo
+- much closer to natural video than Moving MNIST while still being manageable on Colab when cached as a small subset

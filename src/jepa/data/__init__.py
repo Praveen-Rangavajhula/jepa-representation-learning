@@ -9,6 +9,7 @@ from .moving_mnist import (
 )
 from .real_video import (
     DEFAULT_SOMETHING_SOMETHING_TEMPLATE_SPECS,
+    DEFAULT_UCF101_TEMPLATE_SPECS,
     LocalVideoManifestAdapter,
     RealVideoClipRecord,
     RealVideoDataError,
@@ -18,8 +19,12 @@ from .real_video import (
     RealVideoTemplateSpec,
     RealVideoFutureSelectionDataset,
     SomethingSomethingV2SubsetAdapter,
+    available_real_video_templates,
     available_something_something_templates,
+    available_ucf101_templates,
+    make_ucf101_fallback_config,
     save_real_video_manifest,
+    UCF101SubsetAdapter,
 )
 
 __all__ = [
@@ -29,6 +34,7 @@ __all__ = [
     "save_sample_visualizations",
     "summarize_batch",
     "DEFAULT_SOMETHING_SOMETHING_TEMPLATE_SPECS",
+    "DEFAULT_UCF101_TEMPLATE_SPECS",
     "LocalVideoManifestAdapter",
     "RealVideoClipRecord",
     "RealVideoDataError",
@@ -38,6 +44,10 @@ __all__ = [
     "RealVideoSubsetConfig",
     "RealVideoTemplateSpec",
     "SomethingSomethingV2SubsetAdapter",
+    "available_real_video_templates",
     "available_something_something_templates",
+    "available_ucf101_templates",
+    "make_ucf101_fallback_config",
     "save_real_video_manifest",
+    "UCF101SubsetAdapter",
 ]
