@@ -237,6 +237,44 @@ class VJEPA2Adapter:
             moved.append(tensor)
         return moved
 
+    @staticmethod
+    def _validate_mask_groups(
+        context_masks: Sequence[Tensor],
+        target_masks: Sequence[Tensor],
+        *,
+        batch_size: int,
+        sequence_length: int,
+    ) -> None:
+        if len(context_masks) != len(target_masks):
+            raise ValueError(
+                "context_masks and target_masks must have the same number of groups. "
+                f"Got {len(context_masks)} and {len(target_masks)}."
+            )
+        for group_index, (context_mask, target_mask) in enumerate(zip(context_masks, target_masks)):
+            context_tensor = torch.as_tensor(context_mask, dtype=torch.long)
+            target_tensor = torch.as_tensor(target_mask, dtype=torch.long)
+            if context_tensor.ndim != 2 or target_tensor.ndim != 2:
+                raise ValueError(
+                    "Predictor masks must be 2D tensors of shape (batch_size, num_token_indices). "
+                    f"Group {group_index} got context {tuple(context_tensor.shape)} and target {tuple(target_tensor.shape)}."
+                )
+            if int(context_tensor.shape[0]) != batch_size or int(target_tensor.shape[0]) != batch_size:
+                raise ValueError(
+                    "Predictor mask batch dimensions must match the clip batch size. "
+                    f"Expected {batch_size}, got context {tuple(context_tensor.shape)} and target "
+                    f"{tuple(target_tensor.shape)} in group {group_index}."
+                )
+            if int(context_tensor.shape[1]) < 1 or int(target_tensor.shape[1]) < 1:
+                raise ValueError(f"Predictor mask group {group_index} must contain at least one token.")
+            if int(context_tensor.min().item()) < 0 or int(target_tensor.min().item()) < 0:
+                raise ValueError(f"Predictor mask group {group_index} contains negative token indices.")
+            if int(context_tensor.max().item()) >= sequence_length or int(target_tensor.max().item()) >= sequence_length:
+                raise ValueError(
+                    "Predictor mask group references token positions outside the V-JEPA sequence length. "
+                    f"Sequence length is {sequence_length}, group {group_index} has context max "
+                    f"{int(context_tensor.max().item())} and target max {int(target_tensor.max().item())}."
+                )
+
     def _model_forward(
         self,
         preprocessed: Tensor,
@@ -360,6 +398,13 @@ class VJEPA2Adapter:
         batch = ensure_video_batch(clips)
         preprocessed = self.preprocess(batch)
         num_masks = len(target_masks)
+        sequence_length = int(self.describe_token_layout()["sequence_length"])
+        self._validate_mask_groups(
+            context_masks,
+            target_masks,
+            batch_size=int(preprocessed.shape[0]),
+            sequence_length=sequence_length,
+        )
 
         predicted_chunks: list[Tensor] = []
         target_chunks: list[Tensor] = []

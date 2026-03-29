@@ -109,6 +109,8 @@ class VJEPAFutureScoreBundle:
 class VJEPAFutureScorer:
     """Score candidate futures with a V-JEPA 2 encoder backbone."""
 
+    MASKED_RUNTIME_SIGNATURE = "single_mask_boundary_blocks_v2"
+
     def __init__(self, adapter: Optional[Any] = None, *, scoring_variant: str = "masked_future_prediction") -> None:
         if adapter is None:
             from jepa.models import VJEPA2Adapter
@@ -116,6 +118,7 @@ class VJEPAFutureScorer:
             adapter = VJEPA2Adapter()
         self.adapter = adapter
         self.scoring_variant = scoring_variant
+        self.masked_runtime_signature = self.MASKED_RUNTIME_SIGNATURE
         self._predictor_mask_cache: Dict[Tuple[int, int, int, int], tuple[List[Tensor], List[Tensor], int]] = {}
 
     def score_context_future(
@@ -178,12 +181,16 @@ class VJEPAFutureScorer:
                     candidate_metadata=candidate_metadata,
                 )
             except Exception as exc:
-                effective_variant = "overlap_transition"
+                masked_failure = f"{type(exc).__name__}: {exc}"
                 if getattr(self.adapter, "device", None) is not None and getattr(self.adapter.device, "type", "") == "cuda":
-                    try:
-                        torch.cuda.empty_cache()
-                    except Exception:
-                        pass
+                    raise RuntimeError(
+                        "The masked future prediction scorer failed on CUDA. We do not try the encoder-only overlap "
+                        "fallback in the same runtime because a failed predictor call can leave the CUDA context in an "
+                        "unstable state and waste Colab time. Restart the Colab runtime, make sure the latest repo "
+                        "state is loaded, and rerun from the top. "
+                        f"Masked scorer error: {masked_failure}"
+                    ) from exc
+                effective_variant = "overlap_transition"
                 try:
                     candidate_scores, embedding_dim = self._score_overlap_transition(
                         observed_tensor,
@@ -193,7 +200,7 @@ class VJEPAFutureScorer:
                     extra_notes = [
                         "Masked future prediction was requested but unavailable in this runtime; "
                         "the scorer fell back to overlap_transition.",
-                        f"Masked scorer error: {type(exc).__name__}: {exc}",
+                        f"Masked scorer error: {masked_failure}",
                     ]
                 except Exception as fallback_exc:
                     raise RuntimeError(
@@ -290,10 +297,7 @@ class VJEPAFutureScorer:
             future_temporal_tokens = total_temporal_tokens - context_stop
 
             usable_temporal_tokens = min(context_stop, future_temporal_tokens)
-            if usable_temporal_tokens >= 4 and usable_temporal_tokens % 4 == 0:
-                block_count = 4
-                block_size = usable_temporal_tokens // 4
-            elif usable_temporal_tokens >= 2 and usable_temporal_tokens % 2 == 0:
+            if usable_temporal_tokens >= 2 and usable_temporal_tokens % 2 == 0:
                 block_count = 2
                 block_size = usable_temporal_tokens // 2
             else:
@@ -343,6 +347,64 @@ class VJEPAFutureScorer:
         ]
         return context_masks, target_masks, block_count
 
+    def _validate_predictor_mask_groups(
+        self,
+        *,
+        context_masks: Sequence[Tensor],
+        target_masks: Sequence[Tensor],
+        batch_size: int,
+    ) -> int:
+        if len(context_masks) != len(target_masks):
+            raise ValueError(
+                "Predictor context and target masks must have the same number of groups. "
+                f"Got {len(context_masks)} context groups and {len(target_masks)} target groups."
+            )
+        if not context_masks:
+            raise ValueError("At least one predictor mask group is required.")
+
+        sequence_length = int(self.adapter.describe_token_layout()["sequence_length"])
+        expected_batch_size = int(batch_size)
+        expected_token_count: int | None = None
+
+        for group_index, (context_mask, target_mask) in enumerate(zip(context_masks, target_masks)):
+            context_tensor = torch.as_tensor(context_mask, dtype=torch.long)
+            target_tensor = torch.as_tensor(target_mask, dtype=torch.long)
+            if context_tensor.ndim != 2 or target_tensor.ndim != 2:
+                raise ValueError(
+                    "Predictor masks must be 2D tensors of shape (batch_size, num_token_indices). "
+                    f"Group {group_index} got context {tuple(context_tensor.shape)} and target {tuple(target_tensor.shape)}."
+                )
+            if int(context_tensor.shape[0]) != expected_batch_size or int(target_tensor.shape[0]) != expected_batch_size:
+                raise ValueError(
+                    "Predictor mask batch dimensions must match the candidate batch size. "
+                    f"Expected {expected_batch_size}, got context {tuple(context_tensor.shape)} and target "
+                    f"{tuple(target_tensor.shape)} in group {group_index}."
+                )
+            if int(context_tensor.shape[1]) < 1 or int(target_tensor.shape[1]) < 1:
+                raise ValueError(f"Predictor mask group {group_index} must include at least one token.")
+            if int(context_tensor.shape[1]) != int(target_tensor.shape[1]):
+                raise ValueError(
+                    "Context and target mask groups must be equal-sized for masked future scoring. "
+                    f"Group {group_index} got {int(context_tensor.shape[1])} context tokens and "
+                    f"{int(target_tensor.shape[1])} target tokens."
+                )
+            if expected_token_count is None:
+                expected_token_count = int(context_tensor.shape[1])
+            elif int(context_tensor.shape[1]) != expected_token_count:
+                raise ValueError(
+                    "All predictor mask groups must use the same token count. "
+                    f"Expected {expected_token_count}, got {int(context_tensor.shape[1])} in group {group_index}."
+                )
+            if int(context_tensor.min().item()) < 0 or int(target_tensor.min().item()) < 0:
+                raise ValueError(f"Predictor mask group {group_index} contains negative token indices.")
+            if int(context_tensor.max().item()) >= sequence_length or int(target_tensor.max().item()) >= sequence_length:
+                raise ValueError(
+                    "Predictor mask group references token positions outside the V-JEPA sequence length. "
+                    f"Sequence length is {sequence_length}, group {group_index} has context max "
+                    f"{int(context_tensor.max().item())} and target max {int(target_tensor.max().item())}."
+                )
+        return int(expected_token_count or 0)
+
     def _score_masked_future_prediction(
         self,
         observed: Tensor,
@@ -356,17 +418,29 @@ class VJEPAFutureScorer:
             observed_length=int(observed.shape[0]),
             future_length=int(candidates.shape[1]),
         )
-        masked = self.adapter.predict_masked_tokens(
-            combined_clips,
+        mask_token_count = self._validate_predictor_mask_groups(
             context_masks=context_masks,
             target_masks=target_masks,
-            batch_size=2,
+            batch_size=int(combined_clips.shape[0]),
         )
+        masked_blocks = []
+        for context_mask, target_mask in zip(context_masks, target_masks):
+            masked_blocks.append(
+                self.adapter.predict_masked_tokens(
+                    combined_clips,
+                    context_masks=[context_mask],
+                    target_masks=[target_mask],
+                    batch_size=2,
+                )
+            )
 
-        token_aligned = cosine_similarity(masked.predicted_tokens, masked.target_tokens)
+        predicted_blocks = torch.cat([block.predicted_tokens for block in masked_blocks], dim=1)
+        target_blocks = torch.cat([block.target_tokens for block in masked_blocks], dim=1)
+
+        token_aligned = cosine_similarity(predicted_blocks, target_blocks)
         block_token_alignment = token_aligned.mean(dim=2)
-        predicted = masked.predicted_tokens.mean(dim=2)
-        target = masked.target_tokens.mean(dim=2)
+        predicted = predicted_blocks.mean(dim=2)
+        target = target_blocks.mean(dim=2)
         aligned = cosine_similarity(predicted, target)
 
         if block_count >= 2:
@@ -428,10 +502,13 @@ class VJEPAFutureScorer:
         notes = [
             "This scorer uses V-JEPA predictor outputs with context and target masks rather than encoder-only pooling.",
             f"Future prediction is scored over {block_count} equal temporal block(s) to retain order sensitivity.",
+            "Each temporal block is predicted in a separate masked forward pass to avoid unstable multi-mask batching in the current HF runtime.",
             "Context masks use equal-sized near-boundary observed blocks so predictor context and target groups stay shape-compatible.",
+            f"Each predictor block uses {mask_token_count} masked tokens per candidate.",
+            f"Masked scorer implementation signature: {self.masked_runtime_signature}.",
             "Predictor masks are cached by token layout and observed/future split so repeated notebook runs avoid rebuilding them.",
         ]
-        return candidate_scores, int(masked.hidden_size), notes
+        return candidate_scores, int(masked_blocks[0].hidden_size), notes
 
     def _score_prefix_future_cosine(
         self,

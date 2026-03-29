@@ -6,6 +6,11 @@
 - Added reusable preprocessing for grayscale-to-RGB conversion, spatial resizing, and temporal resampling.
 - Added V-JEPA-specific scoring utilities and a modular future scorer under `src/jepa/scoring/`.
 - Upgraded the primary V-JEPA scorer from pooled encoder-only overlap scoring to a predictor-aware masked future scorer that uses context/target masks and frozen V-JEPA predictor outputs.
+- Hardened the masked V-JEPA scorer so it now:
+  - validates predictor mask groups on CPU before any CUDA call
+  - predicts one temporal mask block at a time instead of relying on unstable multi-mask batching
+  - records a visible masked scorer implementation signature in the notebook
+  - stops immediately on CUDA predictor failure instead of attempting an in-place overlap fallback in a poisoned runtime
 - Added a real-world dataset path under `src/jepa/data/real_video.py` with:
   - a generic clip-based adapter
   - a primary Something-Something V2 adapter using a standard parquet/video dataset path
