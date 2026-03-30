@@ -415,6 +415,9 @@ class RealVideoSubsetConfig:
     placeholders_column: str = "placeholders"
     video_column: str = "video"
     template_specs: Tuple[RealVideoTemplateSpec, ...] = DEFAULT_SOMETHING_SOMETHING_TEMPLATE_SPECS
+    include_temporal_negative: bool = True
+    include_same_template_negative: bool = True
+    include_paired_negative: bool = True
     streaming: bool = False
     local_manifest_path: Optional[str] = None
 
@@ -433,6 +436,12 @@ class RealVideoSubsetConfig:
             raise ValueError("confident eval size must be at least the default eval size.")
         if not self.template_specs:
             raise ValueError("template_specs must not be empty.")
+        if not (
+            self.include_temporal_negative
+            or self.include_same_template_negative
+            or self.include_paired_negative
+        ):
+            raise ValueError("At least one negative-candidate family must be enabled.")
         return self
 
     @property
@@ -474,6 +483,9 @@ class RealVideoSubsetConfig:
             "video_id_column": self.video_id_column,
             "placeholders_column": self.placeholders_column,
             "video_column": self.video_column,
+            "include_temporal_negative": self.include_temporal_negative,
+            "include_same_template_negative": self.include_same_template_negative,
+            "include_paired_negative": self.include_paired_negative,
             "streaming": self.streaming,
             "local_manifest_path": self.local_manifest_path,
             "template_specs": [spec.as_dict() for spec in self.template_specs],
@@ -561,52 +573,58 @@ class RealVideoFutureSelectionDataset(Dataset):
             )
         )
 
-        temporal_negative, temporal_negative_mode, temporal_negative_details = self._build_temporal_negative(future, rng)
-        candidates.append(temporal_negative)
-        candidate_metadata.append(
-            self._candidate_metadata(
-                source=source,
-                strategy=temporal_negative_mode,
-                generation_type=temporal_negative_mode,
-                is_true=False,
-                description_suffix=self._strategy_description(temporal_negative_mode),
-                source_video_id=source.video_id,
-                details={
-                    "candidate_role": "same_clip_temporal_negative",
-                    **temporal_negative_details,
-                },
+        if self.config.include_temporal_negative:
+            temporal_negative, temporal_negative_mode, temporal_negative_details = self._build_temporal_negative(
+                future,
+                rng,
             )
-        )
+            candidates.append(temporal_negative)
+            candidate_metadata.append(
+                self._candidate_metadata(
+                    source=source,
+                    strategy=temporal_negative_mode,
+                    generation_type=temporal_negative_mode,
+                    is_true=False,
+                    description_suffix=self._strategy_description(temporal_negative_mode),
+                    source_video_id=source.video_id,
+                    details={
+                        "candidate_role": "same_clip_temporal_negative",
+                        **temporal_negative_details,
+                    },
+                )
+            )
 
-        same_template_other = self._pick_same_template_other(index=index, rng=rng)
-        same_template_clip = self._future_from_record(same_template_other)
-        candidates.append(same_template_clip)
-        candidate_metadata.append(
-            self._candidate_metadata(
-                source=same_template_other,
-                strategy="future_segment_from_other_sample",
-                generation_type="future_segment_from_other_sample",
-                is_true=False,
-                description_suffix="same-template other-sample future",
-                source_video_id=same_template_other.video_id,
-                details={"fallback": False, "source_rank": "same_template"},
+        if self.config.include_same_template_negative:
+            same_template_other = self._pick_same_template_other(index=index, rng=rng)
+            same_template_clip = self._future_from_record(same_template_other)
+            candidates.append(same_template_clip)
+            candidate_metadata.append(
+                self._candidate_metadata(
+                    source=same_template_other,
+                    strategy="future_segment_from_other_sample",
+                    generation_type="future_segment_from_other_sample",
+                    is_true=False,
+                    description_suffix="same-template other-sample future",
+                    source_video_id=same_template_other.video_id,
+                    details={"fallback": False, "source_rank": "same_template"},
+                )
             )
-        )
 
-        paired_source, paired_strategy = self._pick_paired_or_fallback(index=index, rng=rng)
-        paired_clip = self._future_from_record(paired_source)
-        candidates.append(paired_clip)
-        candidate_metadata.append(
-            self._candidate_metadata(
-                source=paired_source,
-                strategy=paired_strategy,
-                generation_type=paired_strategy,
-                is_true=False,
-                description_suffix=self._strategy_description(paired_strategy),
-                source_video_id=paired_source.video_id,
-                details={"fallback": paired_strategy != "paired_template_counterfactual"},
+        if self.config.include_paired_negative:
+            paired_source, paired_strategy = self._pick_paired_or_fallback(index=index, rng=rng)
+            paired_clip = self._future_from_record(paired_source)
+            candidates.append(paired_clip)
+            candidate_metadata.append(
+                self._candidate_metadata(
+                    source=paired_source,
+                    strategy=paired_strategy,
+                    generation_type=paired_strategy,
+                    is_true=False,
+                    description_suffix=self._strategy_description(paired_strategy),
+                    source_video_id=paired_source.video_id,
+                    details={"fallback": paired_strategy != "paired_template_counterfactual"},
+                )
             )
-        )
 
         permutation = list(range(len(candidates)))
         rng.shuffle(permutation)
