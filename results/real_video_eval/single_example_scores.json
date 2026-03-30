@@ -1,0 +1,319 @@
+{
+  "source_video_id": "test_776319609647",
+  "correct_index": 0,
+  "control_runtime_info": {
+    "loaded": true,
+    "backend_used": "huggingface",
+    "model_id": "facebook/vjepa2-vitl-fpc64-256",
+    "fallback_model_name": "vjepa2_vit_large",
+    "device": "cuda",
+    "dtype": "float16",
+    "target_frames": 64,
+    "image_size": 256,
+    "model_class": "VJEPA2Model",
+    "processor_class": "VJEPA2VideoProcessor",
+    "frames_per_clip": 64,
+    "crop_size": 256,
+    "patch_size": 16,
+    "tubelet_size": 2,
+    "last_load_errors": {},
+    "token_layout": {
+      "patch_size": 16,
+      "tubelet_size": 2,
+      "frames": 64,
+      "image_size": 256,
+      "temporal_tokens": 32,
+      "spatial_tokens_per_temporal_step": 256,
+      "sequence_length": 8192
+    }
+  },
+  "real_vjepa_runtime_info": {
+    "loaded": true,
+    "backend_used": "huggingface",
+    "model_id": "facebook/vjepa2-vitl-fpc16-256-ssv2",
+    "fallback_model_name": "vjepa2_vit_large",
+    "device": "cuda",
+    "dtype": "float16",
+    "target_frames": 16,
+    "image_size": 256,
+    "model_class": "VJEPA2Model",
+    "processor_class": "VJEPA2VideoProcessor",
+    "frames_per_clip": 16,
+    "crop_size": 256,
+    "patch_size": 16,
+    "tubelet_size": 2,
+    "last_load_errors": {},
+    "token_layout": {
+      "patch_size": 16,
+      "tubelet_size": 2,
+      "frames": 16,
+      "image_size": 256,
+      "temporal_tokens": 8,
+      "spatial_tokens_per_temporal_step": 256,
+      "sequence_length": 2048
+    }
+  },
+  "dataset_source": "mteb/SomethingSomethingV2",
+  "real_vjepa_config": {
+    "model_id": "facebook/vjepa2-vitl-fpc16-256-ssv2",
+    "backend": "huggingface",
+    "fallback_backend": "torch_hub",
+    "fallback_model_name": "vjepa2_vit_large",
+    "target_frames": 16,
+    "image_size": 256,
+    "dtype": "float16",
+    "attn_implementation": "sdpa",
+    "cache_dir": "/content/.cache/huggingface",
+    "device": "cuda",
+    "local_files_only": false,
+    "is_colab_runtime": true
+  },
+  "masked_only_bundle": {
+    "evaluator_name": "vjepa2_masked_future_prediction",
+    "scoring_variant": "masked_future_prediction",
+    "model_id": "facebook/vjepa2-vitl-fpc16-256-ssv2",
+    "backend_used": "huggingface",
+    "selected_index": 0,
+    "confidence": 0.0007179975509643555,
+    "confidence_tier": "low",
+    "candidate_scores": [
+      {
+        "candidate_index": 0,
+        "score": 0.47129273414611816,
+        "probability": 0.33549928665161133,
+        "rank": 1,
+        "components": {
+          "predictor_boundary_alignment": 0.5264374017715454,
+          "predictor_future_alignment": 0.5264742970466614,
+          "predictor_worst_block_alignment": 0.5264374017715454,
+          "predictor_order_score": 0.33301523327827454,
+          "predictor_transition_consistency": 0.4584537446498871,
+          "predictor_order_margin_raw": -0.3339695334434509,
+          "predictor_block_token_alignment_mean": 0.5264742970466614,
+          "predictor_aligned_mean": 0.8576178550720215
+        },
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.858).",
+        "source_index": null,
+        "is_true": true,
+        "details": {
+          "description": "Opening something (true continuation)",
+          "paired_template": "Closing something",
+          "source_description": "Opening something",
+          "candidate_role": "observed_clip_true_future",
+          "construction_index": 0
+        }
+      },
+      {
+        "candidate_index": 2,
+        "score": 0.4691503643989563,
+        "probability": 0.334781289100647,
+        "rank": 2,
+        "components": {
+          "predictor_boundary_alignment": 0.5159292221069336,
+          "predictor_future_alignment": 0.5158188939094543,
+          "predictor_worst_block_alignment": 0.5157085657119751,
+          "predictor_order_score": 0.3331548869609833,
+          "predictor_transition_consistency": 0.5055729746818542,
+          "predictor_order_margin_raw": -0.33369022607803345,
+          "predictor_block_token_alignment_mean": 0.5158188939094543,
+          "predictor_aligned_mean": 0.8499388694763184
+        },
+        "generation_type": "temporal_order_block_reverse",
+        "rationale": "temporal_order_block_reverse candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.850).",
+        "source_index": null,
+        "is_true": false,
+        "details": {
+          "description": "Opening something (reverse-block temporal negative)",
+          "paired_template": "Closing something",
+          "source_description": "Opening something",
+          "candidate_role": "same_clip_temporal_negative",
+          "temporal_negative_mode": "temporal_order_block_reverse",
+          "block_count": 2,
+          "block_size": 4,
+          "source_frame_count": 8,
+          "construction_index": 1
+        }
+      },
+      {
+        "candidate_index": 1,
+        "score": 0.453914999961853,
+        "probability": 0.3297194540500641,
+        "rank": 3,
+        "components": {
+          "predictor_boundary_alignment": 0.4923441708087921,
+          "predictor_future_alignment": 0.49424076080322266,
+          "predictor_worst_block_alignment": 0.4923441708087921,
+          "predictor_order_score": 0.3480184078216553,
+          "predictor_transition_consistency": 0.4641254246234894,
+          "predictor_order_margin_raw": -0.30396318435668945,
+          "predictor_block_token_alignment_mean": 0.49424076080322266,
+          "predictor_aligned_mean": 0.7962708473205566
+        },
+        "generation_type": "paired_template_counterfactual",
+        "rationale": "paired_template_counterfactual candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.796).",
+        "source_index": null,
+        "is_true": false,
+        "details": {
+          "description": "Closing something (paired counterfactual)",
+          "paired_template": "Opening something",
+          "source_description": "Closing something",
+          "fallback": false,
+          "construction_index": 2
+        }
+      }
+    ],
+    "observed_shape": [
+      8,
+      3,
+      256,
+      256
+    ],
+    "candidates_shape": [
+      3,
+      8,
+      3,
+      256,
+      256
+    ],
+    "embedding_dim": 1024,
+    "notes": [
+      "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
+      "Single-channel clips are converted to RGB inside preprocessing when needed.",
+      "This scorer uses V-JEPA predictor outputs with context and target masks rather than encoder-only pooling.",
+      "Future prediction is scored over 2 equal temporal block(s) to retain order sensitivity.",
+      "Each temporal block is predicted in a separate masked forward pass to avoid unstable multi-mask batching in the current HF runtime.",
+      "Context masks use equal-sized near-boundary observed blocks so predictor context and target groups stay shape-compatible.",
+      "Each predictor block uses 512 masked tokens per candidate.",
+      "Masked scorer implementation signature: single_mask_boundary_blocks_v2.",
+      "Predictor masks are cached by token layout and observed/future split so repeated notebook runs avoid rebuilding them."
+    ]
+  },
+  "boundary_hybrid_bundle": {
+    "evaluator_name": "vjepa2_masked_boundary_hybrid",
+    "scoring_variant": "masked_boundary_hybrid",
+    "model_id": "facebook/vjepa2-vitl-fpc16-256-ssv2",
+    "backend_used": "huggingface",
+    "selected_index": 0,
+    "confidence": 0.00034224987030029297,
+    "confidence_tier": "low",
+    "candidate_scores": [
+      {
+        "candidate_index": 0,
+        "score": 0.5514014005661011,
+        "probability": 0.33783164620399475,
+        "rank": 1,
+        "components": {
+          "predictor_boundary_alignment": 0.5264374017715454,
+          "predictor_future_alignment": 0.5265111923217773,
+          "encoder_boundary_overlap": 0.9494144916534424,
+          "transition_delta_consistency": 0.4584537446498871,
+          "predictor_aligned_mean": 0.8576178550720215,
+          "predictor_block_token_alignment_mean": 0.5264742970466614,
+          "predictor_mask_token_count": 512.0,
+          "boundary_hybrid_base_score": 0.551601767539978,
+          "boundary_hybrid_block_swapped_score": 0.5536054372787476,
+          "boundary_hybrid_order_margin": -0.0020036697387695312
+        },
+        "generation_type": "true_continuation",
+        "rationale": "true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "source_index": null,
+        "is_true": true,
+        "details": {
+          "description": "Opening something (true continuation)",
+          "paired_template": "Closing something",
+          "source_description": "Opening something",
+          "candidate_role": "observed_clip_true_future",
+          "construction_index": 0
+        }
+      },
+      {
+        "candidate_index": 2,
+        "score": 0.5503877878189087,
+        "probability": 0.33748939633369446,
+        "rank": 2,
+        "components": {
+          "predictor_boundary_alignment": 0.5159292221069336,
+          "predictor_future_alignment": 0.5157085657119751,
+          "encoder_boundary_overlap": 0.9501647353172302,
+          "transition_delta_consistency": 0.5055729746818542,
+          "predictor_aligned_mean": 0.8499388694763184,
+          "predictor_block_token_alignment_mean": 0.5158188939094543,
+          "predictor_mask_token_count": 512.0,
+          "boundary_hybrid_base_score": 0.5501146912574768,
+          "boundary_hybrid_block_swapped_score": 0.547383725643158,
+          "boundary_hybrid_order_margin": 0.0027309656143188477
+        },
+        "generation_type": "temporal_order_block_reverse",
+        "rationale": "temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "source_index": null,
+        "is_true": false,
+        "details": {
+          "description": "Opening something (reverse-block temporal negative)",
+          "paired_template": "Closing something",
+          "source_description": "Opening something",
+          "candidate_role": "same_clip_temporal_negative",
+          "temporal_negative_mode": "temporal_order_block_reverse",
+          "block_count": 2,
+          "block_size": 4,
+          "source_frame_count": 8,
+          "construction_index": 1
+        }
+      },
+      {
+        "candidate_index": 1,
+        "score": 0.5116904973983765,
+        "probability": 0.3246789276599884,
+        "rank": 3,
+        "components": {
+          "predictor_boundary_alignment": 0.4923441708087921,
+          "predictor_future_alignment": 0.4961373209953308,
+          "encoder_boundary_overlap": 0.850035548210144,
+          "transition_delta_consistency": 0.4641254246234894,
+          "predictor_aligned_mean": 0.7962708473205566,
+          "predictor_block_token_alignment_mean": 0.49424076080322266,
+          "predictor_mask_token_count": 512.0,
+          "boundary_hybrid_base_score": 0.5123951435089111,
+          "boundary_hybrid_block_swapped_score": 0.5194416046142578,
+          "boundary_hybrid_order_margin": -0.00704646110534668
+        },
+        "generation_type": "paired_template_counterfactual",
+        "rationale": "paired_template_counterfactual candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "source_index": null,
+        "is_true": false,
+        "details": {
+          "description": "Closing something (paired counterfactual)",
+          "paired_template": "Opening something",
+          "source_description": "Closing something",
+          "fallback": false,
+          "construction_index": 2
+        }
+      }
+    ],
+    "observed_shape": [
+      8,
+      3,
+      256,
+      256
+    ],
+    "candidates_shape": [
+      3,
+      8,
+      3,
+      256,
+      256
+    ],
+    "embedding_dim": 1024,
+    "notes": [
+      "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
+      "Single-channel clips are converted to RGB inside preprocessing when needed.",
+      "This scorer uses V-JEPA predictor outputs plus a boundary overlap encoder check and a direct block-swap order margin.",
+      "The real-video path is auto-routed to this variant when candidate metadata looks like a clip-based real-video example.",
+      "Masked predictor calls stay single-mask and fail fast on CUDA to avoid poisoned-runtime fallbacks.",
+      "Boundary hybrid implementation signature: masked_boundary_hybrid_v1.",
+      "Boundary hybrid scores predictor alignment near the observed/future boundary, overlap-transition compatibility, and transition delta consistency.",
+      "The overlap component is measured on short windows straddling the observed/future boundary.",
+      "The predictor component is kept frozen and evaluated with single-mask calls only."
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "heuristic": {
+    "temporal_order_block_reverse": {
+      "count": 3,
+      "fraction_of_errors": 0.75,
+      "fraction_of_examples": 0.375
+    },
+    "temporal_order_two_block_swap": {
+      "count": 1,
+      "fraction_of_errors": 0.25,
+      "fraction_of_examples": 0.125
+    }
+  },
+  "boundary_hybrid": {
+    "temporal_order_two_block_swap": {
+      "count": 1,
+      "fraction_of_errors": 0.16666666666666666,
+      "fraction_of_examples": 0.125
+    },
+    "temporal_order_block_reverse": {
+      "count": 5,
+      "fraction_of_errors": 0.8333333333333334,
+      "fraction_of_examples": 0.625
+    }
+  }
+}

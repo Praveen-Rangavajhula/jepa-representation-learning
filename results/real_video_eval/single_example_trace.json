@@ -1,0 +1,106 @@
+{
+  "comparison_table": [
+    {
+      "evaluator": "heuristic",
+      "evaluator_name": "FutureSelectionResult",
+      "selected_index": 2,
+      "selected_generation_type": "temporal_order_block_reverse",
+      "selected_score": 0.31284620828893456,
+      "selected_probability": null,
+      "selected_component_highlights": [
+        {
+          "name": "direction",
+          "value": 0.934969145745752
+        },
+        {
+          "name": "speed",
+          "value": 0.334456678440673
+        }
+      ],
+      "runner_up_index": 1,
+      "runner_up_generation_type": "paired_template_counterfactual",
+      "runner_up_score": 0.2672700922221827,
+      "runner_up_probability": null,
+      "score_gap_to_runner_up": 0.04557611606675188,
+      "score_margin": 0.04557611606675188,
+      "probability_gap_to_runner_up": null,
+      "confidence_margin": null,
+      "confidence_tier": "unknown",
+      "selected_description": null,
+      "runner_up_description": null,
+      "probability_gap_to_runner_up_legacy": null,
+      "confidence": null,
+      "correct_index": 0,
+      "correct_rank": 3,
+      "was_correct": false
+    },
+    {
+      "evaluator": "masked_only",
+      "evaluator_name": "vjepa2_masked_future_prediction",
+      "selected_index": 0,
+      "selected_generation_type": "true_continuation",
+      "selected_score": 0.47129273414611816,
+      "selected_probability": 0.33549928665161133,
+      "selected_component_highlights": [
+        {
+          "name": "predictor_aligned_mean",
+          "value": 0.8576178550720215
+        },
+        {
+          "name": "predictor_future_alignment",
+          "value": 0.5264742970466614
+        }
+      ],
+      "runner_up_index": 2,
+      "runner_up_generation_type": "temporal_order_block_reverse",
+      "runner_up_score": 0.4691503643989563,
+      "runner_up_probability": 0.334781289100647,
+      "score_gap_to_runner_up": 0.0021423697471618652,
+      "score_margin": 0.0021423697471618652,
+      "probability_gap_to_runner_up": 0.0007179975509643555,
+      "confidence_margin": 0.0007179975509643555,
+      "confidence_tier": "low",
+      "selected_description": "Opening something (true continuation)",
+      "runner_up_description": "Opening something (reverse-block temporal negative)",
+      "probability_gap_to_runner_up_legacy": 0.0007179975509643555,
+      "confidence": 0.0007179975509643555,
+      "correct_index": 0,
+      "correct_rank": 1,
+      "was_correct": true
+    },
+    {
+      "evaluator": "boundary_hybrid",
+      "evaluator_name": "vjepa2_masked_boundary_hybrid",
+      "selected_index": 0,
+      "selected_generation_type": "true_continuation",
+      "selected_score": 0.5514014005661011,
+      "selected_probability": 0.33783164620399475,
+      "selected_component_highlights": [
+        {
+          "name": "predictor_mask_token_count",
+          "value": 512.0
+        },
+        {
+          "name": "encoder_boundary_overlap",
+          "value": 0.9494144916534424
+        }
+      ],
+      "runner_up_index": 2,
+      "runner_up_generation_type": "temporal_order_block_reverse",
+      "runner_up_score": 0.5503877878189087,
+      "runner_up_probability": 0.33748939633369446,
+      "score_gap_to_runner_up": 0.0010136127471923606,
+      "score_margin": 0.0010136127471923606,
+      "probability_gap_to_runner_up": 0.00034224987030029297,
+      "confidence_margin": 0.00034224987030029297,
+      "confidence_tier": "low",
+      "selected_description": "Opening something (true continuation)",
+      "runner_up_description": "Opening something (reverse-block temporal negative)",
+      "probability_gap_to_runner_up_legacy": 0.00034224987030029297,
+      "confidence": 0.00034224987030029297,
+      "correct_index": 0,
+      "correct_rank": 1,
+      "was_correct": true
+    }
+  ]
+}

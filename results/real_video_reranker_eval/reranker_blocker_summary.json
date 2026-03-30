@@ -1,0 +1,11 @@
+{
+  "enabled": false,
+  "allow_provisional_overlap_split": true,
+  "include_heuristic_features": true,
+  "include_candidate_type_indicators": false,
+  "model_kind": "linear",
+  "train_split": "train",
+  "eval_split": "test",
+  "status": "disabled",
+  "reason": "JEPA_REAL_VIDEO_RERANKER_ENABLED is disabled."
+}

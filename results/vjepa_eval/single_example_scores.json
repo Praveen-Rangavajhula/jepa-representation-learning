@@ -14,47 +14,45 @@
     "processor_class": "VJEPA2VideoProcessor",
     "frames_per_clip": 64,
     "crop_size": 256,
-    "last_load_errors": {}
+    "patch_size": 16,
+    "tubelet_size": 2,
+    "last_load_errors": {},
+    "token_layout": {
+      "patch_size": 16,
+      "tubelet_size": 2,
+      "frames": 64,
+      "image_size": 256,
+      "temporal_tokens": 32,
+      "spatial_tokens_per_temporal_step": 256,
+      "sequence_length": 8192
+    }
   },
   "vjepa_score_bundle": {
-    "evaluator_name": "vjepa2_overlap_transition",
-    "scoring_variant": "overlap_transition",
+    "evaluator_name": "vjepa2_masked_future_prediction",
+    "scoring_variant": "masked_future_prediction",
     "model_id": "facebook/vjepa2-vitl-fpc64-256",
     "backend_used": "huggingface",
-    "selected_index": 3,
-    "confidence": 5.874037742614746e-05,
-    "uncertainty": "low",
+    "selected_index": 1,
+    "confidence": 0.0005947649478912354,
+    "confidence_tier": "low",
     "candidate_scores": [
       {
-        "candidate_index": 3,
-        "score": 0.9773304462432861,
-        "probability": 0.2540198862552643,
+        "candidate_index": 1,
+        "score": 0.6352034211158752,
+        "probability": 0.2541261613368988,
         "rank": 1,
         "components": {
-          "cosine_a_b": 0.995932936668396,
-          "cosine_b_c": 0.9966485500335693,
-          "transition_smoothness": 0.9013671875
-        },
-        "generation_type": "shuffled_temporal_order",
-        "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
-        "source_index": 0,
-        "is_true": false,
-        "details": {
-          "description": "True future frames in shuffled order."
-        }
-      },
-      {
-        "candidate_index": 1,
-        "score": 0.9770991802215576,
-        "probability": 0.25396114587783813,
-        "rank": 2,
-        "components": {
-          "cosine_a_b": 0.9953352808952332,
-          "cosine_b_c": 0.9972782731056213,
-          "transition_smoothness": 0.900390625
+          "predictor_boundary_alignment": 0.7518543004989624,
+          "predictor_future_alignment": 0.7340437173843384,
+          "predictor_worst_block_alignment": 0.7162331938743591,
+          "predictor_order_score": 0.3975256085395813,
+          "predictor_transition_consistency": 0.5513150691986084,
+          "predictor_order_margin_raw": -0.2049487829208374,
+          "predictor_block_token_alignment_mean": 0.7340437173843384,
+          "predictor_aligned_mean": 0.9415151476860046
         },
         "generation_type": "true_continuation",
-        "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+        "rationale": "true_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.942).",
         "source_index": 0,
         "is_true": true,
         "details": {
@@ -62,40 +60,73 @@
         }
       },
       {
-        "candidate_index": 0,
-        "score": 0.9508732557296753,
-        "probability": 0.2473873496055603,
+        "candidate_index": 3,
+        "score": 0.6328603029251099,
+        "probability": 0.25353139638900757,
+        "rank": 2,
+        "components": {
+          "predictor_boundary_alignment": 0.7358834743499756,
+          "predictor_future_alignment": 0.7282770276069641,
+          "predictor_worst_block_alignment": 0.7206705808639526,
+          "predictor_order_score": 0.3971448242664337,
+          "predictor_transition_consistency": 0.5867272615432739,
+          "predictor_order_margin_raw": -0.20571035146713257,
+          "predictor_block_token_alignment_mean": 0.7282770276069641,
+          "predictor_aligned_mean": 0.939007043838501
+        },
+        "generation_type": "shuffled_temporal_order",
+        "rationale": "shuffled_temporal_order candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.939).",
+        "source_index": 0,
+        "is_true": false,
+        "details": {
+          "description": "True future frames in shuffled order."
+        }
+      },
+      {
+        "candidate_index": 2,
+        "score": 0.6048664450645447,
+        "probability": 0.24653251469135284,
         "rank": 3,
         "components": {
-          "cosine_a_b": 0.9686720967292786,
-          "cosine_b_c": 0.9879788756370544,
-          "transition_smoothness": 0.84130859375
+          "predictor_boundary_alignment": 0.6937525272369385,
+          "predictor_future_alignment": 0.6884735822677612,
+          "predictor_worst_block_alignment": 0.683194637298584,
+          "predictor_order_score": 0.38648295402526855,
+          "predictor_transition_consistency": 0.5968206524848938,
+          "predictor_order_margin_raw": -0.2270340919494629,
+          "predictor_block_token_alignment_mean": 0.6884735822677612,
+          "predictor_aligned_mean": 0.9195921421051025
+        },
+        "generation_type": "mirrored_or_perturbed_continuation",
+        "rationale": "mirrored_or_perturbed_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.920).",
+        "source_index": 0,
+        "is_true": false,
+        "details": {
+          "description": "Mirrored future with small spatial perturbations."
+        }
+      },
+      {
+        "candidate_index": 0,
+        "score": 0.6019310355186462,
+        "probability": 0.2458098828792572,
+        "rank": 4,
+        "components": {
+          "predictor_boundary_alignment": 0.6847494840621948,
+          "predictor_future_alignment": 0.6832937598228455,
+          "predictor_worst_block_alignment": 0.6818380355834961,
+          "predictor_order_score": 0.38983675837516785,
+          "predictor_transition_consistency": 0.6003974676132202,
+          "predictor_order_margin_raw": -0.2203264832496643,
+          "predictor_block_token_alignment_mean": 0.6832937598228455,
+          "predictor_aligned_mean": 0.9096462726593018
         },
         "generation_type": "wrong_direction_continuation",
-        "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+        "rationale": "wrong_direction_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.910).",
         "source_index": 0,
         "is_true": false,
         "details": {
           "description": "Continuation moving in the opposite direction.",
           "direction_scale": -1.0
-        }
-      },
-      {
-        "candidate_index": 2,
-        "score": 0.9396715760231018,
-        "probability": 0.24463167786598206,
-        "rank": 4,
-        "components": {
-          "cosine_a_b": 0.9576993584632874,
-          "cosine_b_c": 0.9855958223342896,
-          "transition_smoothness": 0.8115234375
-        },
-        "generation_type": "mirrored_or_perturbed_continuation",
-        "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
-        "source_index": 0,
-        "is_true": false,
-        "details": {
-          "description": "Mirrored future with small spatial perturbations."
         }
       }
     ],
@@ -115,97 +146,150 @@
     "embedding_dim": 1024,
     "notes": [
       "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
-      "Grayscale Moving MNIST clips are converted to RGB inside preprocessing."
+      "Single-channel clips are converted to RGB inside preprocessing when needed.",
+      "This scorer uses V-JEPA predictor outputs with context and target masks rather than encoder-only pooling.",
+      "Future prediction is scored over 2 equal temporal block(s) to retain order sensitivity.",
+      "Each temporal block is predicted in a separate masked forward pass to avoid unstable multi-mask batching in the current HF runtime.",
+      "Context masks use equal-sized near-boundary observed blocks so predictor context and target groups stay shape-compatible.",
+      "Each predictor block uses 2048 masked tokens per candidate.",
+      "Masked scorer implementation signature: single_mask_boundary_blocks_v2.",
+      "Predictor masks are cached by token layout and observed/future split so repeated notebook runs avoid rebuilding them."
     ]
   },
   "candidate_score_table": [
     {
-      "candidate_index": 3,
-      "rank": 1,
-      "score": 0.9773304462432861,
-      "probability": 0.2540198862552643,
-      "generation_type": "shuffled_temporal_order",
-      "rationale": "shuffled_temporal_order candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
-      "components": {
-        "cosine_a_b": 0.995932936668396,
-        "cosine_b_c": 0.9966485500335693,
-        "transition_smoothness": 0.9013671875
-      },
-      "is_true": false,
-      "is_correct": false
-    },
-    {
       "candidate_index": 1,
-      "rank": 2,
-      "score": 0.9770991802215576,
-      "probability": 0.25396114587783813,
+      "rank": 1,
+      "score": 0.6352034211158752,
+      "probability": 0.2541261613368988,
       "generation_type": "true_continuation",
-      "rationale": "true_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.997).",
+      "rationale": "true_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.942).",
       "components": {
-        "cosine_a_b": 0.9953352808952332,
-        "cosine_b_c": 0.9972782731056213,
-        "transition_smoothness": 0.900390625
+        "predictor_boundary_alignment": 0.7518543004989624,
+        "predictor_future_alignment": 0.7340437173843384,
+        "predictor_worst_block_alignment": 0.7162331938743591,
+        "predictor_order_score": 0.3975256085395813,
+        "predictor_transition_consistency": 0.5513150691986084,
+        "predictor_order_margin_raw": -0.2049487829208374,
+        "predictor_block_token_alignment_mean": 0.7340437173843384,
+        "predictor_aligned_mean": 0.9415151476860046
       },
       "is_true": true,
+      "source_index": 0,
+      "candidate_description": "Ground-truth future segment.",
+      "candidate_metadata": {
+        "description": "Ground-truth future segment."
+      },
       "is_correct": true
     },
     {
-      "candidate_index": 0,
-      "rank": 3,
-      "score": 0.9508732557296753,
-      "probability": 0.2473873496055603,
-      "generation_type": "wrong_direction_continuation",
-      "rationale": "wrong_direction_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.988).",
+      "candidate_index": 3,
+      "rank": 2,
+      "score": 0.6328603029251099,
+      "probability": 0.25353139638900757,
+      "generation_type": "shuffled_temporal_order",
+      "rationale": "shuffled_temporal_order candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.939).",
       "components": {
-        "cosine_a_b": 0.9686720967292786,
-        "cosine_b_c": 0.9879788756370544,
-        "transition_smoothness": 0.84130859375
+        "predictor_boundary_alignment": 0.7358834743499756,
+        "predictor_future_alignment": 0.7282770276069641,
+        "predictor_worst_block_alignment": 0.7206705808639526,
+        "predictor_order_score": 0.3971448242664337,
+        "predictor_transition_consistency": 0.5867272615432739,
+        "predictor_order_margin_raw": -0.20571035146713257,
+        "predictor_block_token_alignment_mean": 0.7282770276069641,
+        "predictor_aligned_mean": 0.939007043838501
       },
       "is_true": false,
+      "source_index": 0,
+      "candidate_description": "True future frames in shuffled order.",
+      "candidate_metadata": {
+        "description": "True future frames in shuffled order."
+      },
       "is_correct": false
     },
     {
       "candidate_index": 2,
-      "rank": 4,
-      "score": 0.9396715760231018,
-      "probability": 0.24463167786598206,
+      "rank": 3,
+      "score": 0.6048664450645447,
+      "probability": 0.24653251469135284,
       "generation_type": "mirrored_or_perturbed_continuation",
-      "rationale": "mirrored_or_perturbed_continuation candidate under overlap_transition; strongest latent component was cosine_b_c (0.986).",
+      "rationale": "mirrored_or_perturbed_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.920).",
       "components": {
-        "cosine_a_b": 0.9576993584632874,
-        "cosine_b_c": 0.9855958223342896,
-        "transition_smoothness": 0.8115234375
+        "predictor_boundary_alignment": 0.6937525272369385,
+        "predictor_future_alignment": 0.6884735822677612,
+        "predictor_worst_block_alignment": 0.683194637298584,
+        "predictor_order_score": 0.38648295402526855,
+        "predictor_transition_consistency": 0.5968206524848938,
+        "predictor_order_margin_raw": -0.2270340919494629,
+        "predictor_block_token_alignment_mean": 0.6884735822677612,
+        "predictor_aligned_mean": 0.9195921421051025
       },
       "is_true": false,
+      "source_index": 0,
+      "candidate_description": "Mirrored future with small spatial perturbations.",
+      "candidate_metadata": {
+        "description": "Mirrored future with small spatial perturbations."
+      },
+      "is_correct": false
+    },
+    {
+      "candidate_index": 0,
+      "rank": 4,
+      "score": 0.6019310355186462,
+      "probability": 0.2458098828792572,
+      "generation_type": "wrong_direction_continuation",
+      "rationale": "wrong_direction_continuation candidate under masked_future_prediction; strongest latent component was predictor_aligned_mean (0.910).",
+      "components": {
+        "predictor_boundary_alignment": 0.6847494840621948,
+        "predictor_future_alignment": 0.6832937598228455,
+        "predictor_worst_block_alignment": 0.6818380355834961,
+        "predictor_order_score": 0.38983675837516785,
+        "predictor_transition_consistency": 0.6003974676132202,
+        "predictor_order_margin_raw": -0.2203264832496643,
+        "predictor_block_token_alignment_mean": 0.6832937598228455,
+        "predictor_aligned_mean": 0.9096462726593018
+      },
+      "is_true": false,
+      "source_index": 0,
+      "candidate_description": "Continuation moving in the opposite direction.",
+      "candidate_metadata": {
+        "description": "Continuation moving in the opposite direction.",
+        "direction_scale": -1.0
+      },
       "is_correct": false
     }
   ],
   "ranking_summary": {
-    "evaluator_name": "vjepa2_overlap_transition",
-    "selected_index": 3,
-    "selected_generation_type": "shuffled_temporal_order",
-    "selected_score": 0.9773304462432861,
-    "selected_probability": 0.2540198862552643,
+    "evaluator_name": "vjepa2_masked_future_prediction",
+    "selected_index": 1,
+    "selected_generation_type": "true_continuation",
+    "selected_score": 0.6352034211158752,
+    "selected_probability": 0.2541261613368988,
     "selected_component_highlights": [
       {
-        "name": "cosine_b_c",
-        "value": 0.9966485500335693
+        "name": "predictor_aligned_mean",
+        "value": 0.9415151476860046
       },
       {
-        "name": "cosine_a_b",
-        "value": 0.995932936668396
+        "name": "predictor_boundary_alignment",
+        "value": 0.7518543004989624
       }
     ],
-    "runner_up_index": 1,
-    "runner_up_generation_type": "true_continuation",
-    "runner_up_score": 0.9770991802215576,
-    "runner_up_probability": 0.25396114587783813,
-    "score_gap_to_runner_up": 0.00023126602172851562,
-    "probability_gap_to_runner_up": 5.874037742614746e-05,
-    "confidence": 5.874037742614746e-05,
-    "uncertainty": "low",
+    "runner_up_index": 3,
+    "runner_up_generation_type": "shuffled_temporal_order",
+    "runner_up_score": 0.6328603029251099,
+    "runner_up_probability": 0.25353139638900757,
+    "score_gap_to_runner_up": 0.002343118190765381,
+    "score_margin": 0.002343118190765381,
+    "probability_gap_to_runner_up": 0.0005947649478912354,
+    "confidence_margin": 0.0005947649478912354,
+    "confidence_tier": "low",
+    "selected_description": "Ground-truth future segment.",
+    "runner_up_description": "True future frames in shuffled order.",
+    "probability_gap_to_runner_up_legacy": 0.0005947649478912354,
+    "confidence": 0.0005947649478912354,
     "correct_index": 1,
-    "correct_rank": 2,
-    "was_correct": false
+    "correct_rank": 1,
+    "was_correct": true
   }
 }

@@ -1,0 +1,21 @@
+{
+  "evaluation_count": 8,
+  "heuristic": {
+    "top1_accuracy": 0.5,
+    "mean_reciprocal_rank": 0.7291666666666666,
+    "average_correct_rank": 1.625,
+    "score_margin_mean": 0.15809203305147382,
+    "score_margin_variance": 0.01943343254044529,
+    "confidence_margin_mean": 0.0,
+    "confidence_margin_variance": 0.0
+  },
+  "boundary_hybrid": {
+    "top1_accuracy": 0.25,
+    "mean_reciprocal_rank": 0.625,
+    "average_correct_rank": 1.75,
+    "score_margin_mean": 0.005443505197763418,
+    "score_margin_variance": 3.768021299479434e-05,
+    "confidence_margin_mean": 0.0018440932035446167,
+    "confidence_margin_variance": 4.299574801747141e-06
+  }
+}

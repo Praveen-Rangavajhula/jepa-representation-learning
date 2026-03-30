@@ -1,0 +1,30 @@
+{
+  "heuristic": {
+    "paired_template_counterfactual": {
+      "count": 8,
+      "accuracy_when_present": 0.5
+    },
+    "temporal_order_block_reverse": {
+      "count": 7,
+      "accuracy_when_present": 0.5714285714285714
+    },
+    "temporal_order_two_block_swap": {
+      "count": 1,
+      "accuracy_when_present": 0.0
+    }
+  },
+  "boundary_hybrid": {
+    "paired_template_counterfactual": {
+      "count": 8,
+      "accuracy_when_present": 0.25
+    },
+    "temporal_order_block_reverse": {
+      "count": 7,
+      "accuracy_when_present": 0.2857142857142857
+    },
+    "temporal_order_two_block_swap": {
+      "count": 1,
+      "accuracy_when_present": 0.0
+    }
+  }
+}
