@@ -71,6 +71,13 @@ class DeterministicCommentaryBackend:
         }
 
 
+def _env_flag(name: str, *, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
 def _first_nonempty(values: Sequence[Optional[str]]) -> Optional[str]:
     for value in values:
         if value is not None and str(value).strip():
@@ -118,6 +125,132 @@ def _resolve_gemini_api_key() -> Optional[str]:
         os.environ.setdefault("GEMINI_API_KEY", value)
         os.environ.setdefault("GOOGLE_API_KEY", value)
     return value
+
+
+class ColabAICommentaryBackend:
+    """Structured-output backend using the built-in external Colab AI proxy."""
+
+    name = "colab_ai"
+
+    def __init__(
+        self,
+        *,
+        model: Optional[str] = None,
+        client: Any = None,
+    ) -> None:
+        self.model = (
+            model
+            or os.environ.get("JEPA_LLM_MODEL")
+            or os.environ.get("COLAB_AI_MODEL")
+            or "google/gemini-2.5-flash"
+        )
+        self._client = client
+        self._status = BackendStatus(name=self.name, available=False, reason="not initialized")
+        self._initialize_client()
+
+    def _initialize_client(self) -> None:
+        if _env_flag("JEPA_DISABLE_COLAB_AI", default=False):
+            self._status = BackendStatus(
+                name=self.name,
+                available=False,
+                reason="JEPA_DISABLE_COLAB_AI is enabled",
+            )
+            return
+
+        if self._client is not None:
+            self._status = BackendStatus(name=self.name, available=True)
+            return
+
+        try:
+            from google.colab import ai as colab_ai  # type: ignore
+
+            self._client = colab_ai
+            self._status = BackendStatus(name=self.name, available=True)
+        except Exception as exc:  # pragma: no cover - import/runtime dependent
+            self._client = None
+            self._status = BackendStatus(name=self.name, available=False, reason=str(exc))
+
+    def available(self) -> bool:
+        return bool(self._status.available and self._client is not None)
+
+    @property
+    def status(self) -> BackendStatus:
+        return self._status
+
+    def generate(
+        self,
+        evidence: Mapping[str, Any],
+        *,
+        prompt_package: Optional[LLMReadyCommentaryContext] = None,
+        expected_selected_index: int | None = None,
+    ) -> Dict[str, Any]:
+        if not self.available():
+            raise RuntimeError(f"Colab AI commentary backend unavailable: {self._status.reason}")
+        if prompt_package is None:
+            raise ValueError("prompt_package is required for the Colab AI backend.")
+
+        prompt = self._build_prompt(prompt_package)
+        response = self._client.generate_text(  # type: ignore[union-attr]
+            prompt,
+            model_name=self.model,
+        )
+        payload = self._extract_json_payload(response)
+        normalized = validate_commentary_payload(
+            payload,
+            expected_selected_index=expected_selected_index,
+            valid_candidate_indices=self._candidate_indices(evidence),
+        )
+        return normalized.as_dict()
+
+    @staticmethod
+    def _build_prompt(prompt_package: LLMReadyCommentaryContext) -> str:
+        return (
+            "System instructions:\n"
+            f"{prompt_package.system_instructions.strip()}\n\n"
+            "Return only a JSON object matching this schema. "
+            "Do not include markdown, code fences, or explanatory text.\n\n"
+            f"JSON schema:\n{json.dumps(COMMENTARY_JSON_SCHEMA, indent=2, ensure_ascii=True)}\n\n"
+            "User prompt:\n"
+            f"{prompt_package.user_prompt.strip()}\n"
+        )
+
+    @staticmethod
+    def _extract_json_payload(response: Any) -> Dict[str, Any]:
+        text = str(response).strip()
+        if not text:
+            raise RuntimeError("Colab AI response did not contain text.")
+
+        if text.startswith("```"):
+            lines = text.splitlines()
+            if lines and lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].startswith("```"):
+                lines = lines[:-1]
+            text = "\n".join(lines).strip()
+
+        start = text.find("{")
+        end = text.rfind("}")
+        if start != -1 and end != -1 and start < end:
+            text = text[start : end + 1]
+
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"Colab AI response was not valid JSON: {exc}") from exc
+        if not isinstance(payload, dict):
+            raise RuntimeError("Colab AI response JSON must be an object.")
+        return payload
+
+    @staticmethod
+    def _candidate_indices(evidence: Mapping[str, Any]) -> list[int]:
+        table = list(evidence.get("candidate_score_table", []))
+        indices: list[int] = []
+        for row in table:
+            try:
+                indices.append(int(row.get("candidate_index")))
+            except Exception:
+                continue
+        return indices
 
 
 class GeminiCommentaryBackend:
@@ -380,9 +513,13 @@ class OpenAIResponsesCommentaryBackend:
 
 
 def build_default_commentary_backend() -> CommentaryBackend:
-    """Prefer Gemini, then OpenAI, then deterministic fallback."""
+    """Prefer external Colab AI, then Gemini, then OpenAI, then deterministic fallback."""
 
-    for backend in (GeminiCommentaryBackend(), OpenAIResponsesCommentaryBackend()):
+    for backend in (
+        ColabAICommentaryBackend(),
+        GeminiCommentaryBackend(),
+        OpenAIResponsesCommentaryBackend(),
+    ):
         if backend.available():
             return backend
     return DeterministicCommentaryBackend()

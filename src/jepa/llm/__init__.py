@@ -2,6 +2,7 @@
 
 from .backends import (
     BackendStatus,
+    ColabAICommentaryBackend,
     CommentaryBackend,
     DeterministicCommentaryBackend,
     GeminiCommentaryBackend,
@@ -24,6 +25,7 @@ from .service import (
 __all__ = [
     "BackendStatus",
     "COMMENTARY_JSON_SCHEMA",
+    "ColabAICommentaryBackend",
     "CommentaryBackend",
     "CommentaryGenerationResult",
     "CommentarySchemaError",
