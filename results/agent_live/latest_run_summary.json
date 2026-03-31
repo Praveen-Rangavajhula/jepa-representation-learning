@@ -1,0 +1,61 @@
+{
+  "count": 5,
+  "jsonl_path": "/content/jepa-representation-learning/results/agent_live/live_agent_transcript_20260331_170124.jsonl",
+  "markdown_path": "/content/jepa-representation-learning/results/agent_live/live_agent_transcript_20260331_170124.md",
+  "backend_counts": {
+    "colab_ai": 5
+  },
+  "fallback_count": 0,
+  "records": [
+    {
+      "example_index": 0,
+      "selected_index": 0,
+      "correct_index": 0,
+      "backend_name": "colab_ai",
+      "used_fallback": false,
+      "confidence_margin": 0.00034224987030029297,
+      "confidence_tier": "low",
+      "score_margin": 0.0010136127471923606
+    },
+    {
+      "example_index": 1,
+      "selected_index": 2,
+      "correct_index": 0,
+      "backend_name": "colab_ai",
+      "used_fallback": false,
+      "confidence_margin": 0.006142407655715942,
+      "confidence_tier": "low",
+      "score_margin": 0.01818365454673765
+    },
+    {
+      "example_index": 2,
+      "selected_index": 2,
+      "correct_index": 1,
+      "backend_name": "colab_ai",
+      "used_fallback": false,
+      "confidence_margin": 0.0003604292869567871,
+      "confidence_tier": "low",
+      "score_margin": 0.0010634958744049072
+    },
+    {
+      "example_index": 3,
+      "selected_index": 1,
+      "correct_index": 0,
+      "backend_name": "colab_ai",
+      "used_fallback": false,
+      "confidence_margin": 0.0008327662944793701,
+      "confidence_tier": "low",
+      "score_margin": 0.002454131841659546
+    },
+    {
+      "example_index": 4,
+      "selected_index": 0,
+      "correct_index": 1,
+      "backend_name": "colab_ai",
+      "used_fallback": false,
+      "confidence_margin": 0.0002790391445159912,
+      "confidence_tier": "low",
+      "score_margin": 0.0008261680603027788
+    }
+  ]
+}
