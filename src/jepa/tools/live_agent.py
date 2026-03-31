@@ -111,6 +111,9 @@ class LiveAgentRunResult:
     records: List[LiveAgentTranscriptEntry]
     jsonl_path: Path
     markdown_path: Path
+    summary_path: Path | None = None
+    backend_counts: Dict[str, int] = field(default_factory=dict)
+    fallback_count: int = 0
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -118,6 +121,9 @@ class LiveAgentRunResult:
             "records": [record.as_dict() for record in self.records],
             "jsonl_path": str(self.jsonl_path),
             "markdown_path": str(self.markdown_path),
+            "summary_path": str(self.summary_path) if self.summary_path is not None else None,
+            "backend_counts": dict(self.backend_counts),
+            "fallback_count": int(self.fallback_count),
         }
 
 
@@ -249,11 +255,44 @@ def run_live_agent_loop(
             markdown_lines.append("")
 
     markdown_path.write_text("\n".join(markdown_lines).strip() + "\n", encoding="utf-8")
+    backend_counts: Dict[str, int] = {}
+    fallback_count = 0
+    for record in records:
+        backend_counts[record.backend_name] = backend_counts.get(record.backend_name, 0) + 1
+        if record.used_fallback:
+            fallback_count += 1
+
+    summary_path = output_dir / "latest_run_summary.json"
+    summary_payload = {
+        "count": run_count,
+        "jsonl_path": str(jsonl_path),
+        "markdown_path": str(markdown_path),
+        "backend_counts": backend_counts,
+        "fallback_count": fallback_count,
+        "records": [
+            {
+                "example_index": record.example_index,
+                "selected_index": record.selected_index,
+                "correct_index": record.correct_index,
+                "backend_name": record.backend_name,
+                "used_fallback": record.used_fallback,
+                "confidence_margin": record.confidence_margin,
+                "confidence_tier": record.confidence_tier,
+                "score_margin": record.score_margin,
+            }
+            for record in records
+        ],
+    }
+    summary_path.write_text(json.dumps(summary_payload, indent=2), encoding="utf-8")
+
     return LiveAgentRunResult(
         count=run_count,
         records=records,
         jsonl_path=jsonl_path,
         markdown_path=markdown_path,
+        summary_path=summary_path,
+        backend_counts=backend_counts,
+        fallback_count=fallback_count,
     )
 
 
