@@ -143,20 +143,25 @@ class DeterministicCommentaryGenerator:
 
         top_components = _component_highlights(selected.get("components", {}))
         runner_up_index = runner_up.get("candidate_index")
+        selected_label = self._candidate_label(selected, selected_generation_type)
+        runner_up_label = self._candidate_label(
+            runner_up,
+            str(runner_up.get("generation_type", "unknown")),
+        )
 
         anticipated_future_summary = (
-            f"The system favors candidate {selected_index} as the most plausible short-term future after "
-            f"the {observed_frames}-frame observed prefix. In this benchmark, that candidate represents "
-            f"{_describe_generation_type(selected_generation_type)}."
+            f"For this example, the strongest predicted next step is candidate {selected_index}"
+            f"{selected_label}. After the {observed_frames}-frame observed prefix, that is the future "
+            "the system would present as its best guess."
         )
 
         component_phrase = self._component_phrase(top_components)
         why_selected = (
-            f"It ranked highest under {evaluator_name} because its strongest evidence came from "
-            f"{component_phrase}. The lead over the next-best candidate is {score_gap:.4f}."
+            f"It finished first under {evaluator_name}, driven mainly by {component_phrase}. "
+            f"The lead over the next-best option is {score_gap:.4f}."
         )
         if runner_up_index is not None:
-            why_selected += f" The nearest alternative was candidate {int(runner_up_index)}."
+            why_selected += f" The closest alternative was candidate {int(runner_up_index)}{runner_up_label}."
 
         uncertainty_statement = self._uncertainty_statement(
             confidence=confidence,
@@ -225,29 +230,29 @@ class DeterministicCommentaryGenerator:
     ) -> str:
         if confidence is None:
             return (
-                f"This evaluator does not expose a calibrated confidence margin, so the ranking over "
-                f"{candidate_count} candidates should be interpreted qualitatively."
+                f"This evaluator does not expose a calibrated confidence margin, so treat the ranking over "
+                f"{candidate_count} candidates as directional evidence rather than a hard probability claim."
             )
 
         confidence_value = _as_float(confidence)
         if confidence_tier == "high":
             return (
-                f"Confidence is high with a top-two margin of {confidence_value:.4f}, so the selected "
+                f"This is a strong call: the top-two margin is {confidence_value:.4f}, so the selected "
                 "future is meaningfully separated from the alternatives."
             )
         if confidence_tier == "medium":
             return (
-                f"Confidence is moderate with a top-two margin of {confidence_value:.4f}; the leading "
-                "candidate is plausible, but an alternative still remains competitive."
+                f"This is a reasonable call with a top-two margin of {confidence_value:.4f}; the leader "
+                "looks plausible, but an alternative still remains competitive."
             )
         if score_gap <= self.close_score_gap_threshold:
             return (
-                f"Confidence is low with a top-two margin of {confidence_value:.4f}, and the score gap "
-                f"to the runner-up is only {score_gap:.4f}. This prediction should be treated cautiously."
+                f"This is a close call: the top-two margin is {confidence_value:.4f}, and the gap to the "
+                f"runner-up is only {score_gap:.4f}. I would present it as a tentative but defensible pick."
             )
         return (
-            f"Confidence is low with a top-two margin of {confidence_value:.4f}, so the ranking should "
-            "be viewed as tentative even though one candidate is still preferred."
+            f"Confidence is still limited with a top-two margin of {confidence_value:.4f}, so frame this "
+            "as a tentative preference rather than a decisive win."
         )
 
     def _close_alternative_warning(
@@ -269,8 +274,10 @@ class DeterministicCommentaryGenerator:
 
         runner_up_index = int(runner_up.get("candidate_index", -1))
         runner_up_type = str(runner_up.get("generation_type", "unknown"))
+        runner_up_label = self._candidate_label(runner_up, runner_up_type)
         return (
-            f"Candidate {runner_up_index} remains close to the leader, and it represents "
+            f"Candidate {runner_up_index}{runner_up_label} is still very close, so this should be framed "
+            f"as a near tie rather than a clean separation. That alternative represents "
             f"{_describe_generation_type(runner_up_type)}."
         )
 
@@ -342,6 +349,17 @@ class DeterministicCommentaryGenerator:
             parts.append(baseline_note)
         return " ".join(part.strip() for part in parts if part).strip()
 
+    @staticmethod
+    def _candidate_label(candidate: Mapping[str, Any], generation_type: str) -> str:
+        description = (
+            candidate.get("candidate_description")
+            or candidate.get("selected_description")
+            or candidate.get("description")
+        )
+        if description is not None and str(description).strip():
+            return f" ({str(description).strip()})"
+        return f" ({_describe_generation_type(generation_type)})"
+
 
 class LLMReadyCommentaryBuilder:
     """Prepare a grounded prompt package for a later LLM commentary stage."""
@@ -367,16 +385,19 @@ class LLMReadyCommentaryBuilder:
         }
 
         system_instructions = (
-            "You are writing grounded anticipatory commentary for a future-selection benchmark. "
-            "Use only the provided evidence. State the selected candidate, explain why it ranked "
-            "highest, describe the system's certainty using the confidence_margin and confidence_tier, warn when the margin is small, and note "
-            "baseline disagreement if present. Do not invent storylines, object identities, or causes."
+            "You are writing grounded, presentation-ready commentary for a class demo of a future-selection benchmark. "
+            "Use only the provided evidence. Sound clear, confident, and helpful, but stay honest about uncertainty. "
+            "Avoid robotic repetition, avoid restating the same score twice, prefer human-readable candidate descriptions "
+            "over raw candidate numbers when available, and do not invent storylines, object identities, or causes."
         )
         user_prompt = (
-            "Generate a concise analytical commentary in 3-5 sentences. Mention: "
-            "(1) what future is most likely, "
-            "(2) why it was selected using the score evidence, and "
-            "(3) how certain the system is.\n\n"
+            "Return only JSON.\n"
+            "Write concise presenter notes that someone could comfortably read aloud in class.\n"
+            "Field guidance:\n"
+            "- anticipation_summary: 1-2 sentences saying what future the system favors and why that is the main takeaway.\n"
+            "- why_selected: 1 sentence naming the strongest evidence without repeating the full summary.\n"
+            "- uncertainty_note: 1 sentence that frames confidence honestly but constructively; if the margin is small, call it a close call instead of apologizing.\n"
+            "- baseline_note: mention baseline agreement or disagreement only if it is genuinely useful; otherwise return an empty string.\n\n"
             f"Evidence JSON:\n{json.dumps(minimal_evidence, indent=2)}"
         )
 

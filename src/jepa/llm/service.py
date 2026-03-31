@@ -185,14 +185,23 @@ class LLMCommentaryService:
             text_parts.append(payload.baseline_note.strip())
         text = " ".join(part for part in text_parts if part)
 
-        evidence_highlights = list(deterministic.evidence_highlights)
+        evidence_highlights: list[str] = []
+
+        def _append_highlight(item: str | None) -> None:
+            if item is None:
+                return
+            text = str(item).strip()
+            if text and text not in evidence_highlights:
+                evidence_highlights.append(text)
+
+        for item in deterministic.evidence_highlights:
+            _append_highlight(item)
         if score_margin is not None:
-            evidence_highlights.append(f"Score margin = {float(score_margin):.4f}")
+            _append_highlight(f"Score margin = {float(score_margin):.4f}")
         if confidence_margin is not None:
             label = confidence_tier if confidence_tier is not None else "unknown"
-            evidence_highlights.append(f"Confidence margin = {float(confidence_margin):.4f} ({label})")
-        if payload.baseline_note.strip() and payload.baseline_note not in evidence_highlights:
-            evidence_highlights.append(payload.baseline_note.strip())
+            _append_highlight(f"Confidence margin = {float(confidence_margin):.4f} ({label})")
+        _append_highlight(payload.baseline_note)
 
         return GroundedCommentary(
             evaluator_name=evaluator_name,
