@@ -20,6 +20,7 @@ from .frozen_feature_reranker import (
     FrozenFeatureRerankerTrainingSummary,
 )
 from .latent_future_scorer import LatentFuturePredictorScorer
+from .semantic_future_scorer import HybridFutureScorer, SSV2SemanticFutureScorer
 from .vjepa_future_scorer import (
     VJEPAFutureCandidateScore,
     VJEPAFutureScoreBundle,
@@ -32,9 +33,11 @@ __all__ = [
     "FrozenFeatureRerankerConfig",
     "FrozenFeatureRerankerScorer",
     "FrozenFeatureRerankerTrainingSummary",
+    "HybridFutureScorer",
     "VJEPAFutureCandidateScore",
     "VJEPAFutureScoreBundle",
     "VJEPAFutureScorer",
+    "SSV2SemanticFutureScorer",
     "average_correct_rank",
     "confidence_tier",
     "cosine_similarity",
