@@ -33,6 +33,7 @@ __all__ = [
     "build_future_selection_dataset",
     "build_future_selection_loader",
     "generate_future_selection_example",
+    "save_future_selection_example_artifacts",
     "save_future_selection_examples",
     "summarize_future_selection_example",
 ]
@@ -495,24 +496,39 @@ def summarize_future_selection_example(example: FutureSelectionExample) -> Dict[
 
 def _frame_to_pil(frame: Tensor) -> Image.Image:
     frame = _normalize_frame(frame.detach().cpu())
-    array = frame.squeeze(0).mul(255).to(torch.uint8).numpy()
-    return Image.fromarray(array, mode="L")
+    if frame.ndim != 3:
+        raise ValueError(f"Expected frame shape (C, H, W); got {tuple(frame.shape)}")
+    channels = int(frame.shape[0])
+    if channels == 1:
+        frame = frame.repeat(3, 1, 1)
+    elif channels != 3:
+        raise ValueError(f"Expected 1 or 3 channels; got {channels}")
+    array = frame.mul(255).to(torch.uint8).permute(1, 2, 0).numpy()
+    return Image.fromarray(array, mode="RGB")
+
+
+def _sequence_to_pil_frames(sequence: Tensor) -> List[Image.Image]:
+    if sequence.ndim != 4:
+        raise ValueError(f"Expected sequence shape (T, C, H, W); got {tuple(sequence.shape)}")
+    if sequence.shape[0] < 1:
+        raise ValueError("Cannot create frames from an empty sequence.")
+    return [_frame_to_pil(frame) for frame in sequence]
 
 
 def _sequence_to_grid(sequence: Tensor, *, columns: int = 4, padding: int = 2) -> Image.Image:
-    frames = [_frame_to_pil(frame) for frame in sequence]
+    frames = _sequence_to_pil_frames(sequence)
     if not frames:
         raise ValueError("Cannot create a grid from an empty sequence.")
     width, height = frames[0].size
     columns = max(1, min(columns, len(frames)))
     rows = math.ceil(len(frames) / columns)
     grid = Image.new(
-        "L",
+        "RGB",
         (
             columns * width + padding * (columns - 1),
             rows * height + padding * (rows - 1),
         ),
-        color=0,
+        color=(0, 0, 0),
     )
     for frame_index, frame in enumerate(frames):
         row = frame_index // columns
@@ -524,30 +540,186 @@ def _sequence_to_grid(sequence: Tensor, *, columns: int = 4, padding: int = 2) -
 
 
 def _draw_label(image: Image.Image, label: str) -> Image.Image:
-    canvas = Image.new("L", (image.width, image.height + 18), color=0)
+    canvas = Image.new("RGB", (image.width, image.height + 18), color=(0, 0, 0))
     canvas.paste(image, (0, 18))
     draw = ImageDraw.Draw(canvas)
-    draw.text((4, 2), label, fill=255)
+    draw.text((4, 2), label, fill=(255, 255, 255))
     return canvas
+
+
+def _candidate_label(example: FutureSelectionExample, candidate_index: int) -> str:
+    strategy = example.metadata["candidate_strategies"][candidate_index]["strategy"]
+    return f"candidate {candidate_index} | {strategy}"
+
+
+def _save_gif_frames(
+    frames: Sequence[Image.Image],
+    output_path: str | Path,
+    *,
+    duration_ms: int = 160,
+) -> Path:
+    if not frames:
+        raise ValueError("Cannot save an empty GIF.")
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    frames[0].save(
+        output_path,
+        save_all=True,
+        append_images=list(frames[1:]),
+        duration=duration_ms,
+        loop=0,
+        optimize=False,
+    )
+    return output_path
+
+
+def save_sequence_gif(
+    sequence: Tensor,
+    output_path: str | Path,
+    *,
+    duration_ms: int = 160,
+    label: Optional[str] = None,
+) -> Path:
+    frames = _sequence_to_pil_frames(sequence)
+    if label is not None:
+        frames = [_draw_label(frame, f"{label} | t={frame_index:02d}") for frame_index, frame in enumerate(frames)]
+    return _save_gif_frames(frames, output_path, duration_ms=duration_ms)
 
 
 def _make_example_panel(example: FutureSelectionExample) -> Image.Image:
     panels = [_draw_label(_sequence_to_grid(example.observed), "observed (0:8)")]
     for candidate_index, candidate in enumerate(example.candidates):
-        label = (
-            f"candidate {candidate_index} | "
-            f"{example.metadata['candidate_strategies'][candidate_index]['strategy']}"
-        )
+        label = _candidate_label(example, candidate_index)
         panels.append(_draw_label(_sequence_to_grid(candidate), label))
 
     width = max(panel.width for panel in panels)
     height = sum(panel.height for panel in panels) + 2 * (len(panels) - 1)
-    canvas = Image.new("L", (width, height), color=0)
+    canvas = Image.new("RGB", (width, height), color=(0, 0, 0))
     y = 0
     for panel in panels:
         canvas.paste(panel, (0, y))
         y += panel.height + 2
     return canvas
+
+
+def _make_example_animation_frames(
+    example: FutureSelectionExample,
+    *,
+    panel_padding: int = 4,
+) -> List[Image.Image]:
+    labels = ["observed (0:8)"] + [
+        _candidate_label(example, candidate_index)
+        for candidate_index in range(example.candidates.shape[0])
+    ]
+    sequences = [example.observed, *[candidate for candidate in example.candidates]]
+    sequence_frames = [_sequence_to_pil_frames(sequence) for sequence in sequences]
+
+    frame_width = max(frame.width for frames in sequence_frames for frame in frames)
+    frame_height = max(frame.height for frames in sequence_frames for frame in frames)
+    max_steps = max(len(frames) for frames in sequence_frames)
+
+    animation_frames: List[Image.Image] = []
+    for frame_index in range(max_steps):
+        labeled_panels: List[Image.Image] = []
+        for label, frames in zip(labels, sequence_frames):
+            if frame_index < len(frames):
+                frame = frames[frame_index]
+            else:
+                frame = Image.new("RGB", (frame_width, frame_height), color=(0, 0, 0))
+            if frame.size != (frame_width, frame_height):
+                padded = Image.new("RGB", (frame_width, frame_height), color=(0, 0, 0))
+                padded.paste(frame, (0, 0))
+                frame = padded
+            labeled_panels.append(_draw_label(frame, f"{label} | t={frame_index:02d}"))
+
+        width = max(panel.width for panel in labeled_panels)
+        height = sum(panel.height for panel in labeled_panels) + panel_padding * (len(labeled_panels) - 1)
+        canvas = Image.new("RGB", (width, height), color=(0, 0, 0))
+        y = 0
+        for panel in labeled_panels:
+            canvas.paste(panel, (0, y))
+            y += panel.height + panel_padding
+        animation_frames.append(canvas)
+    return animation_frames
+
+
+def save_future_selection_example_artifacts(
+    example: FutureSelectionExample,
+    output_dir: str | Path,
+    *,
+    stem: str = "future_selection_example",
+    duration_ms: int = 160,
+    save_panel_png: bool = True,
+    save_candidate_pngs: bool = True,
+    save_individual_gifs: bool = True,
+    save_comparison_gif: bool = True,
+) -> Dict[str, Any]:
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    artifacts: Dict[str, Any] = {
+        "panel_png": None,
+        "comparison_gif": None,
+        "observed_gif": None,
+        "candidate_pngs": [],
+        "candidate_gifs": [],
+    }
+
+    if save_panel_png:
+        panel_path = output_dir / f"{stem}_panel.png"
+        _make_example_panel(example).save(panel_path)
+        artifacts["panel_png"] = panel_path
+
+    if save_individual_gifs:
+        observed_path = output_dir / f"{stem}_observed.gif"
+        artifacts["observed_gif"] = save_sequence_gif(
+            example.observed,
+            observed_path,
+            duration_ms=duration_ms,
+            label="observed (0:8)",
+        )
+
+    for candidate_index, candidate in enumerate(example.candidates):
+        label = _candidate_label(example, candidate_index)
+        if save_candidate_pngs:
+            candidate_grid = _draw_label(_sequence_to_grid(candidate), label)
+            candidate_path = output_dir / f"{stem}_candidate_{candidate_index}.png"
+            candidate_grid.save(candidate_path)
+            artifacts["candidate_pngs"].append(candidate_path)
+        if save_individual_gifs:
+            candidate_gif_path = output_dir / f"{stem}_candidate_{candidate_index}.gif"
+            artifacts["candidate_gifs"].append(
+                save_sequence_gif(
+                    candidate,
+                    candidate_gif_path,
+                    duration_ms=duration_ms,
+                    label=label,
+                )
+            )
+
+    if save_comparison_gif:
+        comparison_path = output_dir / f"{stem}_comparison.gif"
+        comparison_frames = _make_example_animation_frames(example)
+        artifacts["comparison_gif"] = _save_gif_frames(
+            comparison_frames,
+            comparison_path,
+            duration_ms=duration_ms,
+        )
+
+    return artifacts
+
+
+def _flatten_artifact_paths(artifacts: Dict[str, Any]) -> List[Path]:
+    paths: List[Path] = []
+    for value in artifacts.values():
+        if value is None:
+            continue
+        if isinstance(value, Path):
+            paths.append(value)
+            continue
+        if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+            paths.extend(path for path in value if isinstance(path, Path))
+    return paths
 
 
 def save_future_selection_examples(
@@ -563,19 +735,16 @@ def save_future_selection_examples(
 
     saved_paths: List[Path] = []
     for example_index, example in enumerate(examples[:max_examples]):
-        panel_path = output_dir / f"future_selection_{example_index:03d}_panel.png"
-        _make_example_panel(example).save(panel_path)
-        saved_paths.append(panel_path)
-
-        for candidate_index, candidate in enumerate(example.candidates):
-            label = (
-                f"candidate {candidate_index} | "
-                f"{example.metadata['candidate_strategies'][candidate_index]['strategy']}"
-            )
-            candidate_grid = _draw_label(_sequence_to_grid(candidate), label)
-            candidate_path = output_dir / f"future_selection_{example_index:03d}_candidate_{candidate_index}.png"
-            candidate_grid.save(candidate_path)
-            saved_paths.append(candidate_path)
+        artifacts = save_future_selection_example_artifacts(
+            example,
+            output_dir,
+            stem=f"future_selection_{example_index:03d}",
+            save_panel_png=True,
+            save_candidate_pngs=True,
+            save_individual_gifs=True,
+            save_comparison_gif=True,
+        )
+        saved_paths.extend(_flatten_artifact_paths(artifacts))
 
     return saved_paths
 

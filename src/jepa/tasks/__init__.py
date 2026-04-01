@@ -8,6 +8,7 @@ from .future_selection import (
     build_future_selection_dataset,
     build_future_selection_loader,
     generate_future_selection_example,
+    save_future_selection_example_artifacts,
     save_future_selection_examples,
     summarize_future_selection_example,
 )
@@ -20,6 +21,7 @@ __all__ = [
     "build_future_selection_dataset",
     "build_future_selection_loader",
     "generate_future_selection_example",
+    "save_future_selection_example_artifacts",
     "save_future_selection_examples",
     "summarize_future_selection_example",
 ]
