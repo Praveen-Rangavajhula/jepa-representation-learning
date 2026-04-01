@@ -1,6 +1,6 @@
 {
   "system_instructions": "You are writing grounded, presentation-ready commentary for a class demo of a future-selection benchmark. Use only the provided evidence. Sound clear, confident, and helpful, but stay honest about uncertainty. Avoid robotic repetition, avoid restating the same score twice, prefer human-readable candidate descriptions over raw candidate numbers when available, and do not invent storylines, object identities, or causes.",
-  "user_prompt": "Return only JSON.\nWrite concise presenter notes that someone could comfortably read aloud in class.\nField guidance:\n- anticipation_summary: 1-2 sentences saying what future the system favors and why that is the main takeaway.\n- why_selected: 1 sentence naming the strongest evidence without repeating the full summary.\n- uncertainty_note: 1 sentence that frames confidence honestly but constructively; if the margin is small, call it a close call instead of apologizing.\n- baseline_note: mention baseline agreement or disagreement only if it is genuinely useful; otherwise return an empty string.\n\nEvidence JSON:\n{\n  \"task_type\": \"future_selection\",\n  \"observed_clip_summary\": {\n    \"shape\": [\n      8,\n      3,\n      256,\n      256\n    ],\n    \"frame_count\": 8\n  },\n  \"candidate_clip_summary\": {\n    \"shape\": [\n      3,\n      8,\n      3,\n      256,\n      256\n    ],\n    \"candidate_count\": 3,\n    \"future_frames\": 8\n  },\n  \"ranking_summary\": {\n    \"evaluator_name\": \"vjepa2_masked_boundary_hybrid\",\n    \"selected_index\": 0,\n    \"selected_generation_type\": \"true_continuation\",\n    \"selected_score\": 0.5514014005661011,\n    \"selected_probability\": 0.33783164620399475,\n    \"selected_component_highlights\": [\n      {\n        \"name\": \"predictor_mask_token_count\",\n        \"value\": 512.0\n      },\n      {\n        \"name\": \"encoder_boundary_overlap\",\n        \"value\": 0.9494144916534424\n      }\n    ],\n    \"runner_up_index\": 2,\n    \"runner_up_generation_type\": \"temporal_order_block_reverse\",\n    \"runner_up_score\": 0.5503877878189087,\n    \"runner_up_probability\": 0.33748939633369446,\n    \"score_gap_to_runner_up\": 0.0010136127471923606,\n    \"score_margin\": 0.0010136127471923606,\n    \"probability_gap_to_runner_up\": 0.00034224987030029297,\n    \"confidence_margin\": 0.00034224987030029297,\n    \"confidence_tier\": \"low\",\n    \"selected_description\": \"Opening something (true continuation)\",\n    \"runner_up_description\": \"Opening something (reverse-block temporal negative)\",\n    \"probability_gap_to_runner_up_legacy\": 0.00034224987030029297,\n    \"confidence\": 0.00034224987030029297,\n    \"correct_index\": 0,\n    \"correct_rank\": 1,\n    \"was_correct\": true\n  },\n  \"selected_candidate\": {\n    \"candidate_index\": 0,\n    \"rank\": 1,\n    \"score\": 0.5514014005661011,\n    \"probability\": 0.33783164620399475,\n    \"generation_type\": \"true_continuation\",\n    \"rationale\": \"true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n    \"components\": {\n      \"predictor_boundary_alignment\": 0.5264374017715454,\n      \"predictor_future_alignment\": 0.5265111923217773,\n      \"encoder_boundary_overlap\": 0.9494144916534424,\n      \"transition_delta_consistency\": 0.4584537446498871,\n      \"predictor_aligned_mean\": 0.8576178550720215,\n      \"predictor_block_token_alignment_mean\": 0.5264742970466614,\n      \"predictor_mask_token_count\": 512.0,\n      \"boundary_hybrid_base_score\": 0.551601767539978,\n      \"boundary_hybrid_block_swapped_score\": 0.5536054372787476,\n      \"boundary_hybrid_order_margin\": -0.0020036697387695312\n    },\n    \"is_true\": true,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (true continuation)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (true continuation)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"observed_clip_true_future\",\n      \"construction_index\": 0\n    },\n    \"is_correct\": true\n  },\n  \"runner_up_candidate\": {\n    \"candidate_index\": 2,\n    \"rank\": 2,\n    \"score\": 0.5503877878189087,\n    \"probability\": 0.33748939633369446,\n    \"generation_type\": \"temporal_order_block_reverse\",\n    \"rationale\": \"temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n    \"components\": {\n      \"predictor_boundary_alignment\": 0.5159292221069336,\n      \"predictor_future_alignment\": 0.5157085657119751,\n      \"encoder_boundary_overlap\": 0.9501647353172302,\n      \"transition_delta_consistency\": 0.5055729746818542,\n      \"predictor_aligned_mean\": 0.8499388694763184,\n      \"predictor_block_token_alignment_mean\": 0.5158188939094543,\n      \"predictor_mask_token_count\": 512.0,\n      \"boundary_hybrid_base_score\": 0.5501146912574768,\n      \"boundary_hybrid_block_swapped_score\": 0.547383725643158,\n      \"boundary_hybrid_order_margin\": 0.0027309656143188477\n    },\n    \"is_true\": false,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (reverse-block temporal negative)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"same_clip_temporal_negative\",\n      \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n      \"block_count\": 2,\n      \"block_size\": 4,\n      \"source_frame_count\": 8,\n      \"construction_index\": 1\n    },\n    \"is_correct\": false\n  },\n  \"candidate_score_table\": [\n    {\n      \"candidate_index\": 0,\n      \"rank\": 1,\n      \"score\": 0.5514014005661011,\n      \"probability\": 0.33783164620399475,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.5264374017715454,\n        \"predictor_future_alignment\": 0.5265111923217773,\n        \"encoder_boundary_overlap\": 0.9494144916534424,\n        \"transition_delta_consistency\": 0.4584537446498871,\n        \"predictor_aligned_mean\": 0.8576178550720215,\n        \"predictor_block_token_alignment_mean\": 0.5264742970466614,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.551601767539978,\n        \"boundary_hybrid_block_swapped_score\": 0.5536054372787476,\n        \"boundary_hybrid_order_margin\": -0.0020036697387695312\n      },\n      \"is_true\": true,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (true continuation)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0\n      },\n      \"is_correct\": true\n    },\n    {\n      \"candidate_index\": 2,\n      \"rank\": 2,\n      \"score\": 0.5503877878189087,\n      \"probability\": 0.33748939633369446,\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"rationale\": \"temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.5159292221069336,\n        \"predictor_future_alignment\": 0.5157085657119751,\n        \"encoder_boundary_overlap\": 0.9501647353172302,\n        \"transition_delta_consistency\": 0.5055729746818542,\n        \"predictor_aligned_mean\": 0.8499388694763184,\n        \"predictor_block_token_alignment_mean\": 0.5158188939094543,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.5501146912574768,\n        \"boundary_hybrid_block_swapped_score\": 0.547383725643158,\n        \"boundary_hybrid_order_margin\": 0.0027309656143188477\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1\n      },\n      \"is_correct\": false\n    },\n    {\n      \"candidate_index\": 1,\n      \"rank\": 3,\n      \"score\": 0.5116904973983765,\n      \"probability\": 0.3246789276599884,\n      \"generation_type\": \"paired_template_counterfactual\",\n      \"rationale\": \"paired_template_counterfactual candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.4923441708087921,\n        \"predictor_future_alignment\": 0.4961373209953308,\n        \"encoder_boundary_overlap\": 0.850035548210144,\n        \"transition_delta_consistency\": 0.4641254246234894,\n        \"predictor_aligned_mean\": 0.7962708473205566,\n        \"predictor_block_token_alignment_mean\": 0.49424076080322266,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.5123951435089111,\n        \"boundary_hybrid_block_swapped_score\": 0.5194416046142578,\n        \"boundary_hybrid_order_margin\": -0.00704646110534668\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Closing something (paired counterfactual)\",\n      \"candidate_metadata\": {\n        \"description\": \"Closing something (paired counterfactual)\",\n        \"paired_template\": \"Opening something\",\n        \"source_description\": \"Closing something\",\n        \"fallback\": false,\n        \"construction_index\": 2\n      },\n      \"is_correct\": false\n    }\n  ],\n  \"candidate_metadata\": [\n    {\n      \"strategy\": \"true_continuation\",\n      \"generation_type\": \"true_continuation\",\n      \"source_video_id\": \"test_38788824614\",\n      \"label_template\": \"Opening something\",\n      \"placeholders\": [],\n      \"pair_group\": \"open_close\",\n      \"description\": \"Opening something (true continuation)\",\n      \"is_true\": true,\n      \"details\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0\n      },\n      \"candidate_index\": 0,\n      \"construction_index\": 0\n    },\n    {\n      \"strategy\": \"paired_template_counterfactual\",\n      \"generation_type\": \"paired_template_counterfactual\",\n      \"source_video_id\": \"test_903673796535\",\n      \"label_template\": \"Closing something\",\n      \"placeholders\": [],\n      \"pair_group\": \"open_close\",\n      \"description\": \"Closing something (paired counterfactual)\",\n      \"is_true\": false,\n      \"details\": {\n        \"description\": \"Closing something (paired counterfactual)\",\n        \"paired_template\": \"Opening something\",\n        \"source_description\": \"Closing something\",\n        \"fallback\": false,\n        \"construction_index\": 2\n      },\n      \"candidate_index\": 1,\n      \"construction_index\": 2\n    },\n    {\n      \"strategy\": \"temporal_order_block_reverse\",\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"source_video_id\": \"test_38788824614\",\n      \"label_template\": \"Opening something\",\n      \"placeholders\": [],\n      \"pair_group\": \"open_close\",\n      \"description\": \"Opening something (reverse-block temporal negative)\",\n      \"is_true\": false,\n      \"details\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1\n      },\n      \"candidate_index\": 2,\n      \"construction_index\": 1\n    }\n  ],\n  \"candidate_descriptions\": [\n    \"Opening something (true continuation)\",\n    \"Closing something (paired counterfactual)\",\n    \"Opening something (reverse-block temporal negative)\"\n  ],\n  \"score_margin\": 0.0010136127471923606,\n  \"confidence_margin\": 0.00034224987030029297,\n  \"confidence_tier\": \"low\",\n  \"baseline_comparison\": [\n    {\n      \"evaluator\": \"vjepa\",\n      \"evaluator_name\": \"vjepa2_masked_boundary_hybrid\",\n      \"selected_index\": 0,\n      \"selected_generation_type\": \"true_continuation\",\n      \"selected_score\": 0.5514014005661011,\n      \"selected_probability\": 0.33783164620399475,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"predictor_mask_token_count\",\n          \"value\": 512.0\n        },\n        {\n          \"name\": \"encoder_boundary_overlap\",\n          \"value\": 0.9494144916534424\n        }\n      ],\n      \"runner_up_index\": 2,\n      \"runner_up_generation_type\": \"temporal_order_block_reverse\",\n      \"runner_up_score\": 0.5503877878189087,\n      \"runner_up_probability\": 0.33748939633369446,\n      \"score_gap_to_runner_up\": 0.0010136127471923606,\n      \"score_margin\": 0.0010136127471923606,\n      \"probability_gap_to_runner_up\": 0.00034224987030029297,\n      \"confidence_margin\": 0.00034224987030029297,\n      \"confidence_tier\": \"low\",\n      \"selected_description\": \"Opening something (true continuation)\",\n      \"runner_up_description\": \"Opening something (reverse-block temporal negative)\",\n      \"probability_gap_to_runner_up_legacy\": 0.00034224987030029297,\n      \"confidence\": 0.00034224987030029297,\n      \"correct_index\": 0,\n      \"correct_rank\": 1,\n      \"was_correct\": true\n    },\n    {\n      \"evaluator\": \"heuristic\",\n      \"evaluator_name\": \"FutureSelectionResult\",\n      \"selected_index\": 2,\n      \"selected_generation_type\": \"temporal_order_block_reverse\",\n      \"selected_score\": 0.31284620828893456,\n      \"selected_probability\": null,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"direction\",\n          \"value\": 0.934969145745752\n        },\n        {\n          \"name\": \"speed\",\n          \"value\": 0.334456678440673\n        }\n      ],\n      \"runner_up_index\": 1,\n      \"runner_up_generation_type\": \"paired_template_counterfactual\",\n      \"runner_up_score\": 0.2672700922221827,\n      \"runner_up_probability\": null,\n      \"score_gap_to_runner_up\": 0.04557611606675188,\n      \"score_margin\": 0.04557611606675188,\n      \"probability_gap_to_runner_up\": null,\n      \"confidence_margin\": null,\n      \"confidence_tier\": \"unknown\",\n      \"selected_description\": null,\n      \"runner_up_description\": null,\n      \"probability_gap_to_runner_up_legacy\": null,\n      \"confidence\": null,\n      \"correct_index\": 0,\n      \"correct_rank\": 3,\n      \"was_correct\": false\n    }\n  ],\n  \"baseline_agreement\": false,\n  \"evidence_highlights\": {\n    \"selected_candidate\": {\n      \"candidate_index\": 0,\n      \"rank\": 1,\n      \"score\": 0.5514014005661011,\n      \"probability\": 0.33783164620399475,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.5264374017715454,\n        \"predictor_future_alignment\": 0.5265111923217773,\n        \"encoder_boundary_overlap\": 0.9494144916534424,\n        \"transition_delta_consistency\": 0.4584537446498871,\n        \"predictor_aligned_mean\": 0.8576178550720215,\n        \"predictor_block_token_alignment_mean\": 0.5264742970466614,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.551601767539978,\n        \"boundary_hybrid_block_swapped_score\": 0.5536054372787476,\n        \"boundary_hybrid_order_margin\": -0.0020036697387695312\n      },\n      \"is_true\": true,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (true continuation)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0\n      },\n      \"is_correct\": true\n    },\n    \"runner_up_candidate\": {\n      \"candidate_index\": 2,\n      \"rank\": 2,\n      \"score\": 0.5503877878189087,\n      \"probability\": 0.33748939633369446,\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"rationale\": \"temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.5159292221069336,\n        \"predictor_future_alignment\": 0.5157085657119751,\n        \"encoder_boundary_overlap\": 0.9501647353172302,\n        \"transition_delta_consistency\": 0.5055729746818542,\n        \"predictor_aligned_mean\": 0.8499388694763184,\n        \"predictor_block_token_alignment_mean\": 0.5158188939094543,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.5501146912574768,\n        \"boundary_hybrid_block_swapped_score\": 0.547383725643158,\n        \"boundary_hybrid_order_margin\": 0.0027309656143188477\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1\n      },\n      \"is_correct\": false\n    },\n    \"selected_component_highlights\": [\n      {\n        \"name\": \"predictor_mask_token_count\",\n        \"value\": 512.0\n      },\n      {\n        \"name\": \"encoder_boundary_overlap\",\n        \"value\": 0.9494144916534424\n      }\n    ],\n    \"runner_up_component_highlights\": [\n      {\n        \"name\": \"predictor_mask_token_count\",\n        \"value\": 512.0\n      },\n      {\n        \"name\": \"encoder_boundary_overlap\",\n        \"value\": 0.9501647353172302\n      }\n    ],\n    \"score_margin\": 0.0010136127471923606,\n    \"confidence_margin\": 0.00034224987030029297,\n    \"confidence_tier\": \"low\",\n    \"score_gap_to_runner_up\": 0.0010136127471923606,\n    \"probability_gap_to_runner_up\": 0.00034224987030029297\n  },\n  \"notes\": [\n    \"Combined 16-frame task clips are internally resampled to the V-JEPA frame count.\",\n    \"Single-channel clips are converted to RGB inside preprocessing when needed.\",\n    \"This scorer uses V-JEPA predictor outputs plus a boundary overlap encoder check and a direct block-swap order margin.\",\n    \"The real-video path is auto-routed to this variant when candidate metadata looks like a clip-based real-video example.\",\n    \"Masked predictor calls stay single-mask and fail fast on CUDA to avoid poisoned-runtime fallbacks.\",\n    \"Boundary hybrid implementation signature: masked_boundary_hybrid_v1.\",\n    \"Boundary hybrid scores predictor alignment near the observed/future boundary, overlap-transition compatibility, and transition delta consistency.\",\n    \"The overlap component is measured on short windows straddling the observed/future boundary.\",\n    \"The predictor component is kept frozen and evaluated with single-mask calls only.\"\n  ]\n}\n\nAdditional grounded evidence:\n{\n  \"observed_description\": \"Observed prefix: a short 8-frame clip showing a human-object interaction in progress. The commentary layer only receives a neutral motion summary rather than the exact action label.\",\n  \"candidate_descriptions\": [\n    \"Opening something (true continuation)\",\n    \"Closing something (paired counterfactual)\",\n    \"Opening something (reverse-block temporal negative)\"\n  ],\n  \"selected_candidate\": {\n    \"candidate_index\": 0,\n    \"rank\": 1,\n    \"score\": 0.5514014005661011,\n    \"probability\": 0.33783164620399475,\n    \"generation_type\": \"true_continuation\",\n    \"rationale\": \"true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n    \"components\": {\n      \"predictor_boundary_alignment\": 0.5264374017715454,\n      \"predictor_future_alignment\": 0.5265111923217773,\n      \"encoder_boundary_overlap\": 0.9494144916534424,\n      \"transition_delta_consistency\": 0.4584537446498871,\n      \"predictor_aligned_mean\": 0.8576178550720215,\n      \"predictor_block_token_alignment_mean\": 0.5264742970466614,\n      \"predictor_mask_token_count\": 512.0,\n      \"boundary_hybrid_base_score\": 0.551601767539978,\n      \"boundary_hybrid_block_swapped_score\": 0.5536054372787476,\n      \"boundary_hybrid_order_margin\": -0.0020036697387695312\n    },\n    \"is_true\": true,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (true continuation)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (true continuation)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"observed_clip_true_future\",\n      \"construction_index\": 0\n    },\n    \"is_correct\": true\n  },\n  \"runner_up_candidate\": {\n    \"candidate_index\": 2,\n    \"rank\": 2,\n    \"score\": 0.5503877878189087,\n    \"probability\": 0.33748939633369446,\n    \"generation_type\": \"temporal_order_block_reverse\",\n    \"rationale\": \"temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n    \"components\": {\n      \"predictor_boundary_alignment\": 0.5159292221069336,\n      \"predictor_future_alignment\": 0.5157085657119751,\n      \"encoder_boundary_overlap\": 0.9501647353172302,\n      \"transition_delta_consistency\": 0.5055729746818542,\n      \"predictor_aligned_mean\": 0.8499388694763184,\n      \"predictor_block_token_alignment_mean\": 0.5158188939094543,\n      \"predictor_mask_token_count\": 512.0,\n      \"boundary_hybrid_base_score\": 0.5501146912574768,\n      \"boundary_hybrid_block_swapped_score\": 0.547383725643158,\n      \"boundary_hybrid_order_margin\": 0.0027309656143188477\n    },\n    \"is_true\": false,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (reverse-block temporal negative)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"same_clip_temporal_negative\",\n      \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n      \"block_count\": 2,\n      \"block_size\": 4,\n      \"source_frame_count\": 8,\n      \"construction_index\": 1\n    },\n    \"is_correct\": false\n  },\n  \"candidate_score_table\": [\n    {\n      \"candidate_index\": 0,\n      \"rank\": 1,\n      \"score\": 0.5514014005661011,\n      \"probability\": 0.33783164620399475,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.5264374017715454,\n        \"predictor_future_alignment\": 0.5265111923217773,\n        \"encoder_boundary_overlap\": 0.9494144916534424,\n        \"transition_delta_consistency\": 0.4584537446498871,\n        \"predictor_aligned_mean\": 0.8576178550720215,\n        \"predictor_block_token_alignment_mean\": 0.5264742970466614,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.551601767539978,\n        \"boundary_hybrid_block_swapped_score\": 0.5536054372787476,\n        \"boundary_hybrid_order_margin\": -0.0020036697387695312\n      },\n      \"is_true\": true,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (true continuation)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0\n      },\n      \"is_correct\": true\n    },\n    {\n      \"candidate_index\": 2,\n      \"rank\": 2,\n      \"score\": 0.5503877878189087,\n      \"probability\": 0.33748939633369446,\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"rationale\": \"temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.5159292221069336,\n        \"predictor_future_alignment\": 0.5157085657119751,\n        \"encoder_boundary_overlap\": 0.9501647353172302,\n        \"transition_delta_consistency\": 0.5055729746818542,\n        \"predictor_aligned_mean\": 0.8499388694763184,\n        \"predictor_block_token_alignment_mean\": 0.5158188939094543,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.5501146912574768,\n        \"boundary_hybrid_block_swapped_score\": 0.547383725643158,\n        \"boundary_hybrid_order_margin\": 0.0027309656143188477\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1\n      },\n      \"is_correct\": false\n    },\n    {\n      \"candidate_index\": 1,\n      \"rank\": 3,\n      \"score\": 0.5116904973983765,\n      \"probability\": 0.3246789276599884,\n      \"generation_type\": \"paired_template_counterfactual\",\n      \"rationale\": \"paired_template_counterfactual candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).\",\n      \"components\": {\n        \"predictor_boundary_alignment\": 0.4923441708087921,\n        \"predictor_future_alignment\": 0.4961373209953308,\n        \"encoder_boundary_overlap\": 0.850035548210144,\n        \"transition_delta_consistency\": 0.4641254246234894,\n        \"predictor_aligned_mean\": 0.7962708473205566,\n        \"predictor_block_token_alignment_mean\": 0.49424076080322266,\n        \"predictor_mask_token_count\": 512.0,\n        \"boundary_hybrid_base_score\": 0.5123951435089111,\n        \"boundary_hybrid_block_swapped_score\": 0.5194416046142578,\n        \"boundary_hybrid_order_margin\": -0.00704646110534668\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Closing something (paired counterfactual)\",\n      \"candidate_metadata\": {\n        \"description\": \"Closing something (paired counterfactual)\",\n        \"paired_template\": \"Opening something\",\n        \"source_description\": \"Closing something\",\n        \"fallback\": false,\n        \"construction_index\": 2\n      },\n      \"is_correct\": false\n    }\n  ],\n  \"score_margin\": 0.0010136127471923606,\n  \"confidence_margin\": 0.00034224987030029297,\n  \"confidence_tier\": \"low\",\n  \"heuristic_comparison\": [\n    {\n      \"evaluator\": \"vjepa\",\n      \"evaluator_name\": \"vjepa2_masked_boundary_hybrid\",\n      \"selected_index\": 0,\n      \"selected_generation_type\": \"true_continuation\",\n      \"selected_score\": 0.5514014005661011,\n      \"selected_probability\": 0.33783164620399475,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"predictor_mask_token_count\",\n          \"value\": 512.0\n        },\n        {\n          \"name\": \"encoder_boundary_overlap\",\n          \"value\": 0.9494144916534424\n        }\n      ],\n      \"runner_up_index\": 2,\n      \"runner_up_generation_type\": \"temporal_order_block_reverse\",\n      \"runner_up_score\": 0.5503877878189087,\n      \"runner_up_probability\": 0.33748939633369446,\n      \"score_gap_to_runner_up\": 0.0010136127471923606,\n      \"score_margin\": 0.0010136127471923606,\n      \"probability_gap_to_runner_up\": 0.00034224987030029297,\n      \"confidence_margin\": 0.00034224987030029297,\n      \"confidence_tier\": \"low\",\n      \"selected_description\": \"Opening something (true continuation)\",\n      \"runner_up_description\": \"Opening something (reverse-block temporal negative)\",\n      \"probability_gap_to_runner_up_legacy\": 0.00034224987030029297,\n      \"confidence\": 0.00034224987030029297,\n      \"correct_index\": 0,\n      \"correct_rank\": 1,\n      \"was_correct\": true\n    },\n    {\n      \"evaluator\": \"heuristic\",\n      \"evaluator_name\": \"FutureSelectionResult\",\n      \"selected_index\": 2,\n      \"selected_generation_type\": \"temporal_order_block_reverse\",\n      \"selected_score\": 0.31284620828893456,\n      \"selected_probability\": null,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"direction\",\n          \"value\": 0.934969145745752\n        },\n        {\n          \"name\": \"speed\",\n          \"value\": 0.334456678440673\n        }\n      ],\n      \"runner_up_index\": 1,\n      \"runner_up_generation_type\": \"paired_template_counterfactual\",\n      \"runner_up_score\": 0.2672700922221827,\n      \"runner_up_probability\": null,\n      \"score_gap_to_runner_up\": 0.04557611606675188,\n      \"score_margin\": 0.04557611606675188,\n      \"probability_gap_to_runner_up\": null,\n      \"confidence_margin\": null,\n      \"confidence_tier\": \"unknown\",\n      \"selected_description\": null,\n      \"runner_up_description\": null,\n      \"probability_gap_to_runner_up_legacy\": null,\n      \"confidence\": null,\n      \"correct_index\": 0,\n      \"correct_rank\": 3,\n      \"was_correct\": false\n    }\n  ]\n}\n\nReturn only JSON that matches the required schema. Do not add markdown, bullets, or code fences.",
+  "user_prompt": "Return only JSON.\nWrite concise presenter notes that someone could comfortably read aloud in class.\nField guidance:\n- anticipation_summary: 1-2 sentences saying what future the system favors and why that is the main takeaway.\n- why_selected: 1 sentence naming the strongest evidence without repeating the full summary.\n- uncertainty_note: 1 sentence that frames confidence honestly but constructively; if the margin is small, call it a close call instead of apologizing.\n- baseline_note: mention baseline agreement or disagreement only if it is genuinely useful; otherwise return an empty string.\n\nEvidence JSON:\n{\n  \"task_type\": \"future_selection\",\n  \"observed_clip_summary\": {\n    \"shape\": [\n      8,\n      3,\n      256,\n      256\n    ],\n    \"frame_count\": 8\n  },\n  \"candidate_clip_summary\": {\n    \"shape\": [\n      3,\n      8,\n      3,\n      256,\n      256\n    ],\n    \"candidate_count\": 3,\n    \"future_frames\": 8\n  },\n  \"ranking_summary\": {\n    \"evaluator_name\": \"hybrid\",\n    \"selected_index\": 0,\n    \"selected_generation_type\": \"true_continuation\",\n    \"selected_score\": 1.05307901583069,\n    \"selected_probability\": 0.4112102687358856,\n    \"selected_component_highlights\": [\n      {\n        \"name\": \"semantic_semantic_max_logit\",\n        \"value\": 11.65625\n      },\n      {\n        \"name\": \"semantic_semantic_top2_logit_margin\",\n        \"value\": 2.140625\n      }\n    ],\n    \"runner_up_index\": 2,\n    \"runner_up_generation_type\": \"temporal_order_block_reverse\",\n    \"runner_up_score\": 0.9288916236903932,\n    \"runner_up_probability\": 0.363186776638031,\n    \"score_gap_to_runner_up\": 0.12418739214029673,\n    \"score_margin\": 0.12418739214029673,\n    \"probability_gap_to_runner_up\": 0.048023492097854614,\n    \"confidence_margin\": 0.048023492097854614,\n    \"confidence_tier\": \"low\",\n    \"selected_description\": \"Opening something (true continuation)\",\n    \"runner_up_description\": \"Opening something (reverse-block temporal negative)\",\n    \"probability_gap_to_runner_up_legacy\": 0.048023492097854614,\n    \"confidence\": 0.048023492097854614,\n    \"correct_index\": 0,\n    \"correct_rank\": 1,\n    \"was_correct\": true\n  },\n  \"selected_candidate\": {\n    \"candidate_index\": 0,\n    \"rank\": 1,\n    \"score\": 1.05307901583069,\n    \"probability\": 0.4112102687358856,\n    \"generation_type\": \"true_continuation\",\n    \"rationale\": \"true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.\",\n    \"components\": {\n      \"temporal_continuity\": 0.18867038357380161,\n      \"temporal_extrapolation\": 0.16374444015866166,\n      \"temporal_direction\": 0.12789382746935501,\n      \"temporal_speed\": 0.334456678440673,\n      \"temporal_smoothness\": 0.45518421958488114,\n      \"semantic_semantic_max_logit\": 11.65625,\n      \"semantic_semantic_max_probability\": 0.8199841380119324,\n      \"semantic_semantic_top2_margin\": 0.7235693335533142,\n      \"semantic_semantic_top2_logit_margin\": 2.140625,\n      \"temporal_total\": 0.23309487781875748,\n      \"semantic_total\": 0.8199841380119324,\n      \"temporal_weight\": 1.0,\n      \"semantic_weight\": 1.0\n    },\n    \"is_true\": true,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (true continuation)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (true continuation)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"observed_clip_true_future\",\n      \"construction_index\": 0,\n      \"semantic_predicted_label\": \"Opening [something]\",\n      \"semantic_predicted_label_id\": 46,\n      \"semantic_score_mode\": \"max_probability\"\n    },\n    \"is_correct\": true\n  },\n  \"runner_up_candidate\": {\n    \"candidate_index\": 2,\n    \"rank\": 2,\n    \"score\": 0.9288916236903932,\n    \"probability\": 0.363186776638031,\n    \"generation_type\": \"temporal_order_block_reverse\",\n    \"rationale\": \"temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.\",\n    \"components\": {\n      \"temporal_continuity\": 0.0919896336974294,\n      \"temporal_extrapolation\": 0.08451593422780106,\n      \"temporal_direction\": 0.934969145745752,\n      \"temporal_speed\": 0.334456678440673,\n      \"temporal_smoothness\": 0.32327875085358904,\n      \"semantic_semantic_max_logit\": 9.1640625,\n      \"semantic_semantic_max_probability\": 0.6160454154014587,\n      \"semantic_semantic_top2_margin\": 0.43676596879959106,\n      \"semantic_semantic_top2_logit_margin\": 1.234375,\n      \"temporal_total\": 0.31284620828893456,\n      \"semantic_total\": 0.6160454154014587,\n      \"temporal_weight\": 1.0,\n      \"semantic_weight\": 1.0\n    },\n    \"is_true\": false,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (reverse-block temporal negative)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"same_clip_temporal_negative\",\n      \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n      \"block_count\": 2,\n      \"block_size\": 4,\n      \"source_frame_count\": 8,\n      \"construction_index\": 1,\n      \"semantic_predicted_label\": \"Opening [something]\",\n      \"semantic_predicted_label_id\": 46,\n      \"semantic_score_mode\": \"max_probability\"\n    },\n    \"is_correct\": false\n  },\n  \"candidate_score_table\": [\n    {\n      \"candidate_index\": 0,\n      \"rank\": 1,\n      \"score\": 1.05307901583069,\n      \"probability\": 0.4112102687358856,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.\",\n      \"components\": {\n        \"temporal_continuity\": 0.18867038357380161,\n        \"temporal_extrapolation\": 0.16374444015866166,\n        \"temporal_direction\": 0.12789382746935501,\n        \"temporal_speed\": 0.334456678440673,\n        \"temporal_smoothness\": 0.45518421958488114,\n        \"semantic_semantic_max_logit\": 11.65625,\n        \"semantic_semantic_max_probability\": 0.8199841380119324,\n        \"semantic_semantic_top2_margin\": 0.7235693335533142,\n        \"semantic_semantic_top2_logit_margin\": 2.140625,\n        \"temporal_total\": 0.23309487781875748,\n        \"semantic_total\": 0.8199841380119324,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": true,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (true continuation)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0,\n        \"semantic_predicted_label\": \"Opening [something]\",\n        \"semantic_predicted_label_id\": 46,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": true\n    },\n    {\n      \"candidate_index\": 2,\n      \"rank\": 2,\n      \"score\": 0.9288916236903932,\n      \"probability\": 0.363186776638031,\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"rationale\": \"temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.\",\n      \"components\": {\n        \"temporal_continuity\": 0.0919896336974294,\n        \"temporal_extrapolation\": 0.08451593422780106,\n        \"temporal_direction\": 0.934969145745752,\n        \"temporal_speed\": 0.334456678440673,\n        \"temporal_smoothness\": 0.32327875085358904,\n        \"semantic_semantic_max_logit\": 9.1640625,\n        \"semantic_semantic_max_probability\": 0.6160454154014587,\n        \"semantic_semantic_top2_margin\": 0.43676596879959106,\n        \"semantic_semantic_top2_logit_margin\": 1.234375,\n        \"temporal_total\": 0.31284620828893456,\n        \"semantic_total\": 0.6160454154014587,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1,\n        \"semantic_predicted_label\": \"Opening [something]\",\n        \"semantic_predicted_label_id\": 46,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": false\n    },\n    {\n      \"candidate_index\": 1,\n      \"rank\": 3,\n      \"score\": 0.4527509699792551,\n      \"probability\": 0.22560296952724457,\n      \"generation_type\": \"paired_template_counterfactual\",\n      \"rationale\": \"paired_template_counterfactual candidate under hybrid scoring; temporal=0.267, semantic=0.185, final=0.453.\",\n      \"components\": {\n        \"temporal_continuity\": 0.054742639756734,\n        \"temporal_extrapolation\": 0.05680934331388442,\n        \"temporal_direction\": 0.11170743313722215,\n        \"temporal_speed\": 0.916710016631465,\n        \"temporal_smoothness\": 0.537684907762681,\n        \"semantic_semantic_max_logit\": 5.58984375,\n        \"semantic_semantic_max_probability\": 0.18548087775707245,\n        \"semantic_semantic_top2_margin\": 0.02989925444126129,\n        \"semantic_semantic_top2_logit_margin\": 0.17578125,\n        \"temporal_total\": 0.2672700922221827,\n        \"semantic_total\": 0.18548087775707245,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Closing something (paired counterfactual)\",\n      \"candidate_metadata\": {\n        \"description\": \"Closing something (paired counterfactual)\",\n        \"paired_template\": \"Opening something\",\n        \"source_description\": \"Closing something\",\n        \"fallback\": false,\n        \"construction_index\": 2,\n        \"semantic_predicted_label\": \"Trying but failing to attach [something] to [something] because it doesn't stick\",\n        \"semantic_predicted_label_id\": 161,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": false\n    }\n  ],\n  \"candidate_metadata\": [\n    {\n      \"strategy\": \"true_continuation\",\n      \"generation_type\": \"true_continuation\",\n      \"source_video_id\": \"test_936226396289\",\n      \"label_template\": \"Opening something\",\n      \"placeholders\": [],\n      \"pair_group\": \"open_close\",\n      \"description\": \"Opening something (true continuation)\",\n      \"is_true\": true,\n      \"details\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0\n      },\n      \"candidate_index\": 0,\n      \"construction_index\": 0\n    },\n    {\n      \"strategy\": \"paired_template_counterfactual\",\n      \"generation_type\": \"paired_template_counterfactual\",\n      \"source_video_id\": \"test_900775903712\",\n      \"label_template\": \"Closing something\",\n      \"placeholders\": [],\n      \"pair_group\": \"open_close\",\n      \"description\": \"Closing something (paired counterfactual)\",\n      \"is_true\": false,\n      \"details\": {\n        \"description\": \"Closing something (paired counterfactual)\",\n        \"paired_template\": \"Opening something\",\n        \"source_description\": \"Closing something\",\n        \"fallback\": false,\n        \"construction_index\": 2\n      },\n      \"candidate_index\": 1,\n      \"construction_index\": 2\n    },\n    {\n      \"strategy\": \"temporal_order_block_reverse\",\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"source_video_id\": \"test_936226396289\",\n      \"label_template\": \"Opening something\",\n      \"placeholders\": [],\n      \"pair_group\": \"open_close\",\n      \"description\": \"Opening something (reverse-block temporal negative)\",\n      \"is_true\": false,\n      \"details\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1\n      },\n      \"candidate_index\": 2,\n      \"construction_index\": 1\n    }\n  ],\n  \"candidate_descriptions\": [\n    \"Opening something (true continuation)\",\n    \"Closing something (paired counterfactual)\",\n    \"Opening something (reverse-block temporal negative)\"\n  ],\n  \"score_margin\": 0.12418739214029673,\n  \"confidence_margin\": 0.048023492097854614,\n  \"confidence_tier\": \"low\",\n  \"baseline_comparison\": [\n    {\n      \"evaluator\": \"hybrid\",\n      \"evaluator_name\": \"hybrid\",\n      \"selected_index\": 0,\n      \"selected_generation_type\": \"true_continuation\",\n      \"selected_score\": 1.05307901583069,\n      \"selected_probability\": 0.4112102687358856,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"semantic_semantic_max_logit\",\n          \"value\": 11.65625\n        },\n        {\n          \"name\": \"semantic_semantic_top2_logit_margin\",\n          \"value\": 2.140625\n        }\n      ],\n      \"runner_up_index\": 2,\n      \"runner_up_generation_type\": \"temporal_order_block_reverse\",\n      \"runner_up_score\": 0.9288916236903932,\n      \"runner_up_probability\": 0.363186776638031,\n      \"score_gap_to_runner_up\": 0.12418739214029673,\n      \"score_margin\": 0.12418739214029673,\n      \"probability_gap_to_runner_up\": 0.048023492097854614,\n      \"confidence_margin\": 0.048023492097854614,\n      \"confidence_tier\": \"low\",\n      \"selected_description\": \"Opening something (true continuation)\",\n      \"runner_up_description\": \"Opening something (reverse-block temporal negative)\",\n      \"probability_gap_to_runner_up_legacy\": 0.048023492097854614,\n      \"confidence\": 0.048023492097854614,\n      \"correct_index\": 0,\n      \"correct_rank\": 1,\n      \"was_correct\": true\n    },\n    {\n      \"evaluator\": \"heuristic\",\n      \"evaluator_name\": \"FutureSelectionResult\",\n      \"selected_index\": 2,\n      \"selected_generation_type\": \"temporal_order_block_reverse\",\n      \"selected_score\": 0.31284620828893456,\n      \"selected_probability\": null,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"direction\",\n          \"value\": 0.934969145745752\n        },\n        {\n          \"name\": \"speed\",\n          \"value\": 0.334456678440673\n        }\n      ],\n      \"runner_up_index\": 1,\n      \"runner_up_generation_type\": \"paired_template_counterfactual\",\n      \"runner_up_score\": 0.2672700922221827,\n      \"runner_up_probability\": null,\n      \"score_gap_to_runner_up\": 0.04557611606675188,\n      \"score_margin\": 0.04557611606675188,\n      \"probability_gap_to_runner_up\": null,\n      \"confidence_margin\": null,\n      \"confidence_tier\": \"unknown\",\n      \"selected_description\": null,\n      \"runner_up_description\": null,\n      \"probability_gap_to_runner_up_legacy\": null,\n      \"confidence\": null,\n      \"correct_index\": 0,\n      \"correct_rank\": 3,\n      \"was_correct\": false\n    }\n  ],\n  \"baseline_agreement\": false,\n  \"evidence_highlights\": {\n    \"selected_candidate\": {\n      \"candidate_index\": 0,\n      \"rank\": 1,\n      \"score\": 1.05307901583069,\n      \"probability\": 0.4112102687358856,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.\",\n      \"components\": {\n        \"temporal_continuity\": 0.18867038357380161,\n        \"temporal_extrapolation\": 0.16374444015866166,\n        \"temporal_direction\": 0.12789382746935501,\n        \"temporal_speed\": 0.334456678440673,\n        \"temporal_smoothness\": 0.45518421958488114,\n        \"semantic_semantic_max_logit\": 11.65625,\n        \"semantic_semantic_max_probability\": 0.8199841380119324,\n        \"semantic_semantic_top2_margin\": 0.7235693335533142,\n        \"semantic_semantic_top2_logit_margin\": 2.140625,\n        \"temporal_total\": 0.23309487781875748,\n        \"semantic_total\": 0.8199841380119324,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": true,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (true continuation)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0,\n        \"semantic_predicted_label\": \"Opening [something]\",\n        \"semantic_predicted_label_id\": 46,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": true\n    },\n    \"runner_up_candidate\": {\n      \"candidate_index\": 2,\n      \"rank\": 2,\n      \"score\": 0.9288916236903932,\n      \"probability\": 0.363186776638031,\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"rationale\": \"temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.\",\n      \"components\": {\n        \"temporal_continuity\": 0.0919896336974294,\n        \"temporal_extrapolation\": 0.08451593422780106,\n        \"temporal_direction\": 0.934969145745752,\n        \"temporal_speed\": 0.334456678440673,\n        \"temporal_smoothness\": 0.32327875085358904,\n        \"semantic_semantic_max_logit\": 9.1640625,\n        \"semantic_semantic_max_probability\": 0.6160454154014587,\n        \"semantic_semantic_top2_margin\": 0.43676596879959106,\n        \"semantic_semantic_top2_logit_margin\": 1.234375,\n        \"temporal_total\": 0.31284620828893456,\n        \"semantic_total\": 0.6160454154014587,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1,\n        \"semantic_predicted_label\": \"Opening [something]\",\n        \"semantic_predicted_label_id\": 46,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": false\n    },\n    \"selected_component_highlights\": [\n      {\n        \"name\": \"semantic_semantic_max_logit\",\n        \"value\": 11.65625\n      },\n      {\n        \"name\": \"semantic_semantic_top2_logit_margin\",\n        \"value\": 2.140625\n      }\n    ],\n    \"runner_up_component_highlights\": [\n      {\n        \"name\": \"semantic_semantic_max_logit\",\n        \"value\": 9.1640625\n      },\n      {\n        \"name\": \"semantic_semantic_top2_logit_margin\",\n        \"value\": 1.234375\n      }\n    ],\n    \"score_margin\": 0.12418739214029673,\n    \"confidence_margin\": 0.048023492097854614,\n    \"confidence_tier\": \"low\",\n    \"score_gap_to_runner_up\": 0.12418739214029673,\n    \"probability_gap_to_runner_up\": 0.048023492097854614\n  },\n  \"notes\": [\n    \"Hybrid scorer blends temporal source=heuristic with semantic_only using weights temporal=1.000, semantic=1.000.\",\n    \"Semantic score mode is max_probability.\",\n    \"This scorer is intended as a lightweight fusion layer without any additional training.\",\n    \"Semantic scorer uses AutoModelForVideoClassification on the official SSV2-tuned V-JEPA 2 checkpoint.\",\n    \"Each candidate is scored from the concatenated observed+future clip and converted with score_mode=max_probability.\",\n    \"This scorer is intended as a semantic compatibility prior and does not replace temporal scoring on its own.\"\n  ]\n}\n\nAdditional grounded evidence:\n{\n  \"observed_description\": \"Observed prefix: a short 8-frame clip showing a human-object interaction in progress. The commentary layer only receives a neutral motion summary rather than the exact action label.\",\n  \"candidate_descriptions\": [\n    \"Opening something (true continuation)\",\n    \"Closing something (paired counterfactual)\",\n    \"Opening something (reverse-block temporal negative)\"\n  ],\n  \"selected_candidate\": {\n    \"candidate_index\": 0,\n    \"rank\": 1,\n    \"score\": 1.05307901583069,\n    \"probability\": 0.4112102687358856,\n    \"generation_type\": \"true_continuation\",\n    \"rationale\": \"true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.\",\n    \"components\": {\n      \"temporal_continuity\": 0.18867038357380161,\n      \"temporal_extrapolation\": 0.16374444015866166,\n      \"temporal_direction\": 0.12789382746935501,\n      \"temporal_speed\": 0.334456678440673,\n      \"temporal_smoothness\": 0.45518421958488114,\n      \"semantic_semantic_max_logit\": 11.65625,\n      \"semantic_semantic_max_probability\": 0.8199841380119324,\n      \"semantic_semantic_top2_margin\": 0.7235693335533142,\n      \"semantic_semantic_top2_logit_margin\": 2.140625,\n      \"temporal_total\": 0.23309487781875748,\n      \"semantic_total\": 0.8199841380119324,\n      \"temporal_weight\": 1.0,\n      \"semantic_weight\": 1.0\n    },\n    \"is_true\": true,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (true continuation)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (true continuation)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"observed_clip_true_future\",\n      \"construction_index\": 0,\n      \"semantic_predicted_label\": \"Opening [something]\",\n      \"semantic_predicted_label_id\": 46,\n      \"semantic_score_mode\": \"max_probability\"\n    },\n    \"is_correct\": true\n  },\n  \"runner_up_candidate\": {\n    \"candidate_index\": 2,\n    \"rank\": 2,\n    \"score\": 0.9288916236903932,\n    \"probability\": 0.363186776638031,\n    \"generation_type\": \"temporal_order_block_reverse\",\n    \"rationale\": \"temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.\",\n    \"components\": {\n      \"temporal_continuity\": 0.0919896336974294,\n      \"temporal_extrapolation\": 0.08451593422780106,\n      \"temporal_direction\": 0.934969145745752,\n      \"temporal_speed\": 0.334456678440673,\n      \"temporal_smoothness\": 0.32327875085358904,\n      \"semantic_semantic_max_logit\": 9.1640625,\n      \"semantic_semantic_max_probability\": 0.6160454154014587,\n      \"semantic_semantic_top2_margin\": 0.43676596879959106,\n      \"semantic_semantic_top2_logit_margin\": 1.234375,\n      \"temporal_total\": 0.31284620828893456,\n      \"semantic_total\": 0.6160454154014587,\n      \"temporal_weight\": 1.0,\n      \"semantic_weight\": 1.0\n    },\n    \"is_true\": false,\n    \"source_index\": null,\n    \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n    \"candidate_metadata\": {\n      \"description\": \"Opening something (reverse-block temporal negative)\",\n      \"paired_template\": \"Closing something\",\n      \"source_description\": \"Opening something\",\n      \"candidate_role\": \"same_clip_temporal_negative\",\n      \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n      \"block_count\": 2,\n      \"block_size\": 4,\n      \"source_frame_count\": 8,\n      \"construction_index\": 1,\n      \"semantic_predicted_label\": \"Opening [something]\",\n      \"semantic_predicted_label_id\": 46,\n      \"semantic_score_mode\": \"max_probability\"\n    },\n    \"is_correct\": false\n  },\n  \"candidate_score_table\": [\n    {\n      \"candidate_index\": 0,\n      \"rank\": 1,\n      \"score\": 1.05307901583069,\n      \"probability\": 0.4112102687358856,\n      \"generation_type\": \"true_continuation\",\n      \"rationale\": \"true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.\",\n      \"components\": {\n        \"temporal_continuity\": 0.18867038357380161,\n        \"temporal_extrapolation\": 0.16374444015866166,\n        \"temporal_direction\": 0.12789382746935501,\n        \"temporal_speed\": 0.334456678440673,\n        \"temporal_smoothness\": 0.45518421958488114,\n        \"semantic_semantic_max_logit\": 11.65625,\n        \"semantic_semantic_max_probability\": 0.8199841380119324,\n        \"semantic_semantic_top2_margin\": 0.7235693335533142,\n        \"semantic_semantic_top2_logit_margin\": 2.140625,\n        \"temporal_total\": 0.23309487781875748,\n        \"semantic_total\": 0.8199841380119324,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": true,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (true continuation)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (true continuation)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"observed_clip_true_future\",\n        \"construction_index\": 0,\n        \"semantic_predicted_label\": \"Opening [something]\",\n        \"semantic_predicted_label_id\": 46,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": true\n    },\n    {\n      \"candidate_index\": 2,\n      \"rank\": 2,\n      \"score\": 0.9288916236903932,\n      \"probability\": 0.363186776638031,\n      \"generation_type\": \"temporal_order_block_reverse\",\n      \"rationale\": \"temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.\",\n      \"components\": {\n        \"temporal_continuity\": 0.0919896336974294,\n        \"temporal_extrapolation\": 0.08451593422780106,\n        \"temporal_direction\": 0.934969145745752,\n        \"temporal_speed\": 0.334456678440673,\n        \"temporal_smoothness\": 0.32327875085358904,\n        \"semantic_semantic_max_logit\": 9.1640625,\n        \"semantic_semantic_max_probability\": 0.6160454154014587,\n        \"semantic_semantic_top2_margin\": 0.43676596879959106,\n        \"semantic_semantic_top2_logit_margin\": 1.234375,\n        \"temporal_total\": 0.31284620828893456,\n        \"semantic_total\": 0.6160454154014587,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Opening something (reverse-block temporal negative)\",\n      \"candidate_metadata\": {\n        \"description\": \"Opening something (reverse-block temporal negative)\",\n        \"paired_template\": \"Closing something\",\n        \"source_description\": \"Opening something\",\n        \"candidate_role\": \"same_clip_temporal_negative\",\n        \"temporal_negative_mode\": \"temporal_order_block_reverse\",\n        \"block_count\": 2,\n        \"block_size\": 4,\n        \"source_frame_count\": 8,\n        \"construction_index\": 1,\n        \"semantic_predicted_label\": \"Opening [something]\",\n        \"semantic_predicted_label_id\": 46,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": false\n    },\n    {\n      \"candidate_index\": 1,\n      \"rank\": 3,\n      \"score\": 0.4527509699792551,\n      \"probability\": 0.22560296952724457,\n      \"generation_type\": \"paired_template_counterfactual\",\n      \"rationale\": \"paired_template_counterfactual candidate under hybrid scoring; temporal=0.267, semantic=0.185, final=0.453.\",\n      \"components\": {\n        \"temporal_continuity\": 0.054742639756734,\n        \"temporal_extrapolation\": 0.05680934331388442,\n        \"temporal_direction\": 0.11170743313722215,\n        \"temporal_speed\": 0.916710016631465,\n        \"temporal_smoothness\": 0.537684907762681,\n        \"semantic_semantic_max_logit\": 5.58984375,\n        \"semantic_semantic_max_probability\": 0.18548087775707245,\n        \"semantic_semantic_top2_margin\": 0.02989925444126129,\n        \"semantic_semantic_top2_logit_margin\": 0.17578125,\n        \"temporal_total\": 0.2672700922221827,\n        \"semantic_total\": 0.18548087775707245,\n        \"temporal_weight\": 1.0,\n        \"semantic_weight\": 1.0\n      },\n      \"is_true\": false,\n      \"source_index\": null,\n      \"candidate_description\": \"Closing something (paired counterfactual)\",\n      \"candidate_metadata\": {\n        \"description\": \"Closing something (paired counterfactual)\",\n        \"paired_template\": \"Opening something\",\n        \"source_description\": \"Closing something\",\n        \"fallback\": false,\n        \"construction_index\": 2,\n        \"semantic_predicted_label\": \"Trying but failing to attach [something] to [something] because it doesn't stick\",\n        \"semantic_predicted_label_id\": 161,\n        \"semantic_score_mode\": \"max_probability\"\n      },\n      \"is_correct\": false\n    }\n  ],\n  \"score_margin\": 0.12418739214029673,\n  \"confidence_margin\": 0.048023492097854614,\n  \"confidence_tier\": \"low\",\n  \"heuristic_comparison\": [\n    {\n      \"evaluator\": \"hybrid\",\n      \"evaluator_name\": \"hybrid\",\n      \"selected_index\": 0,\n      \"selected_generation_type\": \"true_continuation\",\n      \"selected_score\": 1.05307901583069,\n      \"selected_probability\": 0.4112102687358856,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"semantic_semantic_max_logit\",\n          \"value\": 11.65625\n        },\n        {\n          \"name\": \"semantic_semantic_top2_logit_margin\",\n          \"value\": 2.140625\n        }\n      ],\n      \"runner_up_index\": 2,\n      \"runner_up_generation_type\": \"temporal_order_block_reverse\",\n      \"runner_up_score\": 0.9288916236903932,\n      \"runner_up_probability\": 0.363186776638031,\n      \"score_gap_to_runner_up\": 0.12418739214029673,\n      \"score_margin\": 0.12418739214029673,\n      \"probability_gap_to_runner_up\": 0.048023492097854614,\n      \"confidence_margin\": 0.048023492097854614,\n      \"confidence_tier\": \"low\",\n      \"selected_description\": \"Opening something (true continuation)\",\n      \"runner_up_description\": \"Opening something (reverse-block temporal negative)\",\n      \"probability_gap_to_runner_up_legacy\": 0.048023492097854614,\n      \"confidence\": 0.048023492097854614,\n      \"correct_index\": 0,\n      \"correct_rank\": 1,\n      \"was_correct\": true\n    },\n    {\n      \"evaluator\": \"heuristic\",\n      \"evaluator_name\": \"FutureSelectionResult\",\n      \"selected_index\": 2,\n      \"selected_generation_type\": \"temporal_order_block_reverse\",\n      \"selected_score\": 0.31284620828893456,\n      \"selected_probability\": null,\n      \"selected_component_highlights\": [\n        {\n          \"name\": \"direction\",\n          \"value\": 0.934969145745752\n        },\n        {\n          \"name\": \"speed\",\n          \"value\": 0.334456678440673\n        }\n      ],\n      \"runner_up_index\": 1,\n      \"runner_up_generation_type\": \"paired_template_counterfactual\",\n      \"runner_up_score\": 0.2672700922221827,\n      \"runner_up_probability\": null,\n      \"score_gap_to_runner_up\": 0.04557611606675188,\n      \"score_margin\": 0.04557611606675188,\n      \"probability_gap_to_runner_up\": null,\n      \"confidence_margin\": null,\n      \"confidence_tier\": \"unknown\",\n      \"selected_description\": null,\n      \"runner_up_description\": null,\n      \"probability_gap_to_runner_up_legacy\": null,\n      \"confidence\": null,\n      \"correct_index\": 0,\n      \"correct_rank\": 3,\n      \"was_correct\": false\n    }\n  ]\n}\n\nReturn only JSON that matches the required schema. Do not add markdown, bullets, or code fences.",
   "evidence": {
     "task_type": "future_selection",
     "observed_clip_summary": {
@@ -24,34 +24,34 @@
       "future_frames": 8
     },
     "ranking_summary": {
-      "evaluator_name": "vjepa2_masked_boundary_hybrid",
+      "evaluator_name": "hybrid",
       "selected_index": 0,
       "selected_generation_type": "true_continuation",
-      "selected_score": 0.5514014005661011,
-      "selected_probability": 0.33783164620399475,
+      "selected_score": 1.05307901583069,
+      "selected_probability": 0.4112102687358856,
       "selected_component_highlights": [
         {
-          "name": "predictor_mask_token_count",
-          "value": 512.0
+          "name": "semantic_semantic_max_logit",
+          "value": 11.65625
         },
         {
-          "name": "encoder_boundary_overlap",
-          "value": 0.9494144916534424
+          "name": "semantic_semantic_top2_logit_margin",
+          "value": 2.140625
         }
       ],
       "runner_up_index": 2,
       "runner_up_generation_type": "temporal_order_block_reverse",
-      "runner_up_score": 0.5503877878189087,
-      "runner_up_probability": 0.33748939633369446,
-      "score_gap_to_runner_up": 0.0010136127471923606,
-      "score_margin": 0.0010136127471923606,
-      "probability_gap_to_runner_up": 0.00034224987030029297,
-      "confidence_margin": 0.00034224987030029297,
+      "runner_up_score": 0.9288916236903932,
+      "runner_up_probability": 0.363186776638031,
+      "score_gap_to_runner_up": 0.12418739214029673,
+      "score_margin": 0.12418739214029673,
+      "probability_gap_to_runner_up": 0.048023492097854614,
+      "confidence_margin": 0.048023492097854614,
       "confidence_tier": "low",
       "selected_description": "Opening something (true continuation)",
       "runner_up_description": "Opening something (reverse-block temporal negative)",
-      "probability_gap_to_runner_up_legacy": 0.00034224987030029297,
-      "confidence": 0.00034224987030029297,
+      "probability_gap_to_runner_up_legacy": 0.048023492097854614,
+      "confidence": 0.048023492097854614,
       "correct_index": 0,
       "correct_rank": 1,
       "was_correct": true
@@ -59,21 +59,24 @@
     "selected_candidate": {
       "candidate_index": 0,
       "rank": 1,
-      "score": 0.5514014005661011,
-      "probability": 0.33783164620399475,
+      "score": 1.05307901583069,
+      "probability": 0.4112102687358856,
       "generation_type": "true_continuation",
-      "rationale": "true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+      "rationale": "true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.",
       "components": {
-        "predictor_boundary_alignment": 0.5264374017715454,
-        "predictor_future_alignment": 0.5265111923217773,
-        "encoder_boundary_overlap": 0.9494144916534424,
-        "transition_delta_consistency": 0.4584537446498871,
-        "predictor_aligned_mean": 0.8576178550720215,
-        "predictor_block_token_alignment_mean": 0.5264742970466614,
-        "predictor_mask_token_count": 512.0,
-        "boundary_hybrid_base_score": 0.551601767539978,
-        "boundary_hybrid_block_swapped_score": 0.5536054372787476,
-        "boundary_hybrid_order_margin": -0.0020036697387695312
+        "temporal_continuity": 0.18867038357380161,
+        "temporal_extrapolation": 0.16374444015866166,
+        "temporal_direction": 0.12789382746935501,
+        "temporal_speed": 0.334456678440673,
+        "temporal_smoothness": 0.45518421958488114,
+        "semantic_semantic_max_logit": 11.65625,
+        "semantic_semantic_max_probability": 0.8199841380119324,
+        "semantic_semantic_top2_margin": 0.7235693335533142,
+        "semantic_semantic_top2_logit_margin": 2.140625,
+        "temporal_total": 0.23309487781875748,
+        "semantic_total": 0.8199841380119324,
+        "temporal_weight": 1.0,
+        "semantic_weight": 1.0
       },
       "is_true": true,
       "source_index": null,
@@ -83,28 +86,34 @@
         "paired_template": "Closing something",
         "source_description": "Opening something",
         "candidate_role": "observed_clip_true_future",
-        "construction_index": 0
+        "construction_index": 0,
+        "semantic_predicted_label": "Opening [something]",
+        "semantic_predicted_label_id": 46,
+        "semantic_score_mode": "max_probability"
       },
       "is_correct": true
     },
     "runner_up_candidate": {
       "candidate_index": 2,
       "rank": 2,
-      "score": 0.5503877878189087,
-      "probability": 0.33748939633369446,
+      "score": 0.9288916236903932,
+      "probability": 0.363186776638031,
       "generation_type": "temporal_order_block_reverse",
-      "rationale": "temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+      "rationale": "temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.",
       "components": {
-        "predictor_boundary_alignment": 0.5159292221069336,
-        "predictor_future_alignment": 0.5157085657119751,
-        "encoder_boundary_overlap": 0.9501647353172302,
-        "transition_delta_consistency": 0.5055729746818542,
-        "predictor_aligned_mean": 0.8499388694763184,
-        "predictor_block_token_alignment_mean": 0.5158188939094543,
-        "predictor_mask_token_count": 512.0,
-        "boundary_hybrid_base_score": 0.5501146912574768,
-        "boundary_hybrid_block_swapped_score": 0.547383725643158,
-        "boundary_hybrid_order_margin": 0.0027309656143188477
+        "temporal_continuity": 0.0919896336974294,
+        "temporal_extrapolation": 0.08451593422780106,
+        "temporal_direction": 0.934969145745752,
+        "temporal_speed": 0.334456678440673,
+        "temporal_smoothness": 0.32327875085358904,
+        "semantic_semantic_max_logit": 9.1640625,
+        "semantic_semantic_max_probability": 0.6160454154014587,
+        "semantic_semantic_top2_margin": 0.43676596879959106,
+        "semantic_semantic_top2_logit_margin": 1.234375,
+        "temporal_total": 0.31284620828893456,
+        "semantic_total": 0.6160454154014587,
+        "temporal_weight": 1.0,
+        "semantic_weight": 1.0
       },
       "is_true": false,
       "source_index": null,
@@ -118,7 +127,10 @@
         "block_count": 2,
         "block_size": 4,
         "source_frame_count": 8,
-        "construction_index": 1
+        "construction_index": 1,
+        "semantic_predicted_label": "Opening [something]",
+        "semantic_predicted_label_id": 46,
+        "semantic_score_mode": "max_probability"
       },
       "is_correct": false
     },
@@ -126,21 +138,24 @@
       {
         "candidate_index": 0,
         "rank": 1,
-        "score": 0.5514014005661011,
-        "probability": 0.33783164620399475,
+        "score": 1.05307901583069,
+        "probability": 0.4112102687358856,
         "generation_type": "true_continuation",
-        "rationale": "true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "rationale": "true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.",
         "components": {
-          "predictor_boundary_alignment": 0.5264374017715454,
-          "predictor_future_alignment": 0.5265111923217773,
-          "encoder_boundary_overlap": 0.9494144916534424,
-          "transition_delta_consistency": 0.4584537446498871,
-          "predictor_aligned_mean": 0.8576178550720215,
-          "predictor_block_token_alignment_mean": 0.5264742970466614,
-          "predictor_mask_token_count": 512.0,
-          "boundary_hybrid_base_score": 0.551601767539978,
-          "boundary_hybrid_block_swapped_score": 0.5536054372787476,
-          "boundary_hybrid_order_margin": -0.0020036697387695312
+          "temporal_continuity": 0.18867038357380161,
+          "temporal_extrapolation": 0.16374444015866166,
+          "temporal_direction": 0.12789382746935501,
+          "temporal_speed": 0.334456678440673,
+          "temporal_smoothness": 0.45518421958488114,
+          "semantic_semantic_max_logit": 11.65625,
+          "semantic_semantic_max_probability": 0.8199841380119324,
+          "semantic_semantic_top2_margin": 0.7235693335533142,
+          "semantic_semantic_top2_logit_margin": 2.140625,
+          "temporal_total": 0.23309487781875748,
+          "semantic_total": 0.8199841380119324,
+          "temporal_weight": 1.0,
+          "semantic_weight": 1.0
         },
         "is_true": true,
         "source_index": null,
@@ -150,28 +165,34 @@
           "paired_template": "Closing something",
           "source_description": "Opening something",
           "candidate_role": "observed_clip_true_future",
-          "construction_index": 0
+          "construction_index": 0,
+          "semantic_predicted_label": "Opening [something]",
+          "semantic_predicted_label_id": 46,
+          "semantic_score_mode": "max_probability"
         },
         "is_correct": true
       },
       {
         "candidate_index": 2,
         "rank": 2,
-        "score": 0.5503877878189087,
-        "probability": 0.33748939633369446,
+        "score": 0.9288916236903932,
+        "probability": 0.363186776638031,
         "generation_type": "temporal_order_block_reverse",
-        "rationale": "temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "rationale": "temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.",
         "components": {
-          "predictor_boundary_alignment": 0.5159292221069336,
-          "predictor_future_alignment": 0.5157085657119751,
-          "encoder_boundary_overlap": 0.9501647353172302,
-          "transition_delta_consistency": 0.5055729746818542,
-          "predictor_aligned_mean": 0.8499388694763184,
-          "predictor_block_token_alignment_mean": 0.5158188939094543,
-          "predictor_mask_token_count": 512.0,
-          "boundary_hybrid_base_score": 0.5501146912574768,
-          "boundary_hybrid_block_swapped_score": 0.547383725643158,
-          "boundary_hybrid_order_margin": 0.0027309656143188477
+          "temporal_continuity": 0.0919896336974294,
+          "temporal_extrapolation": 0.08451593422780106,
+          "temporal_direction": 0.934969145745752,
+          "temporal_speed": 0.334456678440673,
+          "temporal_smoothness": 0.32327875085358904,
+          "semantic_semantic_max_logit": 9.1640625,
+          "semantic_semantic_max_probability": 0.6160454154014587,
+          "semantic_semantic_top2_margin": 0.43676596879959106,
+          "semantic_semantic_top2_logit_margin": 1.234375,
+          "temporal_total": 0.31284620828893456,
+          "semantic_total": 0.6160454154014587,
+          "temporal_weight": 1.0,
+          "semantic_weight": 1.0
         },
         "is_true": false,
         "source_index": null,
@@ -185,28 +206,34 @@
           "block_count": 2,
           "block_size": 4,
           "source_frame_count": 8,
-          "construction_index": 1
+          "construction_index": 1,
+          "semantic_predicted_label": "Opening [something]",
+          "semantic_predicted_label_id": 46,
+          "semantic_score_mode": "max_probability"
         },
         "is_correct": false
       },
       {
         "candidate_index": 1,
         "rank": 3,
-        "score": 0.5116904973983765,
-        "probability": 0.3246789276599884,
+        "score": 0.4527509699792551,
+        "probability": 0.22560296952724457,
         "generation_type": "paired_template_counterfactual",
-        "rationale": "paired_template_counterfactual candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "rationale": "paired_template_counterfactual candidate under hybrid scoring; temporal=0.267, semantic=0.185, final=0.453.",
         "components": {
-          "predictor_boundary_alignment": 0.4923441708087921,
-          "predictor_future_alignment": 0.4961373209953308,
-          "encoder_boundary_overlap": 0.850035548210144,
-          "transition_delta_consistency": 0.4641254246234894,
-          "predictor_aligned_mean": 0.7962708473205566,
-          "predictor_block_token_alignment_mean": 0.49424076080322266,
-          "predictor_mask_token_count": 512.0,
-          "boundary_hybrid_base_score": 0.5123951435089111,
-          "boundary_hybrid_block_swapped_score": 0.5194416046142578,
-          "boundary_hybrid_order_margin": -0.00704646110534668
+          "temporal_continuity": 0.054742639756734,
+          "temporal_extrapolation": 0.05680934331388442,
+          "temporal_direction": 0.11170743313722215,
+          "temporal_speed": 0.916710016631465,
+          "temporal_smoothness": 0.537684907762681,
+          "semantic_semantic_max_logit": 5.58984375,
+          "semantic_semantic_max_probability": 0.18548087775707245,
+          "semantic_semantic_top2_margin": 0.02989925444126129,
+          "semantic_semantic_top2_logit_margin": 0.17578125,
+          "temporal_total": 0.2672700922221827,
+          "semantic_total": 0.18548087775707245,
+          "temporal_weight": 1.0,
+          "semantic_weight": 1.0
         },
         "is_true": false,
         "source_index": null,
@@ -216,7 +243,10 @@
           "paired_template": "Opening something",
           "source_description": "Closing something",
           "fallback": false,
-          "construction_index": 2
+          "construction_index": 2,
+          "semantic_predicted_label": "Trying but failing to attach [something] to [something] because it doesn't stick",
+          "semantic_predicted_label_id": 161,
+          "semantic_score_mode": "max_probability"
         },
         "is_correct": false
       }
@@ -225,7 +255,7 @@
       {
         "strategy": "true_continuation",
         "generation_type": "true_continuation",
-        "source_video_id": "test_38788824614",
+        "source_video_id": "test_936226396289",
         "label_template": "Opening something",
         "placeholders": [],
         "pair_group": "open_close",
@@ -244,7 +274,7 @@
       {
         "strategy": "paired_template_counterfactual",
         "generation_type": "paired_template_counterfactual",
-        "source_video_id": "test_903673796535",
+        "source_video_id": "test_900775903712",
         "label_template": "Closing something",
         "placeholders": [],
         "pair_group": "open_close",
@@ -263,7 +293,7 @@
       {
         "strategy": "temporal_order_block_reverse",
         "generation_type": "temporal_order_block_reverse",
-        "source_video_id": "test_38788824614",
+        "source_video_id": "test_936226396289",
         "label_template": "Opening something",
         "placeholders": [],
         "pair_group": "open_close",
@@ -289,40 +319,40 @@
       "Closing something (paired counterfactual)",
       "Opening something (reverse-block temporal negative)"
     ],
-    "score_margin": 0.0010136127471923606,
-    "confidence_margin": 0.00034224987030029297,
+    "score_margin": 0.12418739214029673,
+    "confidence_margin": 0.048023492097854614,
     "confidence_tier": "low",
     "baseline_comparison": [
       {
-        "evaluator": "vjepa",
-        "evaluator_name": "vjepa2_masked_boundary_hybrid",
+        "evaluator": "hybrid",
+        "evaluator_name": "hybrid",
         "selected_index": 0,
         "selected_generation_type": "true_continuation",
-        "selected_score": 0.5514014005661011,
-        "selected_probability": 0.33783164620399475,
+        "selected_score": 1.05307901583069,
+        "selected_probability": 0.4112102687358856,
         "selected_component_highlights": [
           {
-            "name": "predictor_mask_token_count",
-            "value": 512.0
+            "name": "semantic_semantic_max_logit",
+            "value": 11.65625
           },
           {
-            "name": "encoder_boundary_overlap",
-            "value": 0.9494144916534424
+            "name": "semantic_semantic_top2_logit_margin",
+            "value": 2.140625
           }
         ],
         "runner_up_index": 2,
         "runner_up_generation_type": "temporal_order_block_reverse",
-        "runner_up_score": 0.5503877878189087,
-        "runner_up_probability": 0.33748939633369446,
-        "score_gap_to_runner_up": 0.0010136127471923606,
-        "score_margin": 0.0010136127471923606,
-        "probability_gap_to_runner_up": 0.00034224987030029297,
-        "confidence_margin": 0.00034224987030029297,
+        "runner_up_score": 0.9288916236903932,
+        "runner_up_probability": 0.363186776638031,
+        "score_gap_to_runner_up": 0.12418739214029673,
+        "score_margin": 0.12418739214029673,
+        "probability_gap_to_runner_up": 0.048023492097854614,
+        "confidence_margin": 0.048023492097854614,
         "confidence_tier": "low",
         "selected_description": "Opening something (true continuation)",
         "runner_up_description": "Opening something (reverse-block temporal negative)",
-        "probability_gap_to_runner_up_legacy": 0.00034224987030029297,
-        "confidence": 0.00034224987030029297,
+        "probability_gap_to_runner_up_legacy": 0.048023492097854614,
+        "confidence": 0.048023492097854614,
         "correct_index": 0,
         "correct_rank": 1,
         "was_correct": true
@@ -367,21 +397,24 @@
       "selected_candidate": {
         "candidate_index": 0,
         "rank": 1,
-        "score": 0.5514014005661011,
-        "probability": 0.33783164620399475,
+        "score": 1.05307901583069,
+        "probability": 0.4112102687358856,
         "generation_type": "true_continuation",
-        "rationale": "true_continuation candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "rationale": "true_continuation candidate under hybrid scoring; temporal=0.233, semantic=0.820, final=1.053.",
         "components": {
-          "predictor_boundary_alignment": 0.5264374017715454,
-          "predictor_future_alignment": 0.5265111923217773,
-          "encoder_boundary_overlap": 0.9494144916534424,
-          "transition_delta_consistency": 0.4584537446498871,
-          "predictor_aligned_mean": 0.8576178550720215,
-          "predictor_block_token_alignment_mean": 0.5264742970466614,
-          "predictor_mask_token_count": 512.0,
-          "boundary_hybrid_base_score": 0.551601767539978,
-          "boundary_hybrid_block_swapped_score": 0.5536054372787476,
-          "boundary_hybrid_order_margin": -0.0020036697387695312
+          "temporal_continuity": 0.18867038357380161,
+          "temporal_extrapolation": 0.16374444015866166,
+          "temporal_direction": 0.12789382746935501,
+          "temporal_speed": 0.334456678440673,
+          "temporal_smoothness": 0.45518421958488114,
+          "semantic_semantic_max_logit": 11.65625,
+          "semantic_semantic_max_probability": 0.8199841380119324,
+          "semantic_semantic_top2_margin": 0.7235693335533142,
+          "semantic_semantic_top2_logit_margin": 2.140625,
+          "temporal_total": 0.23309487781875748,
+          "semantic_total": 0.8199841380119324,
+          "temporal_weight": 1.0,
+          "semantic_weight": 1.0
         },
         "is_true": true,
         "source_index": null,
@@ -391,28 +424,34 @@
           "paired_template": "Closing something",
           "source_description": "Opening something",
           "candidate_role": "observed_clip_true_future",
-          "construction_index": 0
+          "construction_index": 0,
+          "semantic_predicted_label": "Opening [something]",
+          "semantic_predicted_label_id": 46,
+          "semantic_score_mode": "max_probability"
         },
         "is_correct": true
       },
       "runner_up_candidate": {
         "candidate_index": 2,
         "rank": 2,
-        "score": 0.5503877878189087,
-        "probability": 0.33748939633369446,
+        "score": 0.9288916236903932,
+        "probability": 0.363186776638031,
         "generation_type": "temporal_order_block_reverse",
-        "rationale": "temporal_order_block_reverse candidate under masked_boundary_hybrid; strongest latent component was predictor_mask_token_count (512.000).",
+        "rationale": "temporal_order_block_reverse candidate under hybrid scoring; temporal=0.313, semantic=0.616, final=0.929.",
         "components": {
-          "predictor_boundary_alignment": 0.5159292221069336,
-          "predictor_future_alignment": 0.5157085657119751,
-          "encoder_boundary_overlap": 0.9501647353172302,
-          "transition_delta_consistency": 0.5055729746818542,
-          "predictor_aligned_mean": 0.8499388694763184,
-          "predictor_block_token_alignment_mean": 0.5158188939094543,
-          "predictor_mask_token_count": 512.0,
-          "boundary_hybrid_base_score": 0.5501146912574768,
-          "boundary_hybrid_block_swapped_score": 0.547383725643158,
-          "boundary_hybrid_order_margin": 0.0027309656143188477
+          "temporal_continuity": 0.0919896336974294,
+          "temporal_extrapolation": 0.08451593422780106,
+          "temporal_direction": 0.934969145745752,
+          "temporal_speed": 0.334456678440673,
+          "temporal_smoothness": 0.32327875085358904,
+          "semantic_semantic_max_logit": 9.1640625,
+          "semantic_semantic_max_probability": 0.6160454154014587,
+          "semantic_semantic_top2_margin": 0.43676596879959106,
+          "semantic_semantic_top2_logit_margin": 1.234375,
+          "temporal_total": 0.31284620828893456,
+          "semantic_total": 0.6160454154014587,
+          "temporal_weight": 1.0,
+          "semantic_weight": 1.0
         },
         "is_true": false,
         "source_index": null,
@@ -426,79 +465,79 @@
           "block_count": 2,
           "block_size": 4,
           "source_frame_count": 8,
-          "construction_index": 1
+          "construction_index": 1,
+          "semantic_predicted_label": "Opening [something]",
+          "semantic_predicted_label_id": 46,
+          "semantic_score_mode": "max_probability"
         },
         "is_correct": false
       },
       "selected_component_highlights": [
         {
-          "name": "predictor_mask_token_count",
-          "value": 512.0
+          "name": "semantic_semantic_max_logit",
+          "value": 11.65625
         },
         {
-          "name": "encoder_boundary_overlap",
-          "value": 0.9494144916534424
+          "name": "semantic_semantic_top2_logit_margin",
+          "value": 2.140625
         }
       ],
       "runner_up_component_highlights": [
         {
-          "name": "predictor_mask_token_count",
-          "value": 512.0
+          "name": "semantic_semantic_max_logit",
+          "value": 9.1640625
         },
         {
-          "name": "encoder_boundary_overlap",
-          "value": 0.9501647353172302
+          "name": "semantic_semantic_top2_logit_margin",
+          "value": 1.234375
         }
       ],
-      "score_margin": 0.0010136127471923606,
-      "confidence_margin": 0.00034224987030029297,
+      "score_margin": 0.12418739214029673,
+      "confidence_margin": 0.048023492097854614,
       "confidence_tier": "low",
-      "score_gap_to_runner_up": 0.0010136127471923606,
-      "probability_gap_to_runner_up": 0.00034224987030029297
+      "score_gap_to_runner_up": 0.12418739214029673,
+      "probability_gap_to_runner_up": 0.048023492097854614
     },
     "notes": [
-      "Combined 16-frame task clips are internally resampled to the V-JEPA frame count.",
-      "Single-channel clips are converted to RGB inside preprocessing when needed.",
-      "This scorer uses V-JEPA predictor outputs plus a boundary overlap encoder check and a direct block-swap order margin.",
-      "The real-video path is auto-routed to this variant when candidate metadata looks like a clip-based real-video example.",
-      "Masked predictor calls stay single-mask and fail fast on CUDA to avoid poisoned-runtime fallbacks.",
-      "Boundary hybrid implementation signature: masked_boundary_hybrid_v1.",
-      "Boundary hybrid scores predictor alignment near the observed/future boundary, overlap-transition compatibility, and transition delta consistency.",
-      "The overlap component is measured on short windows straddling the observed/future boundary.",
-      "The predictor component is kept frozen and evaluated with single-mask calls only."
+      "Hybrid scorer blends temporal source=heuristic with semantic_only using weights temporal=1.000, semantic=1.000.",
+      "Semantic score mode is max_probability.",
+      "This scorer is intended as a lightweight fusion layer without any additional training.",
+      "Semantic scorer uses AutoModelForVideoClassification on the official SSV2-tuned V-JEPA 2 checkpoint.",
+      "Each candidate is scored from the concatenated observed+future clip and converted with score_mode=max_probability.",
+      "This scorer is intended as a semantic compatibility prior and does not replace temporal scoring on its own."
     ],
     "observed_description": "Observed prefix: a short 8-frame clip showing a human-object interaction in progress. The commentary layer only receives a neutral motion summary rather than the exact action label.",
     "heuristic_comparison": [
       {
-        "evaluator": "vjepa",
-        "evaluator_name": "vjepa2_masked_boundary_hybrid",
+        "evaluator": "hybrid",
+        "evaluator_name": "hybrid",
         "selected_index": 0,
         "selected_generation_type": "true_continuation",
-        "selected_score": 0.5514014005661011,
-        "selected_probability": 0.33783164620399475,
+        "selected_score": 1.05307901583069,
+        "selected_probability": 0.4112102687358856,
         "selected_component_highlights": [
           {
-            "name": "predictor_mask_token_count",
-            "value": 512.0
+            "name": "semantic_semantic_max_logit",
+            "value": 11.65625
           },
           {
-            "name": "encoder_boundary_overlap",
-            "value": 0.9494144916534424
+            "name": "semantic_semantic_top2_logit_margin",
+            "value": 2.140625
           }
         ],
         "runner_up_index": 2,
         "runner_up_generation_type": "temporal_order_block_reverse",
-        "runner_up_score": 0.5503877878189087,
-        "runner_up_probability": 0.33748939633369446,
-        "score_gap_to_runner_up": 0.0010136127471923606,
-        "score_margin": 0.0010136127471923606,
-        "probability_gap_to_runner_up": 0.00034224987030029297,
-        "confidence_margin": 0.00034224987030029297,
+        "runner_up_score": 0.9288916236903932,
+        "runner_up_probability": 0.363186776638031,
+        "score_gap_to_runner_up": 0.12418739214029673,
+        "score_margin": 0.12418739214029673,
+        "probability_gap_to_runner_up": 0.048023492097854614,
+        "confidence_margin": 0.048023492097854614,
         "confidence_tier": "low",
         "selected_description": "Opening something (true continuation)",
         "runner_up_description": "Opening something (reverse-block temporal negative)",
-        "probability_gap_to_runner_up_legacy": 0.00034224987030029297,
-        "confidence": 0.00034224987030029297,
+        "probability_gap_to_runner_up_legacy": 0.048023492097854614,
+        "confidence": 0.048023492097854614,
         "correct_index": 0,
         "correct_rank": 1,
         "was_correct": true

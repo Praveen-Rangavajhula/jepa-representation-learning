@@ -1,7 +1,7 @@
 {
   "count": 5,
-  "jsonl_path": "/content/jepa-representation-learning/results/agent_live/live_agent_transcript_20260331_170124.jsonl",
-  "markdown_path": "/content/jepa-representation-learning/results/agent_live/live_agent_transcript_20260331_170124.md",
+  "jsonl_path": "/content/jepa-representation-learning/results/agent_live/live_agent_transcript_20260401_061221.jsonl",
+  "markdown_path": "/content/jepa-representation-learning/results/agent_live/live_agent_transcript_20260401_061221.md",
   "backend_counts": {
     "colab_ai": 5
   },
@@ -13,19 +13,19 @@
       "correct_index": 0,
       "backend_name": "colab_ai",
       "used_fallback": false,
-      "confidence_margin": 0.00034224987030029297,
+      "confidence_margin": 0.048023492097854614,
       "confidence_tier": "low",
-      "score_margin": 0.0010136127471923606
+      "score_margin": 0.12418739214029673
     },
     {
       "example_index": 1,
-      "selected_index": 2,
+      "selected_index": 1,
       "correct_index": 0,
       "backend_name": "colab_ai",
       "used_fallback": false,
-      "confidence_margin": 0.006142407655715942,
+      "confidence_margin": 0.06344851851463318,
       "confidence_tier": "low",
-      "score_margin": 0.01818365454673765
+      "score_margin": 0.18473602087091545
     },
     {
       "example_index": 2,
@@ -33,29 +33,29 @@
       "correct_index": 1,
       "backend_name": "colab_ai",
       "used_fallback": false,
-      "confidence_margin": 0.0003604292869567871,
+      "confidence_margin": 0.046502768993377686,
       "confidence_tier": "low",
-      "score_margin": 0.0010634958744049072
+      "score_margin": 0.11976236842718457
     },
     {
       "example_index": 3,
-      "selected_index": 1,
+      "selected_index": 0,
       "correct_index": 0,
       "backend_name": "colab_ai",
       "used_fallback": false,
-      "confidence_margin": 0.0008327662944793701,
+      "confidence_margin": 0.03838208317756653,
       "confidence_tier": "low",
-      "score_margin": 0.002454131841659546
+      "score_margin": 0.11161730039628859
     },
     {
       "example_index": 4,
-      "selected_index": 0,
+      "selected_index": 1,
       "correct_index": 1,
       "backend_name": "colab_ai",
       "used_fallback": false,
-      "confidence_margin": 0.0002790391445159912,
-      "confidence_tier": "low",
-      "score_margin": 0.0008261680603027788
+      "confidence_margin": 0.2269158959388733,
+      "confidence_tier": "medium",
+      "score_margin": 0.5970148082869802
     }
   ]
 }

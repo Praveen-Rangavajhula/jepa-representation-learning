@@ -5,45 +5,381 @@ example_index,evaluator,candidate_index,rank,score,probability,generation_type,c
 0,boundary_hybrid,0,1,0.5514014005661011,0.33783164620399475,true_continuation,Opening something (true continuation),True,0,0,0.0010136127471923606,0.00034224987030029297,low
 0,boundary_hybrid,2,2,0.5503877878189087,0.33748939633369446,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.0010136127471923606,0.00034224987030029297,low
 0,boundary_hybrid,1,3,0.5116904973983765,0.3246789276599884,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.0010136127471923606,0.00034224987030029297,low
+0,semantic_only,0,1,0.8199841380119324,0.4263099431991577,true_continuation,Opening something (true continuation),True,0,0,0.20393872261047363,0.07864892482757568,low
+0,semantic_only,2,2,0.6160454154014587,0.34766101837158203,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.20393872261047363,0.07864892482757568,low
+0,semantic_only,1,3,0.18548087775707245,0.22602902352809906,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.20393872261047363,0.07864892482757568,low
+0,hybrid,0,1,1.05307901583069,0.4112102687358856,true_continuation,Opening something (true continuation),True,0,0,0.12418739214029673,0.048023492097854614,low
+0,hybrid,2,2,0.9288916236903932,0.363186776638031,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.12418739214029673,0.048023492097854614,low
+0,hybrid,1,3,0.4527509699792551,0.22560296952724457,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.12418739214029673,0.048023492097854614,low
 1,heuristic,2,1,0.37166388445520376,,temporal_order_two_block_swap,,False,2,0,0.03171460121717601,,unknown
 1,heuristic,0,2,0.33994928323802776,,true_continuation,,True,2,0,0.03171460121717601,,unknown
 1,heuristic,1,3,0.21163115763877952,,paired_template_counterfactual,,False,2,0,0.03171460121717601,,unknown
 1,boundary_hybrid,2,1,0.592334246635437,0.34087833762168884,temporal_order_two_block_swap,Opening something (two-block temporal swap),False,2,0,0.01818365454673765,0.006142407655715942,low
 1,boundary_hybrid,0,2,0.5741505920886993,0.3347359299659729,true_continuation,Opening something (true continuation),True,2,0,0.01818365454673765,0.006142407655715942,low
 1,boundary_hybrid,1,3,0.5427422165870667,0.32438579201698303,paired_template_counterfactual,Closing something (paired counterfactual),False,2,0,0.01818365454673765,0.006142407655715942,low
+1,semantic_only,1,1,0.5932869911193848,0.410521924495697,paired_template_counterfactual,Closing something (paired counterfactual),False,1,0,0.31808701157569885,0.1118510365486145,medium
+1,semantic_only,0,2,0.2751999795436859,0.2986708879470825,true_continuation,Opening something (true continuation),True,1,0,0.31808701157569885,0.1118510365486145,medium
+1,semantic_only,2,3,0.24851824343204498,0.29080721735954285,temporal_order_two_block_swap,Opening something (two-block temporal swap),False,1,0,0.31808701157569885,0.1118510365486145,medium
+1,hybrid,1,1,0.8049181487581643,0.37615564465522766,paired_template_counterfactual,Closing something (paired counterfactual),False,1,0,0.18473602087091545,0.06344851851463318,low
+1,hybrid,2,2,0.6201821278872488,0.3127071261405945,temporal_order_two_block_swap,Opening something (two-block temporal swap),False,1,0,0.18473602087091545,0.06344851851463318,low
+1,hybrid,0,3,0.6151492627817137,0.31113722920417786,true_continuation,Opening something (true continuation),True,1,0,0.18473602087091545,0.06344851851463318,low
 2,heuristic,2,1,0.569700791754807,,temporal_order_block_reverse,,False,2,1,0.14613778136816347,,unknown
 2,heuristic,1,2,0.42356301038664357,,true_continuation,,True,2,1,0.14613778136816347,,unknown
 2,heuristic,0,3,0.14942220899241024,,paired_template_counterfactual,,False,2,1,0.14613778136816347,,unknown
 2,boundary_hybrid,2,1,0.543450391292572,0.33906638622283936,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,2,1,0.0010634958744049072,0.0003604292869567871,low
 2,boundary_hybrid,1,2,0.5423868954181671,0.33870595693588257,true_continuation,Opening something (true continuation),True,2,1,0.0010634958744049072,0.0003604292869567871,low
 2,boundary_hybrid,0,3,0.49251285195350647,0.32222768664360046,paired_template_counterfactual,Closing something (paired counterfactual),False,2,1,0.0010634958744049072,0.0003604292869567871,low
+2,semantic_only,1,1,0.565204381942749,0.36040252447128296,true_continuation,Opening something (true continuation),True,1,1,0.026375412940979004,0.009381532669067383,low
+2,semantic_only,2,2,0.53882896900177,0.3510209918022156,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,1,0.026375412940979004,0.009381532669067383,low
+2,semantic_only,0,3,0.3429427742958069,0.2885764241218567,paired_template_counterfactual,Closing something (paired counterfactual),False,1,1,0.026375412940979004,0.009381532669067383,low
+2,hybrid,2,1,1.1085297607565772,0.41200709342956543,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,2,1,0.11976236842718457,0.046502768993377686,low
+2,hybrid,1,2,0.9887673923293926,0.36550432443618774,true_continuation,Opening something (true continuation),True,2,1,0.11976236842718457,0.046502768993377686,low
+2,hybrid,0,3,0.4923649832882171,0.22248858213424683,paired_template_counterfactual,Closing something (paired counterfactual),False,2,1,0.11976236842718457,0.046502768993377686,low
 3,heuristic,0,1,0.3831645632120706,,true_continuation,,True,0,0,0.139193150883044,,unknown
 3,heuristic,2,2,0.2439714123290266,,paired_template_counterfactual,,False,0,0,0.139193150883044,,unknown
 3,heuristic,1,3,0.09547657299539188,,temporal_order_block_reverse,,False,0,0,0.139193150883044,,unknown
 3,boundary_hybrid,1,1,0.5426528036594391,0.3397512137889862,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,0,0.002454131841659546,0.0008327662944793701,low
 3,boundary_hybrid,0,2,0.5401986718177796,0.33891844749450684,true_continuation,Opening something (true continuation),True,1,0,0.002454131841659546,0.0008327662944793701,low
 3,boundary_hybrid,2,3,0.48690869808197024,0.32133030891418457,paired_template_counterfactual,Closing something (paired counterfactual),False,1,0,0.002454131841659546,0.0008327662944793701,low
+3,semantic_only,1,1,0.7458531856536865,0.36045995354652405,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,0,0.10608583688735962,0.03628122806549072,low
+3,semantic_only,2,2,0.6397673487663269,0.3241787254810333,paired_template_counterfactual,Closing something (paired counterfactual),False,1,0,0.10608583688735962,0.03628122806549072,low
+3,semantic_only,0,3,0.6121914982795715,0.3153613805770874,true_continuation,Opening something (true continuation),True,1,0,0.10608583688735962,0.03628122806549072,low
+3,hybrid,0,1,0.9953560614916421,0.36342015862464905,true_continuation,Opening something (true continuation),True,0,0,0.11161730039628859,0.03838208317756653,low
+3,hybrid,2,2,0.8837387610953535,0.3250380754470825,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.11161730039628859,0.03838208317756653,low
+3,hybrid,1,3,0.8413297586490784,0.31154173612594604,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.11161730039628859,0.03838208317756653,low
 4,heuristic,1,1,0.8468764617613875,,true_continuation,,True,1,1,0.4759016271727834,,unknown
 4,heuristic,0,2,0.37097483458860414,,temporal_order_block_reverse,,False,1,1,0.4759016271727834,,unknown
 4,heuristic,2,3,0.3104823514297455,,paired_template_counterfactual,,False,1,1,0.4759016271727834,,unknown
 4,boundary_hybrid,0,1,0.5605384290218354,0.3379226326942444,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,1,0.0008261680603027788,0.0002790391445159912,low
 4,boundary_hybrid,1,2,0.5597122609615326,0.3376435935497284,true_continuation,Opening something (true continuation),True,0,1,0.0008261680603027788,0.0002790391445159912,low
 4,boundary_hybrid,2,3,0.5198029994964599,0.3244338035583496,paired_template_counterfactual,Closing something (paired counterfactual),False,0,1,0.0008261680603027788,0.0002790391445159912,low
+4,semantic_only,1,1,0.5601488947868347,0.38134437799453735,true_continuation,Opening something (true continuation),True,1,1,0.12111318111419678,0.04349854588508606,low
+4,semantic_only,0,2,0.43903571367263794,0.3378458321094513,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,1,0.12111318111419678,0.04349854588508606,low
+4,semantic_only,2,3,0.25412365794181824,0.28080981969833374,paired_template_counterfactual,Closing something (paired counterfactual),False,1,1,0.12111318111419678,0.04349854588508606,low
+4,hybrid,1,1,1.4070253565482223,0.5047650337219238,true_continuation,Opening something (true continuation),True,1,1,0.5970148082869802,0.2269158959388733,medium
+4,hybrid,0,2,0.8100105482612421,0.27784913778305054,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,1,0.5970148082869802,0.2269158959388733,medium
+4,hybrid,2,3,0.5646060093715637,0.21738581359386444,paired_template_counterfactual,Closing something (paired counterfactual),False,1,1,0.5970148082869802,0.2269158959388733,medium
 5,heuristic,2,1,0.5189574359011475,,temporal_order_block_reverse,,False,2,0,0.014414317032244939,,unknown
 5,heuristic,0,2,0.5045431188689026,,true_continuation,,True,2,0,0.014414317032244939,,unknown
 5,heuristic,1,3,0.278607794349034,,paired_template_counterfactual,,False,2,0,0.014414317032244939,,unknown
 5,boundary_hybrid,2,1,0.565898311138153,0.3403414189815521,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,2,0,0.0129674851894378,0.004384875297546387,low
 5,boundary_hybrid,0,2,0.5529308259487152,0.33595654368400574,true_continuation,Opening something (true continuation),True,2,0,0.0129674851894378,0.004384875297546387,low
 5,boundary_hybrid,1,3,0.5157723426818848,0.32370200753211975,paired_template_counterfactual,Closing something (paired counterfactual),False,2,0,0.0129674851894378,0.004384875297546387,low
+5,semantic_only,0,1,0.7965184450149536,0.3599482476711273,true_continuation,Opening something (true continuation),True,0,0,0.10593891143798828,0.036182135343551636,low
+5,semantic_only,1,2,0.6905795335769653,0.3237661123275757,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.10593891143798828,0.036182135343551636,low
+5,semantic_only,2,3,0.6672039031982422,0.316285640001297,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.10593891143798828,0.036182135343551636,low
+5,hybrid,0,1,1.3010615638838563,0.3832838237285614,true_continuation,Opening something (true continuation),True,0,0,0.1149002247844666,0.041603535413742065,low
+5,hybrid,2,2,1.1861613390993897,0.34168028831481934,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.1149002247844666,0.041603535413742065,low
+5,hybrid,1,3,0.9691873279259993,0.27503588795661926,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.1149002247844666,0.041603535413742065,low
 6,heuristic,2,1,0.518216173108699,,true_continuation,,True,2,2,0.19818567564580214,,unknown
 6,heuristic,0,2,0.3200304974628969,,paired_template_counterfactual,,False,2,2,0.19818567564580214,,unknown
 6,heuristic,1,3,0.19685406582675108,,temporal_order_block_reverse,,False,2,2,0.19818567564580214,,unknown
 6,boundary_hybrid,2,1,0.5849149048328399,0.3402612805366516,true_continuation,Opening something (true continuation),True,2,2,0.0017799556255340132,0.0006051063537597656,low
 6,boundary_hybrid,1,2,0.5831349492073059,0.33965617418289185,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,2,2,0.0017799556255340132,0.0006051063537597656,low
 6,boundary_hybrid,0,3,0.5237800240516662,0.32008254528045654,paired_template_counterfactual,Closing something (paired counterfactual),False,2,2,0.0017799556255340132,0.0006051063537597656,low
+6,semantic_only,2,1,0.8288676142692566,0.36264434456825256,true_continuation,Opening something (true continuation),True,2,2,0.013297677040100098,0.004790395498275757,low
+6,semantic_only,0,2,0.8155699372291565,0.3578539490699768,paired_template_counterfactual,Closing something (paired counterfactual),False,2,2,0.013297677040100098,0.004790395498275757,low
+6,semantic_only,1,3,0.5684532523155212,0.27950167655944824,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,2,2,0.013297677040100098,0.004790395498275757,low
+6,hybrid,2,1,1.3470837873779558,0.4222460687160492,true_continuation,Opening something (true continuation),True,2,2,0.21148335268590235,0.08048740029335022,low
+6,hybrid,0,2,1.1356004346920534,0.341758668422699,paired_template_counterfactual,Closing something (paired counterfactual),False,2,2,0.21148335268590235,0.08048740029335022,low
+6,hybrid,1,3,0.7653073181422723,0.23599526286125183,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,2,2,0.21148335268590235,0.08048740029335022,low
 7,heuristic,0,1,0.6014157666816621,,true_continuation,,True,0,0,0.21361299502582481,,unknown
 7,heuristic,1,2,0.38780277165583726,,temporal_order_block_reverse,,False,0,0,0.21361299502582481,,unknown
 7,heuristic,2,3,0.14413820228828306,,paired_template_counterfactual,,False,0,0,0.21361299502582481,,unknown
 7,boundary_hybrid,1,1,0.5892281353473663,0.3442566692829132,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,0,0.00525953769683829,0.0018058717250823975,low
 7,boundary_hybrid,0,2,0.583968597650528,0.3424507975578308,true_continuation,Opening something (true continuation),True,1,0,0.00525953769683829,0.0018058717250823975,low
 7,boundary_hybrid,2,3,0.4949782580137253,0.31329259276390076,paired_template_counterfactual,Closing something (paired counterfactual),False,1,0,0.00525953769683829,0.0018058717250823975,low
+7,semantic_only,1,1,0.5526242852210999,0.38034164905548096,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,1,0,0.06702086329460144,0.02465537190437317,low
+7,semantic_only,0,2,0.4856034219264984,0.3556862771511078,true_continuation,Opening something (true continuation),True,1,0,0.06702086329460144,0.02465537190437317,low
+7,semantic_only,2,3,0.1873975247144699,0.26397204399108887,paired_template_counterfactual,Closing something (paired counterfactual),False,1,0,0.06702086329460144,0.02465537190437317,low
+7,hybrid,0,1,1.0870191886081604,0.4285537600517273,true_continuation,Opening something (true continuation),True,0,0,0.14659213173122332,0.05843496322631836,low
+7,hybrid,1,2,0.9404270568769371,0.37011879682540894,temporal_order_block_reverse,Opening something (reverse-block temporal negative),False,0,0,0.14659213173122332,0.05843496322631836,low
+7,hybrid,2,3,0.33153572700275297,0.20132745802402496,paired_template_counterfactual,Closing something (paired counterfactual),False,0,0,0.14659213173122332,0.05843496322631836,low
+8,heuristic,0,1,0.5275143247443955,,true_continuation,,True,0,0,0.10668152228129707,,unknown
+8,heuristic,1,2,0.42083280246309845,,temporal_order_two_block_swap,,False,0,0,0.10668152228129707,,unknown
+8,heuristic,2,3,0.2267029652687374,,paired_template_counterfactual,,False,0,0,0.10668152228129707,,unknown
+8,boundary_hybrid,1,1,0.5730707705020904,0.33971190452575684,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,1,0,0.01484591960906978,0.005006074905395508,low
+8,boundary_hybrid,0,2,0.5582248508930207,0.33470582962036133,true_continuation,Closing something (true continuation),True,1,0,0.01484591960906978,0.005006074905395508,low
+8,boundary_hybrid,2,3,0.5305878400802613,0.32558223605155945,paired_template_counterfactual,Opening something (paired counterfactual),False,1,0,0.01484591960906978,0.005006074905395508,low
+8,semantic_only,1,1,0.9739010334014893,0.4088394045829773,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,1,0,0.003047347068786621,0.00124397873878479,low
+8,semantic_only,0,2,0.9708536863327026,0.4075954258441925,true_continuation,Closing something (true continuation),True,1,0,0.003047347068786621,0.00124397873878479,low
+8,semantic_only,2,3,0.17314794659614563,0.18356509506702423,paired_template_counterfactual,Opening something (paired counterfactual),False,1,0,0.003047347068786621,0.00124397873878479,low
+8,hybrid,0,1,1.498368011077098,0.44744330644607544,true_continuation,Closing something (true continuation),True,0,0,0.10363417521251028,0.04404854774475098,low
+8,hybrid,1,2,1.3947338358645878,0.40339475870132446,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,0,0,0.10363417521251028,0.04404854774475098,low
+8,hybrid,2,3,0.39985091186488303,0.1491619497537613,paired_template_counterfactual,Opening something (paired counterfactual),False,0,0,0.10363417521251028,0.04404854774475098,low
+9,heuristic,2,1,0.3517417140120046,,true_continuation,,True,2,2,0.09808385768250444,,unknown
+9,heuristic,1,2,0.25365785632950016,,paired_template_counterfactual,,False,2,2,0.09808385768250444,,unknown
+9,heuristic,0,3,0.20520714309010132,,temporal_order_block_reverse,,False,2,2,0.09808385768250444,,unknown
+9,boundary_hybrid,0,1,0.5338037073612213,0.3357980251312256,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,0,2,0.001075989007949807,0.0003611147403717041,low
+9,boundary_hybrid,2,2,0.5327277183532715,0.3354369103908539,true_continuation,Closing something (true continuation),True,0,2,0.001075989007949807,0.0003611147403717041,low
+9,boundary_hybrid,1,3,0.5126373827457428,0.3287651240825653,paired_template_counterfactual,Opening something (paired counterfactual),False,0,2,0.001075989007949807,0.0003611147403717041,low
+9,semantic_only,2,1,0.6765171885490417,0.392525851726532,true_continuation,Closing something (true continuation),True,2,2,0.19082564115524292,0.06819090247154236,low
+9,semantic_only,0,2,0.48569154739379883,0.3243349492549896,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,2,2,0.19082564115524292,0.06819090247154236,low
+9,semantic_only,1,3,0.34985342621803284,0.2831392288208008,paired_template_counterfactual,Opening something (paired counterfactual),False,2,2,0.19082564115524292,0.06819090247154236,low
+9,hybrid,2,1,1.0282589025610465,0.4223710298538208,true_continuation,Closing something (true continuation),True,2,2,0.3373602120771463,0.12094518542289734,medium
+9,hybrid,0,2,0.6908986904839002,0.30142584443092346,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,2,2,0.3373602120771463,0.12094518542289734,medium
+9,hybrid,1,3,0.6035112825475331,0.27620309591293335,paired_template_counterfactual,Opening something (paired counterfactual),False,2,2,0.3373602120771463,0.12094518542289734,medium
+10,heuristic,1,1,0.4667730647726508,,true_continuation,,True,1,1,0.1497189135965828,,unknown
+10,heuristic,2,2,0.317054151176068,,temporal_order_two_block_swap,,False,1,1,0.1497189135965828,,unknown
+10,heuristic,0,3,0.1924071870045272,,paired_template_counterfactual,,False,1,1,0.1497189135965828,,unknown
+10,boundary_hybrid,2,1,0.5558402240276337,0.3398137092590332,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,2,1,0.0031423747539520708,0.0010661482810974121,low
+10,boundary_hybrid,1,2,0.5526978492736816,0.3387475609779358,true_continuation,Closing something (true continuation),True,2,1,0.0031423747539520708,0.0010661482810974121,low
+10,boundary_hybrid,0,3,0.500249594449997,0.321438729763031,paired_template_counterfactual,Opening something (paired counterfactual),False,2,1,0.0031423747539520708,0.0010661482810974121,low
+10,semantic_only,1,1,0.9817189574241638,0.3507716953754425,true_continuation,Closing something (true continuation),True,1,1,0.06091052293777466,0.02072802186012268,low
+10,semantic_only,2,2,0.9208084344863892,0.3300436735153198,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,1,1,0.06091052293777466,0.02072802186012268,low
+10,semantic_only,0,3,0.8873530626296997,0.3191846013069153,paired_template_counterfactual,Opening something (paired counterfactual),False,1,1,0.06091052293777466,0.02072802186012268,low
+10,hybrid,1,1,1.4484920221968145,0.3997305929660797,true_continuation,Closing something (true continuation),True,1,1,0.21062943653435728,0.07591918110847473,low
+10,hybrid,2,2,1.2378625856624572,0.323811411857605,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,1,1,0.21062943653435728,0.07591918110847473,low
+10,hybrid,0,3,1.079760249634227,0.2764579951763153,paired_template_counterfactual,Opening something (paired counterfactual),False,1,1,0.21062943653435728,0.07591918110847473,low
+11,heuristic,0,1,0.6936977795014493,,true_continuation,,True,0,0,0.12764568974917667,,unknown
+11,heuristic,2,2,0.5660520897522726,,temporal_order_two_block_swap,,False,0,0,0.12764568974917667,,unknown
+11,heuristic,1,3,0.3229013568280205,,paired_template_counterfactual,,False,0,0,0.12764568974917667,,unknown
+11,boundary_hybrid,2,1,0.5805476665496826,0.3420623540878296,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,2,0,0.016691219806671098,0.005662083625793457,low
+11,boundary_hybrid,0,2,0.5638564467430115,0.33640027046203613,true_continuation,Closing something (true continuation),True,2,0,0.016691219806671098,0.005662083625793457,low
+11,boundary_hybrid,1,3,0.5186683177947998,0.3215373158454895,paired_template_counterfactual,Opening something (paired counterfactual),False,2,0,0.016691219806671098,0.005662083625793457,low
+11,semantic_only,0,1,0.9785471558570862,0.3804762661457062,true_continuation,Closing something (true continuation),True,0,0,0.0340038537979126,0.012720197439193726,low
+11,semantic_only,2,2,0.9445433020591736,0.36775606870651245,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,0,0,0.0340038537979126,0.012720197439193726,low
+11,semantic_only,1,3,0.5656301975250244,0.25176769495010376,paired_template_counterfactual,Opening something (paired counterfactual),False,0,0,0.0340038537979126,0.012720197439193726,low
+11,hybrid,0,1,1.6722449353585356,0.43337950110435486,true_continuation,Closing something (true continuation),True,0,0,0.16164954354708927,0.06468650698661804,low
+11,hybrid,2,2,1.5105953918114463,0.3686929941177368,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,0,0,0.16164954354708927,0.06468650698661804,low
+11,hybrid,1,3,0.888531554353045,0.19792743027210236,paired_template_counterfactual,Opening something (paired counterfactual),False,0,0,0.16164954354708927,0.06468650698661804,low
+12,heuristic,0,1,0.382631004927566,,temporal_order_block_reverse,,False,0,2,0.08886123818243041,,unknown
+12,heuristic,2,2,0.2937697667451356,,true_continuation,,True,0,2,0.08886123818243041,,unknown
+12,heuristic,1,3,0.2722918031731479,,paired_template_counterfactual,,False,0,2,0.08886123818243041,,unknown
+12,boundary_hybrid,0,1,0.5416928410530091,0.3387160003185272,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,0,2,0.004600679874420255,0.0015547573566436768,low
+12,boundary_hybrid,2,2,0.5370921611785888,0.33716124296188354,true_continuation,Closing something (true continuation),True,0,2,0.004600679874420255,0.0015547573566436768,low
+12,boundary_hybrid,1,3,0.4976530909538269,0.32412272691726685,paired_template_counterfactual,Opening something (paired counterfactual),False,0,2,0.004600679874420255,0.0015547573566436768,low
+12,semantic_only,2,1,0.544982373714447,0.3638761341571808,true_continuation,Closing something (true continuation),True,2,2,0.1035015881061554,0.03577825427055359,low
+12,semantic_only,1,2,0.4414807856082916,0.3280978798866272,paired_template_counterfactual,Opening something (paired counterfactual),False,2,2,0.1035015881061554,0.03577825427055359,low
+12,semantic_only,0,3,0.37835296988487244,0.30802595615386963,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,2,2,0.1035015881061554,0.03577825427055359,low
+12,hybrid,2,1,0.8387521404595826,0.35616418719291687,true_continuation,Closing something (true continuation),True,2,2,0.07776816564714406,0.026648610830307007,low
+12,hybrid,0,2,0.7609839748124385,0.32951557636260986,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,2,2,0.07776816564714406,0.026648610830307007,low
+12,hybrid,1,3,0.7137725887814395,0.3143202066421509,paired_template_counterfactual,Opening something (paired counterfactual),False,2,2,0.07776816564714406,0.026648610830307007,low
+13,heuristic,1,1,0.351031571090781,,temporal_order_block_reverse,,False,1,0,0.09799263605322911,,unknown
+13,heuristic,0,2,0.25303893503755187,,true_continuation,,True,1,0,0.09799263605322911,,unknown
+13,heuristic,2,3,0.23855033853855395,,paired_template_counterfactual,,False,1,0,0.09799263605322911,,unknown
+13,boundary_hybrid,0,1,0.5392767369747162,0.33755114674568176,true_continuation,Closing something (true continuation),True,0,0,0.004428398609161444,0.0014915168285369873,low
+13,boundary_hybrid,1,2,0.5348483383655548,0.3360596299171448,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,0,0,0.004428398609161444,0.0014915168285369873,low
+13,boundary_hybrid,2,3,0.5056500524282456,0.3263891339302063,paired_template_counterfactual,Opening something (paired counterfactual),False,0,0,0.004428398609161444,0.0014915168285369873,low
+13,semantic_only,0,1,0.9725368618965149,0.3587329089641571,true_continuation,Closing something (true continuation),True,0,0,0.045955777168273926,0.01611277461051941,low
+13,semantic_only,1,2,0.926581084728241,0.3426201343536377,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,0,0,0.045955777168273926,0.01611277461051941,low
+13,semantic_only,2,3,0.789220929145813,0.2986469864845276,paired_template_counterfactual,Opening something (paired counterfactual),False,0,0,0.045955777168273926,0.01611277461051941,low
+13,hybrid,1,1,1.277612655819022,0.3665396273136139,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,1,0,0.05203685888495513,0.018585801124572754,low
+13,hybrid,0,2,1.2255757969340668,0.34795382618904114,true_continuation,Closing something (true continuation),True,1,0,0.05203685888495513,0.018585801124572754,low
+13,hybrid,2,3,1.0277712676843669,0.28550660610198975,paired_template_counterfactual,Opening something (paired counterfactual),False,1,0,0.05203685888495513,0.018585801124572754,low
+14,heuristic,1,1,0.5831090135149218,,true_continuation,,True,1,1,0.10516310736491247,,unknown
+14,heuristic,0,2,0.47794590615000937,,temporal_order_two_block_swap,,False,1,1,0.10516310736491247,,unknown
+14,heuristic,2,3,0.2655089054279985,,paired_template_counterfactual,,False,1,1,0.10516310736491247,,unknown
+14,boundary_hybrid,0,1,0.5806746125221253,0.3419177830219269,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,0,1,0.017896699905395552,0.006064742803573608,low
+14,boundary_hybrid,1,2,0.5627779126167297,0.33585304021835327,true_continuation,Closing something (true continuation),True,0,1,0.017896699905395552,0.006064742803573608,low
+14,boundary_hybrid,2,3,0.521367198228836,0.32222914695739746,paired_template_counterfactual,Opening something (paired counterfactual),False,0,1,0.017896699905395552,0.006064742803573608,low
+14,semantic_only,1,1,0.9964976906776428,0.39134860038757324,true_continuation,Closing something (true continuation),True,1,1,0.00023496150970458984,9.196996688842773e-05,low
+14,semantic_only,0,2,0.9962627291679382,0.3912566304206848,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,1,1,0.00023496150970458984,9.196996688842773e-05,low
+14,semantic_only,2,3,0.40861397981643677,0.21739478409290314,paired_template_counterfactual,Opening something (paired counterfactual),False,1,1,0.00023496150970458984,9.196996688842773e-05,low
+14,hybrid,1,1,1.5796067041925648,0.4339689314365387,true_continuation,Closing something (true continuation),True,1,1,0.10539806887461722,0.04341155290603638,low
+14,hybrid,0,2,1.4742086353179475,0.3905573785305023,temporal_order_two_block_swap,Closing something (two-block temporal swap),False,1,1,0.10539806887461722,0.04341155290603638,low
+14,hybrid,2,3,0.6741228852444352,0.17547370493412018,paired_template_counterfactual,Opening something (paired counterfactual),False,1,1,0.10539806887461722,0.04341155290603638,low
+15,heuristic,2,1,0.2979995230217981,,paired_template_counterfactual,,False,2,1,0.03509713119225777,,unknown
+15,heuristic,1,2,0.26290239182954034,,true_continuation,,True,2,1,0.03509713119225777,,unknown
+15,heuristic,0,3,0.24652193806431472,,temporal_order_block_reverse,,False,2,1,0.03509713119225777,,unknown
+15,boundary_hybrid,1,1,0.5419872820377349,0.3374354839324951,true_continuation,Closing something (true continuation),True,1,1,0.003617173433303811,0.001218348741531372,low
+15,boundary_hybrid,0,2,0.5383701086044311,0.33621713519096375,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,1,1,0.003617173433303811,0.001218348741531372,low
+15,boundary_hybrid,2,3,0.5085753083229065,0.32634735107421875,paired_template_counterfactual,Opening something (paired counterfactual),False,1,1,0.003617173433303811,0.001218348741531372,low
+15,semantic_only,0,1,0.7959349751472473,0.3775342106819153,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,0,1,0.06515485048294067,0.023813962936401367,low
+15,semantic_only,1,2,0.7307801246643066,0.3537202477455139,true_continuation,Closing something (true continuation),True,0,1,0.06515485048294067,0.023813962936401367,low
+15,semantic_only,2,3,0.45603877305984497,0.2687455415725708,paired_template_counterfactual,Opening something (paired counterfactual),False,0,1,0.06515485048294067,0.023813962936401367,low
+15,hybrid,0,1,1.042456913211562,0.3701176345348358,temporal_order_block_reverse,Closing something (reverse-block temporal negative),False,0,1,0.048774396717714996,0.01761910319328308,low
+15,hybrid,1,2,0.993682516493847,0.35249853134155273,true_continuation,Closing something (true continuation),True,0,1,0.048774396717714996,0.01761910319328308,low
+15,hybrid,2,3,0.7540382960816431,0.27738386392593384,paired_template_counterfactual,Opening something (paired counterfactual),False,0,1,0.048774396717714996,0.01761910319328308,low
+16,heuristic,2,1,0.3588366004638013,,paired_template_counterfactual,,False,2,0,0.029656317400530985,,unknown
+16,heuristic,0,2,0.3291802830632703,,true_continuation,,True,2,0,0.029656317400530985,,unknown
+16,heuristic,1,3,0.2716812771443012,,temporal_order_block_reverse,,False,2,0,0.029656317400530985,,unknown
+16,boundary_hybrid,0,1,0.5311669528484344,0.3368920385837555,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.010330843925476008,0.003462463617324829,low
+16,boundary_hybrid,1,2,0.5208361089229584,0.33342957496643066,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,0,0,0.010330843925476008,0.003462463617324829,low
+16,boundary_hybrid,2,3,0.5095220625400543,0.32967838644981384,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.010330843925476008,0.003462463617324829,low
+16,semantic_only,0,1,0.9998819828033447,0.3348625600337982,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.0007606148719787598,0.00025457143783569336,low
+16,semantic_only,1,2,0.999121367931366,0.3346079885959625,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,0,0,0.0007606148719787598,0.00025457143783569336,low
+16,semantic_only,2,3,0.9868576526641846,0.33052948117256165,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.0007606148719787598,0.00025457143783569336,low
+16,hybrid,2,1,1.3456942531279859,0.3434833288192749,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,0,0.01663198726137094,0.005665600299835205,low
+16,hybrid,0,2,1.329062265866615,0.3378177285194397,true_continuation,Moving something towards the camera (true continuation),True,2,0,0.01663198726137094,0.005665600299835205,low
+16,hybrid,1,3,1.270802645075667,0.3186989426612854,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,2,0,0.01663198726137094,0.005665600299835205,low
+17,heuristic,2,1,0.343382641261867,,paired_template_counterfactual,,False,2,0,0.04360748175372464,,unknown
+17,heuristic,0,2,0.2997751595081424,,true_continuation,,True,2,0,0.04360748175372464,,unknown
+17,heuristic,1,3,0.1026877312288077,,temporal_order_two_block_swap,,False,2,0,0.04360748175372464,,unknown
+17,boundary_hybrid,0,1,0.5398733913898468,0.34202471375465393,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.037526154518127464,0.01259702444076538,low
+17,boundary_hybrid,2,2,0.5023472368717193,0.32942768931388855,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.037526154518127464,0.01259702444076538,low
+17,boundary_hybrid,1,3,0.4996720850467682,0.3285475969314575,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,0,0,0.037526154518127464,0.01259702444076538,low
+17,semantic_only,0,1,0.998572587966919,0.3902263939380646,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.022847414016723633,0.008814573287963867,low
+17,semantic_only,1,2,0.9757251739501953,0.3814118206501007,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,0,0,0.022847414016723633,0.008814573287963867,low
+17,semantic_only,2,3,0.46277695894241333,0.2283618450164795,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.022847414016723633,0.008814573287963867,low
+17,hybrid,0,1,1.2983477474750613,0.41427451372146606,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.2199348422960583,0.0817897617816925,low
+17,hybrid,1,2,1.078412905179003,0.33248475193977356,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,0,0,0.2199348422960583,0.0817897617816925,low
+17,hybrid,2,3,0.8061596002042803,0.25324076414108276,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.2199348422960583,0.0817897617816925,low
+18,heuristic,2,1,0.5148359978722665,,true_continuation,,True,2,2,0.16620681905527646,,unknown
+18,heuristic,1,2,0.34862917881699007,,temporal_order_block_reverse,,False,2,2,0.16620681905527646,,unknown
+18,heuristic,0,3,0.2613145090239006,,paired_template_counterfactual,,False,2,2,0.16620681905527646,,unknown
+18,boundary_hybrid,1,1,0.5476779699325561,0.3390178680419922,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,1,2,0.0017920494079589622,0.0006070137023925781,low
+18,boundary_hybrid,2,2,0.5458859205245972,0.3384108543395996,true_continuation,Moving something towards the camera (true continuation),True,1,2,0.0017920494079589622,0.0006070137023925781,low
+18,boundary_hybrid,0,3,0.49794926345348356,0.3225712478160858,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,1,2,0.0017920494079589622,0.0006070137023925781,low
+18,semantic_only,2,1,0.9766927361488342,0.41353508830070496,true_continuation,Moving something towards the camera (true continuation),True,2,2,0.13739800453186035,0.05308827757835388,low
+18,semantic_only,1,2,0.8392947316169739,0.3604468107223511,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,2,2,0.13739800453186035,0.05308827757835388,low
+18,semantic_only,0,3,0.3725656569004059,0.22601813077926636,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,2,0.13739800453186035,0.05308827757835388,low
+18,hybrid,2,1,1.4915287340211008,0.4624682068824768,true_continuation,Moving something towards the camera (true continuation),True,2,2,0.3036048235871369,0.12109613418579102,medium
+18,hybrid,1,2,1.1879239104339638,0.3413720726966858,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,2,2,0.3036048235871369,0.12109613418579102,medium
+18,hybrid,0,3,0.6338801659243065,0.1961597204208374,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,2,0.3036048235871369,0.12109613418579102,medium
+19,heuristic,1,1,0.6542263928942713,,true_continuation,,True,1,1,0.1926015578657615,,unknown
+19,heuristic,2,2,0.4616248350285098,,temporal_order_block_reverse,,False,1,1,0.1926015578657615,,unknown
+19,heuristic,0,3,0.39270333816680947,,paired_template_counterfactual,,False,1,1,0.1926015578657615,,unknown
+19,boundary_hybrid,1,1,0.5348804891109467,0.33892926573753357,true_continuation,Moving something towards the camera (true continuation),True,1,1,0.00038350820541377395,0.00012996792793273926,low
+19,boundary_hybrid,2,2,0.5344969809055329,0.33879929780960083,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,1,1,0.00038350820541377395,0.00012996792793273926,low
+19,boundary_hybrid,0,3,0.4844833314418793,0.322271466255188,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,1,1,0.00038350820541377395,0.00012996792793273926,low
+19,semantic_only,1,1,0.9271774291992188,0.47032681107521057,true_continuation,Moving something towards the camera (true continuation),True,1,1,0.4545654058456421,0.1717991828918457,medium
+19,semantic_only,0,2,0.47261202335357666,0.29852762818336487,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,1,1,0.4545654058456421,0.1717991828918457,medium
+19,semantic_only,2,3,0.21679720282554626,0.23114554584026337,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,1,1,0.4545654058456421,0.1717991828918457,medium
+19,hybrid,1,1,1.58140382209349,0.5279778242111206,true_continuation,Moving something towards the camera (true continuation),True,1,1,0.7160884605731039,0.2699762284755707,high
+19,hybrid,0,2,0.8653153615203861,0.2580015957355499,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,1,1,0.7160884605731039,0.2699762284755707,high
+19,hybrid,2,3,0.6784220378540561,0.21402063965797424,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,1,1,0.7160884605731039,0.2699762284755707,high
+20,heuristic,0,1,0.6657571638704437,,true_continuation,,True,0,0,0.33421217235785944,,unknown
+20,heuristic,1,2,0.33154499151258426,,paired_template_counterfactual,,False,0,0,0.33421217235785944,,unknown
+20,heuristic,2,3,0.31659194573544436,,temporal_order_block_reverse,,False,0,0,0.33421217235785944,,unknown
+20,boundary_hybrid,0,1,0.5605980098247528,0.34121033549308777,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.015445590019226074,0.0052297115325927734,low
+20,boundary_hybrid,2,2,0.5451524198055268,0.335980623960495,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,0,0,0.015445590019226074,0.0052297115325927734,low
+20,boundary_hybrid,1,3,0.5051599681377411,0.3228090703487396,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.015445590019226074,0.0052297115325927734,low
+20,semantic_only,0,1,0.9995793700218201,0.4320615530014038,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.376343309879303,0.1355089247226715,medium
+20,semantic_only,2,2,0.6232360601425171,0.2965526282787323,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,0,0,0.376343309879303,0.1355089247226715,medium
+20,semantic_only,1,3,0.5345529317855835,0.2713858485221863,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.376343309879303,0.1355089247226715,medium
+20,hybrid,0,1,1.6653365338922637,0.5171300172805786,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.7255085280143022,0.26679858565330505,high
+20,hybrid,2,2,0.9398280058779614,0.25033143162727356,temporal_order_block_reverse,Moving something towards the camera (reverse-block temporal negative),False,0,0,0.7255085280143022,0.26679858565330505,high
+20,hybrid,1,3,0.8660979232981678,0.23253849148750305,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.7255085280143022,0.26679858565330505,high
+21,heuristic,1,1,0.5368550877073969,,true_continuation,,True,1,1,0.11471486012113097,,unknown
+21,heuristic,0,2,0.4221402275862659,,paired_template_counterfactual,,False,1,1,0.11471486012113097,,unknown
+21,heuristic,2,3,0.3673252708191378,,temporal_order_two_block_swap,,False,1,1,0.11471486012113097,,unknown
+21,boundary_hybrid,2,1,0.5479245722293854,0.3367694020271301,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,2,1,0.011501967906951904,0.0038513243198394775,low
+21,boundary_hybrid,1,2,0.5364226043224335,0.33291807770729065,true_continuation,Moving something towards the camera (true continuation),True,2,1,0.011501967906951904,0.0038513243198394775,low
+21,boundary_hybrid,0,3,0.5285652101039886,0.33031246066093445,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,1,0.011501967906951904,0.0038513243198394775,low
+21,semantic_only,2,1,0.9848614931106567,0.3345387876033783,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,2,1,0.004843294620513916,0.001616358757019043,low
+21,semantic_only,0,2,0.9800181984901428,0.33292242884635925,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,1,0.004843294620513916,0.001616358757019043,low
+21,semantic_only,1,3,0.9788652658462524,0.33253881335258484,true_continuation,Moving something towards the camera (true continuation),True,2,1,0.004843294620513916,0.001616358757019043,low
+21,hybrid,1,1,1.5157203535536494,0.36472564935684204,true_continuation,Moving something towards the camera (true continuation),True,1,1,0.11356192747724059,0.03915369510650635,low
+21,hybrid,0,2,1.4021584260764088,0.3255719542503357,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,1,1,0.11356192747724059,0.03915369510650635,low
+21,hybrid,2,3,1.3521867639297946,0.30970242619514465,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,1,1,0.11356192747724059,0.03915369510650635,low
+22,heuristic,2,1,0.5306470863206882,,true_continuation,,True,2,2,0.21105376924824298,,unknown
+22,heuristic,0,2,0.31959331707244526,,temporal_order_two_block_swap,,False,2,2,0.21105376924824298,,unknown
+22,heuristic,1,3,0.25748577986451215,,paired_template_counterfactual,,False,2,2,0.21105376924824298,,unknown
+22,boundary_hybrid,2,1,0.5376654744148255,0.33944427967071533,true_continuation,Moving something towards the camera (true continuation),True,2,2,0.019358456134796143,0.006507933139801025,low
+22,boundary_hybrid,0,2,0.5183070182800293,0.3329363465309143,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,2,2,0.019358456134796143,0.006507933139801025,low
+22,boundary_hybrid,1,3,0.502207949757576,0.3276193141937256,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,2,0.019358456134796143,0.006507933139801025,low
+22,semantic_only,0,1,0.9827225208282471,0.3782024681568146,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,0,2,0.00263059139251709,0.000993579626083374,low
+22,semantic_only,2,2,0.98009192943573,0.3772088885307312,true_continuation,Moving something towards the camera (true continuation),True,0,2,0.00263059139251709,0.000993579626083374,low
+22,semantic_only,1,3,0.5468705296516418,0.24458861351013184,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,2,0.00263059139251709,0.000993579626083374,low
+22,hybrid,2,1,1.5107390157564182,0.4337850511074066,true_continuation,Moving something towards the camera (true continuation),True,2,2,0.20842317785572595,0.08161082863807678,low
+22,hybrid,0,2,1.3023158379006923,0.35217422246932983,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,2,2,0.20842317785572595,0.08161082863807678,low
+22,hybrid,1,3,0.804356309516154,0.21404077112674713,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,2,2,0.20842317785572595,0.08161082863807678,low
+23,heuristic,0,1,0.6567659750821558,,true_continuation,,True,0,0,0.11711702973838989,,unknown
+23,heuristic,1,2,0.539648945343766,,temporal_order_two_block_swap,,False,0,0,0.11711702973838989,,unknown
+23,heuristic,2,3,0.48559399415409676,,paired_template_counterfactual,,False,0,0,0.11711702973838989,,unknown
+23,boundary_hybrid,0,1,0.5738724768161774,0.3428921699523926,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.015204548835754395,0.005174100399017334,low
+23,boundary_hybrid,1,2,0.558667927980423,0.33771806955337524,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,0,0,0.015204548835754395,0.005174100399017334,low
+23,boundary_hybrid,2,3,0.5028685331344604,0.3193897306919098,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.015204548835754395,0.005174100399017334,low
+23,semantic_only,1,1,0.6926749348640442,0.37665700912475586,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,1,0,0.015227913856506348,0.005692273378372192,low
+23,semantic_only,0,2,0.6774470210075378,0.37096473574638367,true_continuation,Moving something towards the camera (true continuation),True,1,0,0.015227913856506348,0.005692273378372192,low
+23,semantic_only,2,3,0.29226914048194885,0.25237828493118286,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,1,0,0.015227913856506348,0.005692273378372192,low
+23,hybrid,0,1,1.3342129960896938,0.40380749106407166,true_continuation,Moving something towards the camera (true continuation),True,0,0,0.10188911588188354,0.03911694884300232,low
+23,hybrid,1,2,1.2323238802078103,0.36469054222106934,temporal_order_two_block_swap,Moving something towards the camera (two-block temporal swap),False,0,0,0.10188911588188354,0.03911694884300232,low
+23,hybrid,2,3,0.7778631346360456,0.231501966714859,paired_template_counterfactual,Moving something away from the camera (paired counterfactual),False,0,0,0.10188911588188354,0.03911694884300232,low
+24,heuristic,0,1,0.4229841665537873,,temporal_order_two_block_swap,,False,0,2,0.07104298221354338,,unknown
+24,heuristic,2,2,0.3519411843402439,,true_continuation,,True,0,2,0.07104298221354338,,unknown
+24,heuristic,1,3,0.3256337993496012,,paired_template_counterfactual,,False,0,2,0.07104298221354338,,unknown
+24,boundary_hybrid,0,1,0.5544378578662872,0.3424091637134552,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,0,2,0.004914325475692705,0.0016785860061645508,low
+24,boundary_hybrid,2,2,0.5495235323905945,0.34073057770729065,true_continuation,Moving something away from the camera (true continuation),True,0,2,0.004914325475692705,0.0016785860061645508,low
+24,boundary_hybrid,1,3,0.4768924206495285,0.31686028838157654,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,2,0.004914325475692705,0.0016785860061645508,low
+24,semantic_only,0,1,0.8983194828033447,0.39779165387153625,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,0,2,0.04950404167175293,0.019212812185287476,low
+24,semantic_only,2,2,0.8488154411315918,0.3785788416862488,true_continuation,Moving something away from the camera (true continuation),True,0,2,0.04950404167175293,0.019212812185287476,low
+24,semantic_only,1,3,0.3223816454410553,0.22362945973873138,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,2,0.04950404167175293,0.019212812185287476,low
+24,hybrid,0,1,1.321303649357132,0.4172813892364502,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,0,2,0.12054702388529615,0.04738834500312805,low
+24,hybrid,2,2,1.2007566254718358,0.36989304423332214,true_continuation,Moving something away from the camera (true continuation),True,0,2,0.12054702388529615,0.04738834500312805,low
+24,hybrid,1,3,0.6480154447906565,0.21282552182674408,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,2,0.12054702388529615,0.04738834500312805,low
+25,heuristic,2,1,0.8744023329451216,,true_continuation,,True,2,2,0.19524062079198856,,unknown
+25,heuristic,1,2,0.679161712153133,,temporal_order_two_block_swap,,False,2,2,0.19524062079198856,,unknown
+25,heuristic,0,3,0.35496689688694477,,paired_template_counterfactual,,False,2,2,0.19524062079198856,,unknown
+25,boundary_hybrid,1,1,0.5557459414005279,0.3437357246875763,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,1,2,0.016810691356658913,0.005730152130126953,low
+25,boundary_hybrid,2,2,0.538935250043869,0.33800557255744934,true_continuation,Moving something away from the camera (true continuation),True,1,2,0.016810691356658913,0.005730152130126953,low
+25,boundary_hybrid,0,3,0.47873724699020387,0.3182586431503296,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,2,0.016810691356658913,0.005730152130126953,low
+25,semantic_only,2,1,0.9500054717063904,0.41806453466415405,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.24290865659713745,0.09015846252441406,low
+25,semantic_only,0,2,0.7070968151092529,0.32790607213974,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.24290865659713745,0.09015846252441406,low
+25,semantic_only,1,3,0.4518195390701294,0.25402936339378357,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,2,2,0.24290865659713745,0.09015846252441406,low
+25,hybrid,2,1,1.824407804651512,0.5085353255271912,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.6934265534282495,0.25433871150016785,high
+25,hybrid,1,2,1.1309812512232624,0.2541966140270233,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,2,2,0.6934265534282495,0.25433871150016785,high
+25,hybrid,0,3,1.0620637119961978,0.23726806044578552,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.6934265534282495,0.25433871150016785,high
+26,heuristic,2,1,0.6495114080047669,,true_continuation,,True,2,2,0.337245718882808,,unknown
+26,heuristic,1,2,0.3122656891219589,,temporal_order_block_reverse,,False,2,2,0.337245718882808,,unknown
+26,heuristic,0,3,0.22500118579797443,,paired_template_counterfactual,,False,2,2,0.337245718882808,,unknown
+26,boundary_hybrid,2,1,0.5828900575637818,0.34018027782440186,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.0019922137260437456,0.0006770193576812744,low
+26,boundary_hybrid,1,2,0.580897843837738,0.3395032584667206,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,2,2,0.0019922137260437456,0.0006770193576812744,low
+26,boundary_hybrid,0,3,0.5227239072322846,0.32031649351119995,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.0019922137260437456,0.0006770193576812744,low
+26,semantic_only,2,1,0.9745810627937317,0.4071929454803467,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.0362895131111145,0.01451188325881958,low
+26,semantic_only,0,2,0.9382915496826172,0.3926810622215271,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.0362895131111145,0.01451188325881958,low
+26,semantic_only,1,3,0.2642407715320587,0.20012594759464264,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,2,2,0.0362895131111145,0.01451188325881958,low
+26,hybrid,2,1,1.6240924707984985,0.5046522617340088,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.46079973531790697,0.1863282024860382,medium
+26,hybrid,0,2,1.1632927354805915,0.3183240592479706,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.46079973531790697,0.1863282024860382,medium
+26,hybrid,1,3,0.5765064606540176,0.17702369391918182,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,2,2,0.46079973531790697,0.1863282024860382,medium
+27,heuristic,2,1,0.6034903295983632,,true_continuation,,True,2,2,0.24153732835839042,,unknown
+27,heuristic,0,2,0.3619530012399728,,temporal_order_block_reverse,,False,2,2,0.24153732835839042,,unknown
+27,heuristic,1,3,0.2726673190544487,,paired_template_counterfactual,,False,2,2,0.24153732835839042,,unknown
+27,boundary_hybrid,2,1,0.5536892533302307,0.34184178709983826,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.0027864217758177823,0.0009511709213256836,low
+27,boundary_hybrid,0,2,0.5509028315544129,0.3408906161785126,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,2,2,0.0027864217758177823,0.0009511709213256836,low
+27,boundary_hybrid,1,3,0.4790868699550629,0.31726762652397156,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.0027864217758177823,0.0009511709213256836,low
+27,semantic_only,2,1,0.9186874032020569,0.46133309602737427,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.42974141240119934,0.1611541211605072,medium
+27,semantic_only,0,2,0.48894599080085754,0.30017897486686707,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,2,2,0.42974141240119934,0.1611541211605072,medium
+27,semantic_only,1,3,0.25888553261756897,0.23848788440227509,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.42974141240119934,0.1611541211605072,medium
+27,hybrid,2,1,1.52217773280042,0.5312368869781494,true_continuation,Moving something away from the camera (true continuation),True,2,2,0.6712787407595897,0.2597457766532898,high
+27,hybrid,0,2,0.8508989920408303,0.2714911103248596,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,2,2,0.6712787407595897,0.2597457766532898,high
+27,hybrid,1,3,0.5315528516720176,0.197271928191185,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,2,0.6712787407595897,0.2597457766532898,high
+28,heuristic,0,1,0.406231467885988,,paired_template_counterfactual,,False,0,1,0.04500020506002744,,unknown
+28,heuristic,1,2,0.3612312628259606,,true_continuation,,True,0,1,0.04500020506002744,,unknown
+28,heuristic,2,3,0.3308677019442901,,temporal_order_block_reverse,,False,0,1,0.04500020506002744,,unknown
+28,boundary_hybrid,1,1,0.5302339255809784,0.3366963267326355,true_continuation,Moving something away from the camera (true continuation),True,1,1,0.003766655921936035,0.0012658238410949707,low
+28,boundary_hybrid,2,2,0.5264672696590423,0.3354305028915405,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,1,1,0.003766655921936035,0.0012658238410949707,low
+28,boundary_hybrid,0,3,0.503679433465004,0.32787320017814636,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,1,0.003766655921936035,0.0012658238410949707,low
+28,semantic_only,1,1,0.9640085697174072,0.39702749252319336,true_continuation,Moving something away from the camera (true continuation),True,1,1,0.25330859422683716,0.08884349465370178,low
+28,semantic_only,2,2,0.7106999754905701,0.3081839978694916,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,1,1,0.25330859422683716,0.08884349465370178,low
+28,semantic_only,0,3,0.6662612557411194,0.29478850960731506,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,1,0.25330859422683716,0.08884349465370178,low
+28,hybrid,1,1,1.3252398325433679,0.3953072428703308,true_continuation,Moving something away from the camera (true continuation),True,1,1,0.2527471089162605,0.08828622102737427,low
+28,hybrid,0,2,1.0724927236271073,0.30702102184295654,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,1,0.2527471089162605,0.08828622102737427,low
+28,hybrid,2,3,1.0415676774348601,0.29767167568206787,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,1,1,0.2527471089162605,0.08828622102737427,low
+29,heuristic,2,1,0.2807864813789556,,temporal_order_two_block_swap,,False,2,0,0.014699107229101616,,unknown
+29,heuristic,0,2,0.266087374149854,,true_continuation,,True,2,0,0.014699107229101616,,unknown
+29,heuristic,1,3,0.21737587682003673,,paired_template_counterfactual,,False,2,0,0.014699107229101616,,unknown
+29,boundary_hybrid,0,1,0.5322555422782898,0.34023213386535645,true_continuation,Moving something away from the camera (true continuation),True,0,0,0.004897791147231989,0.0016623139381408691,low
+29,boundary_hybrid,2,2,0.5273577511310578,0.3385698199272156,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,0,0,0.004897791147231989,0.0016623139381408691,low
+29,boundary_hybrid,1,3,0.474685537815094,0.32119810581207275,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,0,0.004897791147231989,0.0016623139381408691,low
+29,semantic_only,2,1,0.9783725142478943,0.4133104383945465,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,2,0,0.10906624794006348,0.042706966400146484,low
+29,semantic_only,0,2,0.8693062663078308,0.3706034719944,true_continuation,Moving something away from the camera (true continuation),True,2,0,0.10906624794006348,0.042706966400146484,low
+29,semantic_only,1,3,0.32985010743141174,0.2160860151052475,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,0,0.10906624794006348,0.042706966400146484,low
+29,hybrid,2,1,1.2591589956268499,0.42117998003959656,temporal_order_two_block_swap,Moving something away from the camera (two-block temporal swap),False,2,0,0.12376535516916509,0.04903078079223633,low
+29,hybrid,0,2,1.1353936404576848,0.37214919924736023,true_continuation,Moving something away from the camera (true continuation),True,2,0,0.12376535516916509,0.04903078079223633,low
+29,hybrid,1,3,0.5472259842514484,0.2066708207130432,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,2,0,0.12376535516916509,0.04903078079223633,low
+30,heuristic,1,1,0.4952017550896248,,temporal_order_block_reverse,,False,1,0,0.04692668568560043,,unknown
+30,heuristic,0,2,0.44827506940402434,,true_continuation,,True,1,0,0.04692668568560043,,unknown
+30,heuristic,2,3,0.35259583285670054,,paired_template_counterfactual,,False,1,0,0.04692668568560043,,unknown
+30,boundary_hybrid,0,1,0.5327556729316711,0.3397252559661865,true_continuation,Moving something away from the camera (true continuation),True,0,0,0.0022645354270934837,0.0007684528827667236,low
+30,boundary_hybrid,1,2,0.5304911375045777,0.3389568030834198,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,0,0,0.0022645354270934837,0.0007684528827667236,low
+30,boundary_hybrid,2,3,0.4770496368408203,0.32131797075271606,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,0,0.0022645354270934837,0.0007684528827667236,low
+30,semantic_only,0,1,0.9988173842430115,0.48732829093933105,true_continuation,Moving something away from the camera (true continuation),True,0,0,0.6401123404502869,0.23039263486862183,medium
+30,semantic_only,2,2,0.3587050437927246,0.25693565607070923,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,0,0.6401123404502869,0.23039263486862183,medium
+30,semantic_only,1,3,0.35402554273605347,0.2557361125946045,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,0,0,0.6401123404502869,0.23039263486862183,medium
+30,hybrid,0,1,1.4470924536470358,0.4928267300128937,true_continuation,Moving something away from the camera (true continuation),True,0,0,0.5978651558213575,0.22177964448928833,medium
+30,hybrid,1,2,0.8492272978256783,0.27104708552360535,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,0,0,0.5978651558213575,0.22177964448928833,medium
+30,hybrid,2,3,0.7113008766494251,0.2361261248588562,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,0,0,0.5978651558213575,0.22177964448928833,medium
+31,heuristic,1,1,0.28384294118612513,,true_continuation,,True,1,1,0.0029235126440484427,,unknown
+31,heuristic,0,2,0.2809194285420767,,temporal_order_block_reverse,,False,1,1,0.0029235126440484427,,unknown
+31,heuristic,2,3,0.1918852675657986,,paired_template_counterfactual,,False,1,1,0.0029235126440484427,,unknown
+31,boundary_hybrid,1,1,0.5386925518512726,0.34185272455215454,true_continuation,Moving something away from the camera (true continuation),True,1,1,0.014238667488098211,0.004833012819290161,low
+31,boundary_hybrid,0,2,0.5244538843631744,0.3370197117328644,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,1,1,0.014238667488098211,0.004833012819290161,low
+31,boundary_hybrid,2,3,0.47615088522434235,0.3211275339126587,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,1,0.014238667488098211,0.004833012819290161,low
+31,semantic_only,1,1,0.9995087385177612,0.35020846128463745,true_continuation,Moving something away from the camera (true continuation),True,1,1,0.02963811159133911,0.010227203369140625,low
+31,semantic_only,0,2,0.9698706269264221,0.3399812579154968,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,1,1,0.02963811159133911,0.010227203369140625,low
+31,semantic_only,2,3,0.8769400715827942,0.30981022119522095,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,1,0.02963811159133911,0.010227203369140625,low
+31,hybrid,1,1,1.2833516797038864,0.3603751063346863,true_continuation,Moving something away from the camera (true continuation),True,1,1,0.032561624235387665,0.011545419692993164,low
+31,hybrid,0,2,1.2507900554684988,0.3488296866416931,temporal_order_block_reverse,Moving something away from the camera (reverse-block temporal negative),False,1,1,0.032561624235387665,0.011545419692993164,low
+31,hybrid,2,3,1.0688253391485927,0.2907951772212982,paired_template_counterfactual,Moving something towards the camera (paired counterfactual),False,1,1,0.032561624235387665,0.011545419692993164,low

@@ -1,21 +1,39 @@
 {
-  "evaluation_count": 8,
+  "evaluation_count": 32,
   "heuristic": {
-    "top1_accuracy": 0.5,
-    "mean_reciprocal_rank": 0.7291666666666666,
-    "average_correct_rank": 1.625,
-    "score_margin_mean": 0.15809203305147382,
-    "score_margin_variance": 0.01943343254044529,
+    "top1_accuracy": 0.59375,
+    "mean_reciprocal_rank": 0.7916666666666666,
+    "average_correct_rank": 1.4375,
+    "score_margin_mean": 0.13243020402876896,
+    "score_margin_variance": 0.011062989978857726,
     "confidence_margin_mean": 0.0,
     "confidence_margin_variance": 0.0
   },
   "boundary_hybrid": {
-    "top1_accuracy": 0.25,
-    "mean_reciprocal_rank": 0.625,
-    "average_correct_rank": 1.75,
-    "score_margin_mean": 0.005443505197763418,
-    "score_margin_variance": 3.768021299479434e-05,
-    "confidence_margin_mean": 0.0018440932035446167,
-    "confidence_margin_variance": 4.299574801747141e-06
+    "top1_accuracy": 0.5,
+    "mean_reciprocal_rank": 0.75,
+    "average_correct_rank": 1.5,
+    "score_margin_mean": 0.008533153682947148,
+    "score_margin_variance": 6.725692876484675e-05,
+    "confidence_margin_mean": 0.002884487621486187,
+    "confidence_margin_variance": 7.635734100042667e-06
+  },
+  "semantic_only": {
+    "top1_accuracy": 0.6875,
+    "mean_reciprocal_rank": 0.8333333333333334,
+    "average_correct_rank": 1.375,
+    "score_margin_mean": 0.13345867581665516,
+    "score_margin_variance": 0.024241904751254425,
+    "confidence_margin_mean": 0.0487170172855258,
+    "confidence_margin_variance": 0.003241454390047311
+  },
+  "hybrid": {
+    "top1_accuracy": 0.78125,
+    "mean_reciprocal_rank": 0.8854166666666666,
+    "average_correct_rank": 1.25,
+    "score_margin_mean": 0.25206808179058837,
+    "score_margin_variance": 0.048092864142648135,
+    "confidence_margin_mean": 0.09497856348752975,
+    "confidence_margin_variance": 0.0068123477332396876
   }
 }

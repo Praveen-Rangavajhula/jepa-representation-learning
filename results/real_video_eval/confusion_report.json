@@ -1,26 +1,65 @@
 {
   "heuristic": {
     "temporal_order_block_reverse": {
-      "count": 3,
-      "fraction_of_errors": 0.75,
-      "fraction_of_examples": 0.375
+      "count": 6,
+      "fraction_of_errors": 0.46153846153846156,
+      "fraction_of_examples": 0.1875
     },
     "temporal_order_two_block_swap": {
-      "count": 1,
-      "fraction_of_errors": 0.25,
+      "count": 3,
+      "fraction_of_errors": 0.23076923076923078,
+      "fraction_of_examples": 0.09375
+    },
+    "paired_template_counterfactual": {
+      "count": 4,
+      "fraction_of_errors": 0.3076923076923077,
       "fraction_of_examples": 0.125
     }
   },
   "boundary_hybrid": {
     "temporal_order_two_block_swap": {
-      "count": 1,
-      "fraction_of_errors": 0.16666666666666666,
-      "fraction_of_examples": 0.125
+      "count": 8,
+      "fraction_of_errors": 0.5,
+      "fraction_of_examples": 0.25
     },
     "temporal_order_block_reverse": {
-      "count": 5,
-      "fraction_of_errors": 0.8333333333333334,
-      "fraction_of_examples": 0.625
+      "count": 8,
+      "fraction_of_errors": 0.5,
+      "fraction_of_examples": 0.25
+    }
+  },
+  "semantic_only": {
+    "paired_template_counterfactual": {
+      "count": 1,
+      "fraction_of_errors": 0.1,
+      "fraction_of_examples": 0.03125
+    },
+    "temporal_order_block_reverse": {
+      "count": 3,
+      "fraction_of_errors": 0.3,
+      "fraction_of_examples": 0.09375
+    },
+    "temporal_order_two_block_swap": {
+      "count": 6,
+      "fraction_of_errors": 0.6,
+      "fraction_of_examples": 0.1875
+    }
+  },
+  "hybrid": {
+    "paired_template_counterfactual": {
+      "count": 2,
+      "fraction_of_errors": 0.2857142857142857,
+      "fraction_of_examples": 0.0625
+    },
+    "temporal_order_block_reverse": {
+      "count": 3,
+      "fraction_of_errors": 0.42857142857142855,
+      "fraction_of_examples": 0.09375
+    },
+    "temporal_order_two_block_swap": {
+      "count": 2,
+      "fraction_of_errors": 0.2857142857142857,
+      "fraction_of_examples": 0.0625
     }
   }
 }
